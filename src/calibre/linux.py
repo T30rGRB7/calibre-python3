@@ -698,18 +698,6 @@ class PostInstall:
             self.setup_completion()
         if islinux or isbsd:
             self.setup_desktop_integration()
-        self.create_uninstaller()
-
-        from calibre.utils.config import config_dir
-        if os.path.exists(config_dir):
-            os.chdir(config_dir)
-            if islinux or isbsd:
-                for f in os.listdir('.'):
-                    if os.stat(f).st_uid == 0:
-                        import shutil
-                        shutil.rmtree(f) if os.path.isdir(f) else os.unlink(f)
-                if os.stat(config_dir).st_uid == 0:
-                    os.rmdir(config_dir)
 
         if warn is None and self.warnings:
             self.info('\n\nThere were %d warnings\n'%len(self.warnings))
@@ -815,7 +803,7 @@ class PostInstall:
                 mimetypes = set()
                 for x in all_input_formats():
                     mt = guess_type('dummy.'+x)[0]
-                    if mt and 'chemical' not in mt and 'ctc-posml' not in mt:
+                    if mt and 'chemical' not in mt and 'text' not in mt and 'pdf' not in mt and 'xhtml' not in mt:
                         mimetypes.add(mt)
                 mimetypes.discard('application/octet-stream')
 
@@ -861,10 +849,8 @@ class PostInstall:
                     ak = x.partition('.')[0]
                     if ak in APPDATA and os.access(appdata, os.W_OK):
                         self.appdata_resources.append(write_appdata(ak, APPDATA[ak], appdata, translators))
-                cc(['xdg-desktop-menu', 'forceupdate'])
                 MIME = P('calibre-mimetypes.xml')
                 self.mime_resources.append(MIME)
-                cc(['xdg-mime', 'install', MIME])
         except Exception:
             if self.opts.fatal_errors:
                 raise
@@ -1030,7 +1016,7 @@ GUI = '''\
 [Desktop Entry]
 Version=1.0
 Type=Application
-Name=calibre
+Name=Calibre
 GenericName=E-book library management
 Comment=E-book library management: Convert, view, share, catalogue all your e-books
 TryExec=calibre
