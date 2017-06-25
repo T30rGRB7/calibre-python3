@@ -8,7 +8,7 @@ Job management.
 '''
 
 import re, time
-from Queue import Empty, Queue
+from queue import Empty, Queue
 
 from PyQt5.Qt import (QAbstractTableModel, QModelIndex, Qt, QPainter,
     QTimer, pyqtSignal, QIcon, QDialog, QAbstractItemDelegate, QApplication,
@@ -130,7 +130,7 @@ class JobManager(QAbstractTableModel, AdaptSQP):  # {{{
                         return None
                     return ('%dm %ds'%(int(rtime)//60, int(rtime)%60))
                 if col == 4 and job.start_time is not None:
-                    return (strftime(u'%H:%M -- %d %b', time.localtime(job.start_time)))
+                    return (strftime('%H:%M -- %d %b', time.localtime(job.start_time)))
             if role == Qt.DecorationRole and col == 0:
                 state = job.run_state
                 if state == job.WAITING:
@@ -279,7 +279,7 @@ class JobManager(QAbstractTableModel, AdaptSQP):  # {{{
     def show_hidden_jobs(self):
         for j in self.jobs:
             j.hidden_in_gui = False
-        for r in xrange(len(self.jobs)):
+        for r in range(len(self.jobs)):
             self.dataChanged.emit(self.index(r, 0), self.index(r, 0))
 
     def kill_job(self, row, view):
@@ -305,7 +305,7 @@ class JobManager(QAbstractTableModel, AdaptSQP):  # {{{
         jobs = [j for j in jobs if j.duration is None]
         unkillable = [j for j in jobs if not getattr(j, 'killable', True)]
         if unkillable:
-            names = u'\n'.join(as_unicode(j.description) for j in unkillable)
+            names = '\n'.join(as_unicode(j.description) for j in unkillable)
             error_dialog(view, _('Cannot kill job'),
                     _('Some of the jobs cannot be stopped. Click Show details'
                         ' to see the list of unstoppable jobs.'), det_msg=names,
@@ -481,7 +481,7 @@ class JobsButton(QWidget):  # {{{
         self._jobs.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         self.setCursor(Qt.PointingHandCursor)
         b = _('Click to see list of jobs')
-        self.setToolTip(b + u' [%s]'%self.shortcut)
+        self.setToolTip(b + ' [%s]'%self.shortcut)
         self.action_toggle = QAction(b, parent)
         parent.addAction(self.action_toggle)
         self.action_toggle.triggered.connect(self.toggle)
@@ -526,7 +526,7 @@ class JobsButton(QWidget):  # {{{
         self.pi.stopAnimation()
 
     def jobs(self):
-        src = unicode(self._jobs.text())
+        src = str(self._jobs.text())
         return int(re.search(r'\d+', src).group())
 
     def tray_tooltip(self, num=0):
@@ -542,7 +542,7 @@ class JobsButton(QWidget):  # {{{
 
     def job_added(self, nnum):
         jobs = self._jobs
-        src = unicode(jobs.text())
+        src = str(jobs.text())
         num = self.jobs()
         text = src.replace(str(num), str(nnum))
         jobs.setText(text)
@@ -551,7 +551,7 @@ class JobsButton(QWidget):  # {{{
 
     def job_done(self, nnum):
         jobs = self._jobs
-        src = unicode(jobs.text())
+        src = str(jobs.text())
         num = self.jobs()
         text = src.replace(str(num), str(nnum))
         jobs.setText(text)
@@ -679,7 +679,7 @@ class JobsDialog(QDialog, Ui_JobsDialog):
         self.proxy_model.beginResetModel(), self.proxy_model.endResetModel()
 
     def hide_all(self, *args):
-        self.model.hide_jobs(list(xrange(0,
+        self.model.hide_jobs(list(range(0,
             self.model.rowCount(QModelIndex()))))
         self.proxy_model.beginResetModel(), self.proxy_model.endResetModel()
 

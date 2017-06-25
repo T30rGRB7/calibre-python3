@@ -229,8 +229,8 @@ per_language_title_sort_articles = {
         'spa'  : (r'El\s+', r'La\s+', r'Lo\s+', r'Los\s+', r'Las\s+', r'Un\s+',
                   r'Una\s+', r'Unos\s+', r'Unas\s+'),
         # French
-        'fra'  : (r'Le\s+', r'La\s+', r"L'", u'L´', u'L’', r'Les\s+', r'Un\s+', r'Une\s+',
-                  r'Des\s+', r'De\s+La\s+', r'De\s+', r"D'", u'D´', u'L’'),
+        'fra'  : (r'Le\s+', r'La\s+', r"L'", 'L´', 'L’', r'Les\s+', r'Un\s+', r'Une\s+',
+                  r'Des\s+', r'De\s+La\s+', r'De\s+', r"D'", 'D´', 'L’'),
 
         # Italian
         'ita': ('Lo\\s+', 'Il\\s+', "L'", 'L\xb4', 'La\\s+', 'Gli\\s+',

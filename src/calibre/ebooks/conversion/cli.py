@@ -1,4 +1,4 @@
-from __future__ import with_statement
+
 __license__ = 'GPL 3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
 __docformat__ = 'restructuredtext en'
@@ -254,7 +254,7 @@ def add_pipeline_options(parser, plumber):
 
               ))
 
-    for group, (desc, options) in groups.iteritems():
+    for group, (desc, options) in groups.items():
         if group:
             group = OptionGroup(parser, group, desc)
             parser.add_option_group(group)
@@ -343,7 +343,7 @@ def read_sr_patterns(path, log=None):
             try:
                 re.compile(line)
             except:
-                msg = u'Invalid regular expression: %r from file: %r'%(
+                msg = 'Invalid regular expression: %r from file: %r'%(
                         line, path)
                 if log is not None:
                     log.error(msg)
@@ -362,7 +362,7 @@ def main(args=sys.argv):
     parser, plumber = create_option_parser(args, log)
     opts, leftover_args = parser.parse_args(args)
     if len(leftover_args) > 3:
-        log.error('Extra arguments not understood:', u', '.join(leftover_args[3:]))
+        log.error('Extra arguments not understood:', ', '.join(leftover_args[3:]))
         return 1
     for x in ('read_metadata_from_opf', 'cover'):
         if getattr(opts, x, None) is not None:

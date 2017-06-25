@@ -114,7 +114,7 @@ try:
     from html.entities import name2codepoint  # Python 3
     name2codepoint
 except ImportError:
-    from htmlentitydefs import name2codepoint
+    from html.entities import name2codepoint
 import re
 
 handle_entities = re.compile("&(\w+);").sub
@@ -127,7 +127,7 @@ def unescape(string):
 
     def unescape_entity(m):
         try:
-            return unichr(name2codepoint[m.group(1)])
+            return chr(name2codepoint[m.group(1)])
         except KeyError:
             return m.group(0)  # use as is
     return handle_entities(unescape_entity, string)

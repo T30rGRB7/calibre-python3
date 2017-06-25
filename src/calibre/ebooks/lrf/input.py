@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
@@ -85,7 +85,7 @@ class Canvas(etree.XSLTExtension):
     def get_objects(self, node):
         for x in node.xpath('descendant::PutObj[@refobj and @x1 and @y1]'):
             objs = node.xpath('//*[@objid="%s"]'%x.get('refobj'))
-            x, y = map(self.styles.to_num, (x.get('x1'), x.get('y1')))
+            x, y = list(map(self.styles.to_num, (x.get('x1'), x.get('y1'))))
             if objs and x is not None and y is not None:
                 yield objs[0], int(x), int(y)
 
@@ -292,7 +292,7 @@ class Styles(etree.XSLTExtension):
     def write(self, name='styles.css'):
 
         def join(style):
-            ans = ['%s : %s;'%(k, v) for k, v in style.items()]
+            ans = ['%s : %s;'%(k, v) for k, v in list(style.items())]
             if ans:
                 ans[-1] = ans[-1][:-1]
             return '\n\t'.join(ans)

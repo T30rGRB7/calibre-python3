@@ -6,7 +6,7 @@ from __future__ import (unicode_literals, division, absolute_import,
 __license__ = 'GPL v3'
 __copyright__ = '2013, Kovid Goyal <kovid at kovidgoyal.net>'
 
-import cPickle
+import pickle
 
 from PyQt5.Qt import (
     Qt, QListWidget, QListWidgetItem, QItemSelectionModel, QAction,
@@ -141,12 +141,12 @@ class BookmarkManager(QWidget):
                 l.scrollToItem(item)
 
     def __iter__(self):
-        for i in xrange(self.bookmarks_list.count()):
+        for i in range(self.bookmarks_list.count()):
             yield self.item_to_bm(self.bookmarks_list.item(i))
 
     def item_changed(self, item):
         self.bookmarks_list.blockSignals(True)
-        title = unicode(item.data(Qt.DisplayRole))
+        title = str(item.data(Qt.DisplayRole))
         if not title:
             title = _('Unknown')
             item.setData(Qt.DisplayRole, title)
@@ -186,10 +186,10 @@ class BookmarkManager(QWidget):
         self.edited.emit(bm)
 
     def bm_to_item(self, bm):
-        return bytearray(cPickle.dumps(bm, -1))
+        return bytearray(pickle.dumps(bm, -1))
 
     def item_to_bm(self, item):
-        return cPickle.loads(bytes(item.data(Qt.UserRole)))
+        return pickle.loads(bytes(item.data(Qt.UserRole)))
 
     def get_bookmarks(self):
         return list(self)
@@ -200,7 +200,7 @@ class BookmarkManager(QWidget):
             filters=[(_('Saved bookmarks'), ['pickle'])], all_files=False, initial_filename='bookmarks.pickle')
         if filename:
             with open(filename, 'wb') as fileobj:
-                cPickle.dump(self.get_bookmarks(), fileobj, -1)
+                pickle.dump(self.get_bookmarks(), fileobj, -1)
 
     def import_bookmarks(self):
         files = choose_files(self, 'export-viewer-bookmarks', _('Import bookmarks'),
@@ -211,7 +211,7 @@ class BookmarkManager(QWidget):
 
         imported = None
         with open(filename, 'rb') as fileobj:
-            imported = cPickle.load(fileobj)
+            imported = pickle.load(fileobj)
 
         if imported is not None:
             bad = False

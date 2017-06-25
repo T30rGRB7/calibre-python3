@@ -57,10 +57,10 @@ class NameTableWidgetItem(QTableWidgetItem):
         QTableWidgetItem.setText(self, txt)
 
     def __ge__(self, other):
-        return sort_key(unicode(self.text())) >= sort_key(unicode(other.text()))
+        return sort_key(str(self.text())) >= sort_key(str(other.text()))
 
     def __lt__(self, other):
-        return sort_key(unicode(self.text())) < sort_key(unicode(other.text()))
+        return sort_key(str(self.text())) < sort_key(str(other.text()))
 
 
 class CountTableWidgetItem(QTableWidgetItem):
@@ -164,7 +164,7 @@ class TagListEditor(QDialog, Ui_TagListEditor):
         # Add the data
         select_item = None
         self.table.setRowCount(len(self.all_tags))
-        for row,tag in enumerate(sorted(self.all_tags.keys(), key=sorter)):
+        for row,tag in enumerate(sorted(list(self.all_tags.keys()), key=sorter)):
             item = NameTableWidgetItem(tag)
             item.setData(Qt.UserRole, self.all_tags[tag])
             item.setFlags(item.flags() | Qt.ItemIsSelectable | Qt.ItemIsEditable)
@@ -215,7 +215,7 @@ class TagListEditor(QDialog, Ui_TagListEditor):
         self.start_find_pos = -1
 
     def search_clicked(self):
-        search_for = icu_lower(unicode(self.search_box.text()))
+        search_for = icu_lower(str(self.search_box.text()))
         if not search_for:
             error_dialog(self, _('Find'), _('You must enter some text to search for'),
                          show=True, show_copy_button=False)
@@ -226,7 +226,7 @@ class TagListEditor(QDialog, Ui_TagListEditor):
             if self.start_find_pos >= rows:
                 self.start_find_pos = 0
             item = self.table.item(self.start_find_pos, 0)
-            if search_for in icu_lower(unicode(item.text())):
+            if search_for in icu_lower(str(item.text())):
                 self.table.setCurrentItem(item)
                 return
         info_dialog(self, _('Find'), _('No tag found'), show=True, show_copy_button=False)
@@ -262,7 +262,7 @@ class TagListEditor(QDialog, Ui_TagListEditor):
                 return
         if item.text() != item.initial_text():
             id_ = int(item.data(Qt.UserRole))
-            self.to_rename[id_] = unicode(item.text())
+            self.to_rename[id_] = str(item.text())
             orig = self.table.item(item.row(), 2)
             self.table.blockSignals(True)
             orig.setData(Qt.DisplayRole, item.initial_text())
@@ -306,13 +306,13 @@ class TagListEditor(QDialog, Ui_TagListEditor):
             else:
                 to_del.append(item)
         if to_del:
-            ct = ', '.join([unicode(item.text()) for item in to_del])
+            ct = ', '.join([str(item.text()) for item in to_del])
             if not confirm(
                 '<p>'+_('Are you sure you want to delete the following items?')+'<br>'+ct,
                 'tag_list_editor_delete'):
                 return
         if to_undel:
-            ct = ', '.join([unicode(item.text()) for item in to_undel])
+            ct = ', '.join([str(item.text()) for item in to_undel])
             if not confirm(
                 '<p>'+_('Are you sure you want to undelete the following items?')+'<br>'+ct,
                 'tag_list_editor_undelete'):

@@ -5,7 +5,7 @@ __copyright__ = '2010, Gregory Riker'
 __docformat__ = 'restructuredtext en'
 
 
-import cStringIO, ctypes, datetime, os, re, shutil, sys, tempfile, time
+import io, ctypes, datetime, os, re, shutil, sys, tempfile, time
 
 from calibre import fit_image, confirm_config_name, strftime as _strftime
 from calibre.constants import (
@@ -45,7 +45,7 @@ def logger():
 class AppleOpenFeedback(OpenFeedback):
 
     def __init__(self, plugin):
-        OpenFeedback.__init__(self, u'')
+        OpenFeedback.__init__(self, '')
         self.plugin = plugin
 
     def custom_dialog(self, parent):
@@ -126,11 +126,11 @@ class DriverBase(DeviceConfig, DevicePlugin):
                     'iBooks category'),
             _('Cache covers from iTunes/iBooks') + ':::' + _(
                 'Enable to cache and display covers from iTunes/iBooks'),
-            _(u'"Copy files to iTunes Media folder %s" is enabled in iTunes Preferences|Advanced') % u'\u2026' + ':::' + _(
+            _('"Copy files to iTunes Media folder %s" is enabled in iTunes Preferences|Advanced') % '\u2026' + ':::' + _(
                     "<p>This setting should match your iTunes <i>Preferences</i>|<i>Advanced</i> setting.</p>"
                     "<p>Disabling will store copies of books transferred to iTunes in your calibre configuration directory.</p>"
                     "<p>Enabling indicates that iTunes is configured to store copies in your iTunes Media folder.</p>"),
-            _(u'Enable debug logging') + ':::' + _("Print driver debug messages to console"),
+            _('Enable debug logging') + ':::' + _("Print driver debug messages to console"),
     ]
     EXTRA_CUSTOMIZATION_DEFAULT = [
                 True,
@@ -1362,7 +1362,7 @@ class ITUNES(DriverBase):
                                 sys.stdout.flush()
 
                         if self.verbose:
-                            print
+                            print()
                         added = op_status.Tracks[0]
                     else:
                         '''
@@ -1429,7 +1429,7 @@ class ITUNES(DriverBase):
                         sys.stdout.write('.')
                         sys.stdout.flush()
                 if self.verbose:
-                    print
+                    print()
                 added = op_status.Tracks[0]
             else:
                 '''
@@ -1511,7 +1511,7 @@ class ITUNES(DriverBase):
                             logger().info("   cover scaled from %sx%s to %sx%s" %
                                           (width, height, nwidth, nheight))
                         img = img.resize((nwidth, nheight), PILImage.ANTIALIAS)
-                        cd = cStringIO.StringIO()
+                        cd = io.StringIO()
                         img.convert('RGB').save(cd, 'JPEG')
                         cover_data = cd.getvalue()
                         cd.close()
@@ -1640,7 +1640,7 @@ class ITUNES(DriverBase):
                 height = metadata.thumbnail[1]
                 im = PILImage.open(metadata.cover)
                 im = im.resize((width, height), PILImage.ANTIALIAS)
-                of = cStringIO.StringIO()
+                of = io.StringIO()
                 im.convert('RGB').save(of, 'JPEG')
                 thumb = of.getvalue()
                 of.close()
@@ -1848,7 +1848,7 @@ class ITUNES(DriverBase):
             logger().info(msg)
             logger().info("%s%s" % (' ' * indent, '-' * len(msg)))
         if isosx:
-            for cb in self.cached_books.keys():
+            for cb in list(self.cached_books.keys()):
                 logger().info("%s%-40.40s %-30.30s %-40.40s %-10.10s %-10.10s" %
                  (' ' * indent,
                   self.cached_books[cb]['title'],
@@ -1858,7 +1858,7 @@ class ITUNES(DriverBase):
                   str(self.cached_books[cb]['dev_book'])[-9:],
                   ))
         elif iswindows:
-            for cb in self.cached_books.keys():
+            for cb in list(self.cached_books.keys()):
                 logger().info("%s%-40.40s %-30.30s %-4.4s %s" %
                  (' ' * indent,
                   self.cached_books[cb]['title'],
@@ -1882,7 +1882,7 @@ class ITUNES(DriverBase):
         fnames = zf.namelist()
         opf = [x for x in fnames if '.opf' in x][0]
         if opf:
-            opf_raw = cStringIO.StringIO(zf.read(opf))
+            opf_raw = io.StringIO(zf.read(opf))
             soup = BeautifulSoup(opf_raw.getvalue())
             opf_raw.close()
             title = soup.find('dc:title').renderContents()
@@ -1914,7 +1914,7 @@ class ITUNES(DriverBase):
             s = s.translate(FILTER)
             result += "%04X   %-*s   %s\n" % (N, length * 3, hexa, s)
             N += length
-        print result
+        print(result)
 
     def _dump_library_books(self, library_books):
         '''
@@ -2171,12 +2171,12 @@ class ITUNES(DriverBase):
 
             # Generate a thumb
             try:
-                img_data = cStringIO.StringIO(data)
+                img_data = io.StringIO(data)
                 im = PILImage.open(img_data)
                 scaled, width, height = fit_image(im.size[0], im.size[1], 60, 80)
                 im = im.resize((int(width), int(height)), PILImage.ANTIALIAS)
 
-                thumb = cStringIO.StringIO()
+                thumb = io.StringIO()
                 im.convert('RGB').save(thumb, 'JPEG')
                 thumb_data = thumb.getvalue()
                 thumb.close()
@@ -2214,7 +2214,7 @@ class ITUNES(DriverBase):
                 im = PILImage.open(tmp_thumb)
                 scaled, width, height = fit_image(im.size[0], im.size[1], 60, 80)
                 im = im.resize((int(width), int(height)), PILImage.ANTIALIAS)
-                thumb = cStringIO.StringIO()
+                thumb = io.StringIO()
                 im.convert('RGB').save(thumb, 'JPEG')
                 thumb_data = thumb.getvalue()
                 os.remove(tmp_thumb)
@@ -2519,7 +2519,7 @@ class ITUNES(DriverBase):
                 kinds.pop(index)
                 names.pop(index)
 
-        return dict(zip(kinds, names))
+        return dict(list(zip(kinds, names)))
 
     def _is_alpha(self, char):
         '''
@@ -2571,7 +2571,7 @@ class ITUNES(DriverBase):
                 self.iTunes.name()
             except:
                 # Try static binding
-                import itunes
+                from . import itunes
                 self.iTunes = appscript.app('iTunes', terms=itunes)
                 try:
                     self.iTunes.name()
@@ -2984,7 +2984,7 @@ class ITUNES(DriverBase):
                         sys.stdout.write('.')
                         sys.stdout.flush()
                     time.sleep(2)
-                print
+                print()
         elif iswindows:
             import pythoncom, win32com.client
 

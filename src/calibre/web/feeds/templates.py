@@ -31,17 +31,17 @@ class Template(object):
     def generate(self, *args, **kwargs):
         if 'style' not in kwargs:
             kwargs['style'] = ''
-        for key in kwargs.keys():
+        for key in list(kwargs.keys()):
             if isbytestring(kwargs[key]):
                 kwargs[key] = kwargs[key].decode('utf-8', 'replace')
             if kwargs[key] is None:
-                kwargs[key] = u''
+                kwargs[key] = ''
         args = list(args)
         for i in range(len(args)):
             if isbytestring(args[i]):
                 args[i] = args[i].decode('utf-8', 'replace')
             if args[i] is None:
-                args[i] = u''
+                args[i] = ''
 
         self._generate(*args, **kwargs)
 
@@ -73,7 +73,7 @@ class EmbeddedContent(Template):
         self.root = HTML(head,
                 BODY(H2(article.title), DIV()))
         div = self.root.find('body').find('div')
-        if elements and isinstance(elements[0], unicode):
+        if elements and isinstance(elements[0], str):
             div.text = elements[0]
             elements = list(elements)[1:]
         for elem in elements:
@@ -88,7 +88,7 @@ class IndexTemplate(Template):
 
     def _generate(self, title, masthead, datefmt, feeds, extra_css=None, style=None):
         self.IS_HTML = False
-        if isinstance(datefmt, unicode):
+        if isinstance(datefmt, str):
             datefmt = datefmt.encode(preferred_encoding)
         date = strftime(datefmt)
         head = HEAD(TITLE(title))
@@ -248,7 +248,7 @@ class TouchscreenIndexTemplate(Template):
 
         self.IS_HTML = False
 
-        if isinstance(datefmt, unicode):
+        if isinstance(datefmt, str):
             datefmt = datefmt.encode(preferred_encoding)
         date = '%s, %s %s, %s' % (strftime('%A'), strftime('%B'), strftime('%d').lstrip('0'), strftime('%Y'))
         masthead_p = etree.Element("p")

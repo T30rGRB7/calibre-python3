@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
@@ -181,7 +181,7 @@ class RecipeModel(QAbstractItemModel, AdaptSQP):
 
     def update_custom_recipes(self, script_urn_map):
         script_ids = []
-        for urn, title_script in script_urn_map.iteritems():
+        for urn, title_script in script_urn_map.items():
             id_ = int(urn[len('custom:'):])
             (title, script) = title_script
             script_ids.append((id_, title, script))
@@ -296,7 +296,7 @@ class RecipeModel(QAbstractItemModel, AdaptSQP):
     def search(self, query):
         results = []
         try:
-            query = unicode(query).strip()
+            query = str(query).strip()
             if query:
                 results = self.parse(query)
                 if not results:

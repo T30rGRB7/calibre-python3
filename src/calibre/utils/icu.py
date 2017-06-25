@@ -19,7 +19,7 @@ from calibre.utils.config_base import tweaks
 
 _locale = _collator = _primary_collator = _sort_collator = _numeric_collator = _case_sensitive_collator = None
 
-_none = u''
+_none = ''
 _none2 = b''
 _cmap = {}
 
@@ -66,7 +66,7 @@ def collator():
         try:
             _collator = _icu.Collator(_locale)
         except Exception as e:
-            print ('Failed to load collator for locale: %r with error %r, using English' % (_locale, e))
+            print(('Failed to load collator for locale: %r with error %r, using English' % (_locale, e)))
             _collator = _icu.Collator('en')
     return _collator
 
@@ -184,7 +184,7 @@ def _make_func(template, name, **kwargs):
     l = globals()
     kwargs['name'] = name
     kwargs['func'] = kwargs.get('func', 'sort_key')
-    exec template.format(**kwargs) in l
+    exec(template.format(**kwargs), l)
     return l[name]
 
 
@@ -246,7 +246,7 @@ ord_string = _icu.ord_string
 
 def character_name(string):
     try:
-        return _icu.character_name(unicode(string)) or None
+        return _icu.character_name(str(string)) or None
     except (TypeError, ValueError, KeyError):
         pass
 
@@ -263,7 +263,7 @@ def normalize(text, mode='NFC'):
     # that unless you have very good reasons not too. Also, it's speed
     # decreases on wide python builds, where conversion to/from ICU's string
     # representation is slower.
-    return _icu.normalize(_nmodes[mode], unicode(text))
+    return _icu.normalize(_nmodes[mode], str(text))
 
 
 def contractions(col=None):
@@ -274,7 +274,7 @@ def contractions(col=None):
     ans = _cmap.get(collator, None)
     if ans is None:
         ans = col.contractions()
-        ans = frozenset(filter(None, ans))
+        ans = frozenset([_f for _f in ans if _f])
         _cmap[col] = ans
     return ans
 

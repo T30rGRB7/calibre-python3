@@ -54,7 +54,7 @@ DML_ERRORS = {
 
     'UNFOUND_QUEUE_ID': (0x4011, 'An invalid transaction identifier was passed to a DDEML function. Once the application has returned from an XTYP_XACT_COMPLETE callback, the transaction identifier for that callback function is no longer valid.'),  # noqa
 }
-DML_ERROR_TEXT = {code:text for (code, text) in DML_ERRORS.itervalues()}
+DML_ERROR_TEXT = {code:text for (code, text) in DML_ERRORS.values()}
 
 user32 = windll.user32
 
@@ -87,7 +87,7 @@ def dde_error(instance):
 
 
 def default_errcheck(result, func, args):
-    if (isinstance(result, (int, long)) and result == 0) or (getattr(result, 'value', False) is None):
+    if (isinstance(result, int) and result == 0) or (getattr(result, 'value', False) is None):
         dde_error(args[0])
     return args
 

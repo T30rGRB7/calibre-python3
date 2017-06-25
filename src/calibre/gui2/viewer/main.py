@@ -416,7 +416,7 @@ class EbookViewer(MainWindow):
                 at_start=True)
 
     def lookup(self, word):
-        from urllib import quote
+        from urllib.parse import quote
         word = quote(word.encode('utf-8'))
         lang = canonicalize_lang(self.view.current_language) or get_lang() or 'en'
         try:
@@ -633,11 +633,11 @@ class EbookViewer(MainWindow):
         tt = '%(action)s [%(sc)s]\n'+_('Current magnification: %(mag).1f')
         sc = _(' or ').join(self.view.shortcuts.get_shortcuts('Font larger'))
         self.action_font_size_larger.setToolTip(
-                tt %dict(action=unicode(self.action_font_size_larger.text()),
+                tt %dict(action=str(self.action_font_size_larger.text()),
                          mag=val, sc=sc))
         sc = _(' or ').join(self.view.shortcuts.get_shortcuts('Font smaller'))
         self.action_font_size_smaller.setToolTip(
-                tt %dict(action=unicode(self.action_font_size_smaller.text()),
+                tt %dict(action=str(self.action_font_size_smaller.text()),
                          mag=val, sc=sc))
         self.action_font_size_larger.setEnabled(self.view.multiplier < 3)
         self.action_font_size_smaller.setEnabled(self.view.multiplier > 0.2)
@@ -664,10 +664,10 @@ class EbookViewer(MainWindow):
         self.load_path(self.iterator.spine[index])
 
     def find_next(self):
-        self.find(unicode(self.search.text()), repeat=True)
+        self.find(str(self.search.text()), repeat=True)
 
     def find_previous(self):
-        self.find(unicode(self.search.text()), repeat=True, backwards=True)
+        self.find(str(self.search.text()), repeat=True, backwards=True)
 
     def do_search(self, text, backwards):
         self.pending_search = None
@@ -686,7 +686,7 @@ class EbookViewer(MainWindow):
             self.history.add(self.pos.value())
             path = self.iterator.spine[self.iterator.spine.index(path)]
             if url.hasFragment():
-                frag = unicode(url.fragment())
+                frag = str(url.fragment())
             if path != self.current_page:
                 self.pending_anchor = frag
                 self.load_path(path)
@@ -892,7 +892,7 @@ class EbookViewer(MainWindow):
             num += 1
         title, ok = QInputDialog.getText(self, _('Add bookmark'),
                 _('Enter title for bookmark:'), text=bm)
-        title = unicode(title).strip()
+        title = str(title).strip()
         if ok and title:
             bm = self.view.bookmark()
             bm['spine'] = self.current_index

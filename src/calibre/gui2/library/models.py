@@ -55,7 +55,7 @@ def default_image():
 
 
 def group_numbers(numbers):
-    for k, g in groupby(enumerate(sorted(numbers)), lambda (i, x):i - x):
+    for k, g in groupby(enumerate(sorted(numbers)), lambda i_x:i_x[0] - i_x[1]):
         first = None
         for last in g:
             if first is None:
@@ -254,7 +254,7 @@ class BooksModel(QAbstractTableModel):  # {{{
             if alignment != 'left':
                 self.alignment_map[colname] = alignment
             col = self.column_map.index(colname)
-            for row in xrange(self.rowCount(QModelIndex())):
+            for row in range(self.rowCount(QModelIndex())):
                 self.dataChanged.emit(self.index(row, col), self.index(row,
                     col))
 
@@ -379,7 +379,7 @@ class BooksModel(QAbstractTableModel):  # {{{
         self.beginResetModel(), self.endResetModel()
 
     def delete_books(self, indices, permanent=False):
-        ids = map(self.id, indices)
+        ids = list(map(self.id, indices))
         self.delete_books_by_id(ids, permanent=permanent)
         return ids
 
@@ -481,7 +481,7 @@ class BooksModel(QAbstractTableModel):  # {{{
         self._sort(label, order, reset)
 
     def sort_by_named_field(self, field, order, reset=True):
-        if field in self.db.field_metadata.keys():
+        if field in list(self.db.field_metadata.keys()):
             self._sort(field, order, reset)
 
     def _sort(self, label, order, reset):
@@ -752,8 +752,8 @@ class BooksModel(QAbstractTableModel):  # {{{
                     val = fffunc(field_obj, idfunc(idx), default_value=0) or 0
                     if val is 0:
                         return None
-                    ans = u'%.1f' % (val * sz_mult)
-                    return (u'<0.1' if ans == u'0.0' else ans)
+                    ans = '%.1f' % (val * sz_mult)
+                    return ('<0.1' if ans == '0.0' else ans)
             elif field == 'languages':
                 def func(idx):
                     return (', '.join(calibre_langcode_to_name(x) for x in fffunc(field_obj, idfunc(idx))))
@@ -851,7 +851,7 @@ class BooksModel(QAbstractTableModel):  # {{{
                     ans += '.5'
                 return _('%s stars') % ans
             return f
-        for f, allow_half in rating_fields.iteritems():
+        for f, allow_half in rating_fields.items():
             tc[f] = stars_tooltip(self.dc[f], allow_half)
         # build a index column to data converter map, to remove the string lookup in the data loop
         self.column_to_dc_map = [self.dc[col] for col in self.column_map]
@@ -915,7 +915,7 @@ class BooksModel(QAbstractTableModel):  # {{{
                 cc = self.custom_columns[self.column_map[col]]['display']
                 colors = cc.get('enum_colors', [])
                 values = cc.get('enum_values', [])
-                txt = unicode(index.data(Qt.DisplayRole) or '')
+                txt = str(index.data(Qt.DisplayRole) or '')
                 if len(colors) > 0 and txt in values:
                     try:
                         color = QColor(colors[values.index(txt)])
@@ -1026,10 +1026,10 @@ class BooksModel(QAbstractTableModel):  # {{{
         label=self.db.field_metadata.key_to_label(colhead)
         s_index = None
         if typ in ('text', 'comments'):
-            val = unicode(value or '').strip()
+            val = str(value or '').strip()
             val = val if val else None
         elif typ == 'enumeration':
-            val = unicode(value or '').strip()
+            val = str(value or '').strip()
             if not val:
                 val = None
         elif typ == 'bool':
@@ -1040,7 +1040,7 @@ class BooksModel(QAbstractTableModel):  # {{{
             if value == 0:
                 val = '0'
             else:
-                val = unicode(value or '').strip()
+                val = str(value or '').strip()
             if not val:
                 val = None
         elif typ == 'datetime':
@@ -1052,7 +1052,7 @@ class BooksModel(QAbstractTableModel):  # {{{
                     return False
                 val = qt_to_dt(val, as_utc=False)
         elif typ == 'series':
-            val = unicode(value or '').strip()
+            val = str(value or '').strip()
             if val:
                 pat = re.compile(r'\[([.0-9]+)\]')
                 match = pat.search(val)
@@ -1066,7 +1066,7 @@ class BooksModel(QAbstractTableModel):  # {{{
                         s_index = self.db.get_next_cc_series_num_for(val,
                                                         label=label, num=None)
         elif typ == 'composite':
-            tmpl = unicode(value or '').strip()
+            tmpl = str(value or '').strip()
             disp = cc['display']
             disp['composite_template'] = tmpl
             self.db.set_custom_column_metadata(cc['colnum'], display=disp,
@@ -1122,7 +1122,7 @@ class BooksModel(QAbstractTableModel):  # {{{
                 return False
             val = (int(value) if column == 'rating' else
                     value if column in ('timestamp', 'pubdate')
-                    else re.sub(ur'\s', u' ', unicode(value or '').strip()))
+                    else re.sub(r'\s', ' ', str(value or '').strip()))
             id = self.db.id(row)
             books_to_refresh = set([id])
             if column == 'rating':
@@ -1252,7 +1252,7 @@ class OnDeviceSearch(SearchQueryParser):  # {{{
                     vals = accessor(row)
                     if vals is None:
                         vals = ''
-                    if isinstance(vals, basestring):
+                    if isinstance(vals, str):
                         vals = vals.split(',') if locvalue == 'collections' else [vals]
                     if _match(query, vals, m, use_primary_find_in_search=upf):
                         matches.add(index)
@@ -1370,7 +1370,7 @@ class DeviceBooksModel(BooksModel):  # {{{
             return False
 
         path = getattr(item, 'path', None)
-        for items in self.marked_for_deletion.itervalues():
+        for items in self.marked_for_deletion.values():
             for x in items:
                 if x is item or (path and path == getattr(x, 'path', None)):
                     return True
@@ -1685,7 +1685,7 @@ class DeviceBooksModel(BooksModel):  # {{{
             cname = self.column_map[col]
             if cname in ('size', 'timestamp', 'inlibrary'):
                 return False
-            val = unicode(value or '').strip()
+            val = str(value or '').strip()
             idx = self.map[row]
             if cname == 'collections':
                 tags = [i.strip() for i in val.split(',')]

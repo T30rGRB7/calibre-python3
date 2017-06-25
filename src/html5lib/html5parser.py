@@ -1,4 +1,4 @@
-from __future__ import absolute_import, division, unicode_literals
+
 
 import types
 from collections import OrderedDict
@@ -18,7 +18,7 @@ from .constants import (
     adjustMathMLAttributes)
 
 try:
-    unicode
+    str
 
     def with_metaclass(meta, *bases):
         """Create a base class with a metaclass."""
@@ -48,7 +48,7 @@ def method_decorator_metaclass(function):
     class Decorated(type):
 
         def __new__(meta, classname, bases, classDict):
-            for attributeName, attribute in classDict.items():
+            for attributeName, attribute in list(classDict.items()):
                 if isinstance(attribute, types.FunctionType):
                     attribute = function(attribute)
 
@@ -87,7 +87,7 @@ class HTMLParser(object):
         self.errors = []
 
         self.phases = dict([(name, cls(self, self.tree)) for name, cls in
-                            getPhases(debug).items()])
+                            list(getPhases(debug).items())])
 
     def _parse(self, stream, innerHTML=False, container="div",
                encoding=None, parseMeta=True, useChardet=True, **kwargs):
@@ -374,7 +374,7 @@ def getPhases(debug):
     def log(function):
         """Logger that records which phase processes each token"""
         type_names = dict((value, key) for key, value in
-                          tokenTypes.items())
+                          list(tokenTypes.items()))
 
         def wrapped(self, *args, **kwargs):
             if function.__name__.startswith("process") and len(args) > 0:
@@ -2672,9 +2672,9 @@ def getPhases(debug):
 
 
 def adjust_attributes(token, replacements):
-    if token['data'].viewkeys() & replacements.viewkeys():
+    if token['data'].keys() & replacements.keys():
         token['data'] = OrderedDict(
-            (replacements.get(k, k), v) for k, v in token['data'].iteritems())
+            (replacements.get(k, k), v) for k, v in token['data'].items())
 
 
 class ParseError(Exception):

@@ -27,7 +27,7 @@ from calibre.utils.icu import utf16_length
 
 
 def create_icon(text, palette=None, sz=None, divider=2, fill='white'):
-    if isinstance(fill, basestring):
+    if isinstance(fill, str):
         fill = QColor(fill)
     sz = sz or int(math.ceil(tprefs['toolbar_icon_size'] * QApplication.instance().devicePixelRatio()))
     if palette is None:
@@ -208,7 +208,7 @@ class Editor(QMainWindow):
     def get_raw_data(self):
         # The EPUB spec requires NFC normalization, see section 1.3.6 of
         # http://www.idpf.org/epub/20/spec/OPS_2.0.1_draft.htm
-        return unicodedata.normalize('NFC', unicode(self.editor.toPlainText()).rstrip('\0'))
+        return unicodedata.normalize('NFC', str(self.editor.toPlainText()).rstrip('\0'))
 
     def replace_data(self, raw, only_if_different=True):
         if isinstance(raw, bytes):
@@ -342,7 +342,7 @@ class Editor(QMainWindow):
     def toolbar_floated(self, floating):
         if not floating:
             self.save_state()
-            for ed in editors.itervalues():
+            for ed in editors.values():
                 if ed is not self:
                     ed.restore_state()
 
@@ -451,7 +451,7 @@ class Editor(QMainWindow):
         if not c.atStart():
             c.clearSelection()
             c.movePosition(c.PreviousCharacter, c.KeepAnchor)
-            char = unicode(c.selectedText()).rstrip('\0')
+            char = str(c.selectedText()).rstrip('\0')
         return (c.blockNumber() + 1, col, char)
 
     def cut(self):
@@ -475,7 +475,7 @@ class Editor(QMainWindow):
     def fix_html(self):
         if self.syntax == 'html':
             from calibre.ebooks.oeb.polish.pretty import fix_html
-            self.editor.replace_text(fix_html(current_container(), unicode(self.editor.toPlainText())).decode('utf-8'))
+            self.editor.replace_text(fix_html(current_container(), str(self.editor.toPlainText())).decode('utf-8'))
             return True
         return False
 
@@ -483,7 +483,7 @@ class Editor(QMainWindow):
         from calibre.ebooks.oeb.polish.pretty import pretty_html, pretty_css, pretty_xml
         if self.syntax in {'css', 'html', 'xml'}:
             func = {'css':pretty_css, 'xml':pretty_xml}.get(self.syntax, pretty_html)
-            original_text = unicode(self.editor.toPlainText())
+            original_text = str(self.editor.toPlainText())
             prettied_text = func(current_container(), name, original_text).decode('utf-8')
             if original_text != prettied_text:
                 self.editor.replace_text(prettied_text)

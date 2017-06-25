@@ -200,10 +200,10 @@ class EPUB_MOBI(CatalogPlugin):
             available_presets = JSONConfig("catalog_presets")
             if opts.preset not in available_presets:
                 if available_presets:
-                    print(_('Error: Preset "%s" not found.' % opts.preset))
-                    print(_('Stored presets: %s' % ', '.join([p for p in sorted(available_presets.keys())])))
+                    print((_('Error: Preset "%s" not found.' % opts.preset)))
+                    print((_('Stored presets: %s' % ', '.join([p for p in sorted(available_presets.keys())]))))
                 else:
-                    print(_('Error: No stored presets.'))
+                    print((_('Error: No stored presets.')))
                 return 1
 
             # Copy the relevant preset values to the opts object
@@ -265,7 +265,7 @@ class EPUB_MOBI(CatalogPlugin):
 
         build_log = []
 
-        build_log.append(u"%s('%s'): Generating %s %sin %s environment, locale: '%s'" %
+        build_log.append("%s('%s'): Generating %s %sin %s environment, locale: '%s'" %
             (self.name,
              current_library_name(),
              self.fmt,
@@ -283,23 +283,23 @@ class EPUB_MOBI(CatalogPlugin):
         if opts.connected_device['is_device_connected'] and \
            opts.connected_device['kind'] == 'device':
             if opts.connected_device['serial']:
-                build_log.append(u" connected_device: '%s' #%s%s " %
+                build_log.append(" connected_device: '%s' #%s%s " %
                     (opts.connected_device['name'],
                      opts.connected_device['serial'][0:4],
                      'x' * (len(opts.connected_device['serial']) - 4)))
                 for storage in opts.connected_device['storage']:
                     if storage:
-                        build_log.append(u"  mount point: %s" % storage)
+                        build_log.append("  mount point: %s" % storage)
             else:
-                build_log.append(u" connected_device: '%s'" % opts.connected_device['name'])
+                build_log.append(" connected_device: '%s'" % opts.connected_device['name'])
                 try:
                     for storage in opts.connected_device['storage']:
                         if storage:
-                            build_log.append(u"  mount point: %s" % storage)
+                            build_log.append("  mount point: %s" % storage)
                 except:
-                    build_log.append(u"  (no mount points)")
+                    build_log.append("  (no mount points)")
         else:
-            build_log.append(u" connected_device: '%s'" % opts.connected_device['name'])
+            build_log.append(" connected_device: '%s'" % opts.connected_device['name'])
 
         opts_dict = vars(opts)
         if opts_dict['ids']:
@@ -338,7 +338,7 @@ class EPUB_MOBI(CatalogPlugin):
             sections_list.insert(0, 'Authors')
             opts.generate_authors = True
 
-        opts.log(u" Sections: %s" % ', '.join(sections_list))
+        opts.log(" Sections: %s" % ', '.join(sections_list))
         opts.section_list = sections_list
 
         # Limit thumb_width to 1.0" - 2.0"
@@ -408,7 +408,7 @@ class EPUB_MOBI(CatalogPlugin):
             if opts.verbose:
                 log.info(" Completed catalog source generation (%s)\n"  %
                          str(datetime.timedelta(seconds=int(time.time() - opts.start_time))))
-        except (AuthorSortMismatchException, EmptyCatalogException), e:
+        except (AuthorSortMismatchException, EmptyCatalogException) as e:
             log.error(" *** Terminated catalog generation: %s ***" % e)
         except:
             log.error(" unhandled exception in catalog generator")

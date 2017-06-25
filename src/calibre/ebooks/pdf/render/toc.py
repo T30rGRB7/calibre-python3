@@ -42,7 +42,7 @@ def process_children(toc, table, level, pdf):
 def toc_as_html(toc, pdf, opts):
     pdf = pdf.engine.pdf
     indents = []
-    for i in xrange(1, 7):
+    for i in range(1, 7):
         indents.extend((i, 1.4*i))
     html = HTML(
         HEAD(

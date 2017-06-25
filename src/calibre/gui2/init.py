@@ -304,7 +304,7 @@ class StatusBar(QStatusBar):  # {{{
         if self.library_total != self.total:
             base = _('{0}, {1} total').format(base, self.library_total)
 
-        self.defmsg.setText(u'\xa0%s\xa0\xa0\xa0\xa0[%s]' % (msg, base))
+        self.defmsg.setText('\xa0%s\xa0\xa0\xa0\xa0[%s]' % (msg, base))
         self.clearMessage()
 
     def device_disconnected(self):
@@ -314,7 +314,7 @@ class StatusBar(QStatusBar):  # {{{
     def show_message(self, msg, timeout=0, show_notification=True):
         self.showMessage(msg, timeout)
         if self.notifier is not None and not config['disable_tray_notification'] and show_notification:
-            if isosx and isinstance(msg, unicode):
+            if isosx and isinstance(msg, str):
                 try:
                     msg = msg.encode(preferred_encoding)
                 except UnicodeEncodeError:
@@ -335,7 +335,7 @@ class GridViewButton(LayoutButton):  # {{{
         self.set_state_to_show()
         self.action_toggle = QAction(self.icon(), _('Toggle') + ' ' + self.label, self)
         gui.addAction(self.action_toggle)
-        gui.keyboard.register_shortcut('grid view toggle' + self.label, unicode(self.action_toggle.text()),
+        gui.keyboard.register_shortcut('grid view toggle' + self.label, str(self.action_toggle.text()),
                                     default_keys=(sc,), action=self.action_toggle)
         self.action_toggle.triggered.connect(self.toggle)
         self.action_toggle.changed.connect(self.update_shortcut)
@@ -365,7 +365,7 @@ class SearchBarButton(LayoutButton):  # {{{
         self.set_state_to_show()
         self.action_toggle = QAction(self.icon(), _('Toggle') + ' ' + self.label, self)
         gui.addAction(self.action_toggle)
-        gui.keyboard.register_shortcut('search bar toggle' + self.label, unicode(self.action_toggle.text()),
+        gui.keyboard.register_shortcut('search bar toggle' + self.label, str(self.action_toggle.text()),
                                     default_keys=(sc,), action=self.action_toggle)
         self.action_toggle.triggered.connect(self.toggle)
         self.action_toggle.changed.connect(self.update_shortcut)
@@ -432,14 +432,14 @@ class VLTabs(QTabBar):  # {{{
     def tab_changed(self, idx):
         if self.ignore_tab_changed:
             return
-        vl = unicode(self.tabData(idx) or '').strip() or None
+        vl = str(self.tabData(idx) or '').strip() or None
         self.gui.apply_virtual_library(vl, update_tabs=False)
 
     def tab_moved(self, from_, to):
-        self.current_db.new_api.set_pref('virt_libs_order', [unicode(self.tabData(i) or '') for i in range(self.count())])
+        self.current_db.new_api.set_pref('virt_libs_order', [str(self.tabData(i) or '') for i in range(self.count())])
 
     def tab_close(self, index):
-        vl = unicode(self.tabData(index) or '')
+        vl = str(self.tabData(index) or '')
         if vl:  # Dont allow closing the All Books tab
             self.current_db.new_api.set_pref('virt_libs_hidden', list(
                 self.current_db.prefs['virt_libs_hidden']) + [vl])
@@ -511,7 +511,7 @@ class VLTabs(QTabBar):  # {{{
         m.addAction(_('Hide virtual library tabs'), self.disable_bar)
         i = self.tabAt(ev.pos())
         if i > -1:
-            vl = unicode(self.tabData(i) or '')
+            vl = str(self.tabData(i) or '')
             if vl:
                 m.addSeparator()
                 m.addAction(_('Edit "%s"') % vl, partial(self.gui.do_create_edit, name=vl))
@@ -569,7 +569,7 @@ class LayoutMixin(object):  # {{{
         # }}}
 
         self.status_bar = StatusBar(self)
-        stylename = unicode(self.style().objectName())
+        stylename = str(self.style().objectName())
         self.grid_view_button = GridViewButton(self)
         self.search_bar_button = SearchBarButton(self)
         self.grid_view_button.toggled.connect(self.toggle_grid_view)
@@ -583,7 +583,7 @@ class LayoutMixin(object):  # {{{
                 button = self.grid_view_button if x == 'gv' else self.search_bar_button
             self.layout_buttons.append(button)
             button.setVisible(False)
-            if isosx and stylename != u'Calibre':
+            if isosx and stylename != 'Calibre':
                 button.setStyleSheet('''
                         QToolButton { background: none; border:none; padding: 0px; }
                         QToolButton:checked { background: rgba(0, 0, 0, 25%); }

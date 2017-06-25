@@ -30,7 +30,7 @@ class ResultsView(QTreeView):
         for i in self._model.HTML_COLS:
             self.setItemDelegateForColumn(i, self.rt_delegate)
 
-        for i in xrange(self._model.columnCount()):
+        for i in range(self._model.columnCount()):
             self.resizeColumnToContents(i)
 
         self.model().sort(1, Qt.AscendingOrder)

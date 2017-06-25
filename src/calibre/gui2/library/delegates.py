@@ -49,7 +49,7 @@ class UpdateEditorGeometry(object):
         else:
             # The line edit box seems to extend by the space consumed by an 'M'.
             # So add that to the text
-            text = self.displayText(index.data(Qt.DisplayRole), QLocale()) + u'M'
+            text = self.displayText(index.data(Qt.DisplayRole), QLocale()) + 'M'
             srect = style.itemTextRect(fm, editor.geometry(), Qt.AlignLeft, False, text)
             new_width = srect.width()
 
@@ -174,7 +174,7 @@ def get_val_for_textlike_columns(index_):
         ct = ''
     else:
         ct = index_.data(Qt.DisplayRole) or ''
-    return unicode(ct)
+    return str(ct)
 
 # }}}
 
@@ -559,7 +559,7 @@ class CcNumberDelegate(QStyledItemDelegate, UpdateEditorGeometry):  # {{{
         val = editor.maximum()
         text = editor.textFromValue(val)
         srect = style.itemTextRect(fm, editor.geometry(), Qt.AlignLeft, False,
-                                   text + u'M')
+                                   text + 'M')
         return srect.width()
 
 # }}}
@@ -590,14 +590,14 @@ class CcEnumDelegate(QStyledItemDelegate, UpdateEditorGeometry):  # {{{
         return editor
 
     def setModelData(self, editor, model, index):
-        val = unicode(editor.currentText())
+        val = str(editor.currentText())
         if not val:
             val = None
         model.setData(index, (val), Qt.EditRole)
 
     def get_required_width(self, editor, style, fm):
         srect = style.itemTextRect(fm, editor.geometry(), Qt.AlignLeft, False,
-                                   self.longest_text + u'M')
+                                   self.longest_text + 'M')
         return srect.width()
 
     def setEditorData(self, editor, index):
@@ -700,7 +700,7 @@ class CcBoolDelegate(QStyledItemDelegate, UpdateEditorGeometry):  # {{{
 
     def get_required_width(self, editor, style, fm):
         srect = style.itemTextRect(fm, editor.geometry(), Qt.AlignLeft, False,
-                                   self.longest_text + u'M')
+                                   self.longest_text + 'M')
         return srect.width() + editor.iconSize().width()
 
     def setModelData(self, editor, model, index):
@@ -732,7 +732,7 @@ class CcTemplateDelegate(QStyledItemDelegate):  # {{{
         m = index.model()
         mi = m.db.get_metadata(index.row(), index_is_id=False)
         if check_key_modifier(Qt.ControlModifier):
-            text = u''
+            text = ''
         else:
             text = m.custom_columns[m.column_map[index.column()]]['display']['composite_template']
         editor = TemplateDialog(parent, text, mi)

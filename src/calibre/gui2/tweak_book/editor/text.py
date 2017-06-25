@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # vim:fileencoding=utf-8
 # License: GPLv3 Copyright: 2013, Kovid Goyal <kovid at kovidgoyal.net>
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 
 import importlib
 import os
@@ -68,7 +68,7 @@ _dff = None
 def default_font_family():
     global _dff
     if _dff is None:
-        families = set(map(unicode, QFontDatabase().families()))
+        families = set(map(str, QFontDatabase().families()))
         for x in ('Ubuntu Mono', 'Consolas', 'Liberation Mono'):
             if x in families:
                 _dff = x
@@ -259,7 +259,7 @@ class TextEdit(PlainTextEdit):
         self.setFont(font)
         self.highlighter.apply_theme(theme)
         w = self.fontMetrics()
-        self.number_width = max(map(lambda x:w.width(str(x)), xrange(10)))
+        self.number_width = max(map(lambda x:w.width(str(x)), range(10)))
         self.size_hint = QSize(self.expected_geometry[0] * w.averageCharWidth(), self.expected_geometry[1] * w.height())
         self.highlight_color = theme_color(theme, 'HighlightRegion', 'bg')
         self.highlight_cursor_line()
@@ -277,7 +277,7 @@ class TextEdit(PlainTextEdit):
             if self.smarts.override_tab_stop_width is not None:
                 self.tw = self.smarts.override_tab_stop_width
                 self.setTabStopWidth(self.tw * self.space_width)
-        self.setPlainText(unicodedata.normalize('NFC', unicode(text)))
+        self.setPlainText(unicodedata.normalize('NFC', str(text)))
         if process_template and QPlainTextEdit.find(self, '%CURSOR%'):
             c = self.textCursor()
             c.insertText('')
@@ -311,7 +311,7 @@ class TextEdit(PlainTextEdit):
         c.movePosition(c.NextBlock, n=lnum - 1)
         c.movePosition(c.StartOfLine)
         c.movePosition(c.EndOfLine, c.KeepAnchor)
-        text = unicode(c.selectedText()).rstrip('\0')
+        text = str(c.selectedText()).rstrip('\0')
         if col is None:
             c.movePosition(c.StartOfLine)
             lt = text.lstrip()
@@ -370,7 +370,7 @@ class TextEdit(PlainTextEdit):
         if wrap:
             pos = m_end if reverse else m_start
         c.setPosition(pos, c.KeepAnchor)
-        raw = unicode(c.selectedText()).replace(PARAGRAPH_SEPARATOR, '\n').rstrip('\0')
+        raw = str(c.selectedText()).replace(PARAGRAPH_SEPARATOR, '\n').rstrip('\0')
         m = pat.search(raw)
         if m is None:
             return False
@@ -403,7 +403,7 @@ class TextEdit(PlainTextEdit):
         if self.current_search_mark is None:
             return 0
         c = self.current_search_mark.cursor
-        raw = unicode(c.selectedText()).replace(PARAGRAPH_SEPARATOR, '\n').rstrip('\0')
+        raw = str(c.selectedText()).replace(PARAGRAPH_SEPARATOR, '\n').rstrip('\0')
         if template is None:
             count = len(pat.findall(raw))
         else:
@@ -417,7 +417,7 @@ class TextEdit(PlainTextEdit):
                 if getattr(template.func, 'append_final_output_to_marked', False):
                     retval = template.end()
                     if retval:
-                        raw += unicode(retval)
+                        raw += str(retval)
                 else:
                     template.end()
                 show_function_debug_output(template)
@@ -440,7 +440,7 @@ class TextEdit(PlainTextEdit):
             c = self.textCursor()
             c.beginEditBlock()
             c.movePosition(c.Start), c.movePosition(c.End, c.KeepAnchor)
-            text = unicode(c.selectedText()).replace(PARAGRAPH_SEPARATOR, '\n').rstrip('\0')
+            text = str(c.selectedText()).replace(PARAGRAPH_SEPARATOR, '\n').rstrip('\0')
             from calibre.ebooks.oeb.polish.css import sort_sheet
             text = sort_sheet(current_container(), text).cssText
             c.insertText(text)
@@ -461,7 +461,7 @@ class TextEdit(PlainTextEdit):
         if wrap and not complete:
             pos = c.End if reverse else c.Start
         c.movePosition(pos, c.KeepAnchor)
-        raw = unicode(c.selectedText()).replace(PARAGRAPH_SEPARATOR, '\n').rstrip('\0')
+        raw = str(c.selectedText()).replace(PARAGRAPH_SEPARATOR, '\n').rstrip('\0')
         m = pat.search(raw)
         if m is None:
             return False
@@ -506,7 +506,7 @@ class TextEdit(PlainTextEdit):
             if not found:
                 return False
         else:
-            raw = unicode(c.selectedText()).replace(PARAGRAPH_SEPARATOR, '\n').rstrip('\0')
+            raw = str(c.selectedText()).replace(PARAGRAPH_SEPARATOR, '\n').rstrip('\0')
             m = pat.search(raw)
             if m is None:
                 return False
@@ -539,7 +539,7 @@ class TextEdit(PlainTextEdit):
             return match_pos, match_word
 
         while True:
-            text = unicode(c.selectedText()).rstrip('\0')
+            text = str(c.selectedText()).rstrip('\0')
             idx, word = find_first_word(text)
             if idx == -1:
                 return False
@@ -571,12 +571,12 @@ class TextEdit(PlainTextEdit):
                         c.setPosition(c.position() + r.length, c.KeepAnchor)
                         self.setTextCursor(c)
                         return True
-            block = block.next()
+            block = next(block)
         return False
 
     def replace(self, pat, template, saved_match='gui'):
         c = self.textCursor()
-        raw = unicode(c.selectedText()).replace(PARAGRAPH_SEPARATOR, '\n').rstrip('\0')
+        raw = str(c.selectedText()).replace(PARAGRAPH_SEPARATOR, '\n').rstrip('\0')
         m = pat.fullmatch(raw)
         if m is None:
             # This can happen if either the user changed the selected text or
@@ -603,7 +603,7 @@ class TextEdit(PlainTextEdit):
             self.setTextCursor(c)
             return True
         base = r'''%%s\s*=\s*['"]{0,1}%s''' % regex.escape(anchor)
-        raw = unicode(self.toPlainText())
+        raw = str(self.toPlainText())
         m = regex.search(base % 'id', raw)
         if m is None:
             m = regex.search(base % 'name', raw)
@@ -685,7 +685,7 @@ class TextEdit(PlainTextEdit):
                               Qt.AlignRight, str(num + 1))
                 if current == num:
                     painter.restore()
-            block = block.next()
+            block = next(block)
             top = bottom
             bottom = top + int(self.blockBoundingRect(block).height())
             num += 1
@@ -710,7 +710,7 @@ class TextEdit(PlainTextEdit):
         c = self.textCursor()
         c.setPosition(block.position() + r.start)
         c.setPosition(c.position() + r.length, c.KeepAnchor)
-        return unicode(c.selectedText())
+        return str(c.selectedText())
 
     def spellcheck_locale_for_cursor(self, c):
         with store_locale:
@@ -729,7 +729,7 @@ class TextEdit(PlainTextEdit):
                 if r.format.property(SPELL_PROPERTY) and self.text_for_range(block, r) == word:
                     self.highlighter.reformat_block(block)
                     break
-            block = block.next()
+            block = next(block)
 
     # Tooltips {{{
     def syntax_range_for_cursor(self, cursor):
@@ -747,7 +747,7 @@ class TextEdit(PlainTextEdit):
         c = self.cursorForPosition(ev.pos())
         fmt = self.syntax_format_for_cursor(c)
         if fmt is not None:
-            tt = unicode(fmt.toolTip())
+            tt = str(fmt.toolTip())
             if tt:
                 QToolTip.setFont(self.tooltip_font)
                 QToolTip.setPalette(self.tooltip_palette)
@@ -782,7 +782,7 @@ class TextEdit(PlainTextEdit):
         right = max(c.anchor(), c.position())
         # For speed we use QPlainTextEdit's toPlainText as we dont care about
         # spaces in this context
-        raw = unicode(QPlainTextEdit.toPlainText(self))
+        raw = str(QPlainTextEdit.toPlainText(self))
         # Make sure the left edge is not within a <>
         gtpos = raw.find('>', left)
         ltpos = raw.find('<', left)
@@ -826,7 +826,7 @@ class TextEdit(PlainTextEdit):
         c = self.textCursor()
         c.setPosition(left)
         c.setPosition(right, c.KeepAnchor)
-        prev_text = unicode(c.selectedText()).rstrip('\0')
+        prev_text = str(c.selectedText()).rstrip('\0')
         c.insertText(prefix + prev_text + suffix)
         if prev_text:
             right = c.position()
@@ -925,10 +925,10 @@ version="1.1" width="100%%" height="100%%" viewBox="0 0 {w} {h}" preserveAspectR
         c = self.textCursor()
         has_selection = c.hasSelection()
         if has_selection:
-            text = unicode(c.selectedText()).rstrip('\0')
+            text = str(c.selectedText()).rstrip('\0')
         else:
             c.setPosition(c.position() - min(c.positionInBlock(), 6), c.KeepAnchor)
-            text = unicode(c.selectedText()).rstrip('\0')
+            text = str(c.selectedText()).rstrip('\0')
         m = re.search(r'[a-fA-F0-9]{2,6}$', text)
         if m is None:
             return False
@@ -970,7 +970,7 @@ version="1.1" width="100%%" height="100%%" viewBox="0 0 {w} {h}" preserveAspectR
         from calibre.gui2.tweak_book.editor.smarts.css import find_rule
         block = None
         if self.syntax == 'css':
-            raw = unicode(self.toPlainText())
+            raw = str(self.toPlainText())
             line, col = find_rule(raw, rule_address)
             if line is not None:
                 block = self.document().findBlockByNumber(line - 1)

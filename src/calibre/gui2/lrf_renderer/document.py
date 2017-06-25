@@ -163,10 +163,10 @@ class _Canvas(QGraphicsRectItem):
             self.is_full = y > self.max_y-5
             ib.has_content = False
             if ib.block_id == 54:
-                print
-                print ib.block_id, ib.has_content, self.is_full
-                print self.current_y, self.max_y, y, br.height()
-                print
+                print()
+                print(ib.block_id, ib.has_content, self.is_full)
+                print(self.current_y, self.max_y, y, br.height())
+                print()
 
     def search(self, phrase):
         matches = []
@@ -491,7 +491,7 @@ class Document(QGraphicsScene):
         self.current_screen.set_page(page)
         self.page_changed.emit(self.current_page)
 
-    def next(self):
+    def __next__(self):
         self.next_by(1)
 
     def previous(self):

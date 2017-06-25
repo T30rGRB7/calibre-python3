@@ -224,7 +224,7 @@ def pretty_xml(container, name, raw):
 
 def fix_all_html(container):
     ' Fix any parsing errors in all HTML files in the container. Fixing is done using the HTML5 parsing algorithm. '
-    for name, mt in container.mime_map.iteritems():
+    for name, mt in container.mime_map.items():
         if mt in OEB_DOCS:
             container.parsed(name)
             container.dirty(name)
@@ -232,7 +232,7 @@ def fix_all_html(container):
 
 def pretty_all(container):
     ' Pretty print all HTML/CSS/XML files in the container '
-    for name, mt in container.mime_map.iteritems():
+    for name, mt in container.mime_map.items():
         prettied = False
         if mt in OEB_DOCS:
             pretty_html_tree(container, container.parsed(name))

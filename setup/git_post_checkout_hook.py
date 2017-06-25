@@ -15,7 +15,7 @@ base = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 os.chdir(base)
 
 if flags == '1':  # A branch checkout
-    prev_branch, cur_branch = map(get_branch_name, (prev_rev, current_rev))
+    prev_branch, cur_branch = list(map(get_branch_name, (prev_rev, current_rev)))
 
     subprocess.check_call(['python', 'setup.py', 'gui', '--summary'])
 

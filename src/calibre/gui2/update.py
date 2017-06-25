@@ -1,7 +1,7 @@
 __license__   = 'GPL v3'
 __copyright__ = '2008, Kovid Goyal <kovid at kovidgoyal.net>'
 
-import re, binascii, cPickle, ssl, json
+import re, binascii, pickle, ssl, json
 from future_builtins import map
 from threading import Thread, Event
 
@@ -53,9 +53,9 @@ def get_newest_version():
     try:
         version = version.decode('utf-8').strip()
     except UnicodeDecodeError:
-        version = u''
+        version = ''
     ans = NO_CALIBRE_UPDATE
-    m = re.match(ur'(\d+)\.(\d+).(\d+)$', version)
+    m = re.match(r'(\d+)\.(\d+).(\d+)$', version)
     if m is not None:
         ans = tuple(map(int, (m.group(1), m.group(2), m.group(3))))
     return ans
@@ -181,21 +181,21 @@ class UpdateMixin(object):
         has_calibre_update = calibre_version != NO_CALIBRE_UPDATE
         has_plugin_updates = number_of_plugin_updates > 0
         self.plugin_update_found(number_of_plugin_updates)
-        version_url = binascii.hexlify(cPickle.dumps((calibre_version, number_of_plugin_updates), -1))
-        calibre_version = u'.'.join(map(unicode, calibre_version))
+        version_url = binascii.hexlify(pickle.dumps((calibre_version, number_of_plugin_updates), -1))
+        calibre_version = '.'.join(map(str, calibre_version))
 
         if not has_calibre_update and not has_plugin_updates:
             self.status_bar.update_label.setVisible(False)
             return
         if has_calibre_update:
-            plt = u''
+            plt = ''
             if has_plugin_updates:
                 plt = ngettext(' (one plugin update)', ' ({} plugin updates)', number_of_plugin_updates).format(number_of_plugin_updates)
-            msg = (u'<span style="color:green; font-weight: bold">%s: '
-                    u'<a href="update:%s">%s%s</a></span>') % (
+            msg = ('<span style="color:green; font-weight: bold">%s: '
+                    '<a href="update:%s">%s%s</a></span>') % (
                         _('Update found'), version_url, calibre_version, plt)
         else:
-            msg = (u'<a href="update:%s">%d %s</a>')%(version_url, number_of_plugin_updates,
+            msg = ('<a href="update:%s">%d %s</a>')%(version_url, number_of_plugin_updates,
                     _('updated plugins'))
         self.status_bar.update_label.setText(msg)
         self.status_bar.update_label.setVisible(True)
@@ -234,9 +234,9 @@ class UpdateMixin(object):
             plugin.qaction.setToolTip(_('Install and configure user plugins'))
 
     def update_link_clicked(self, url):
-        url = unicode(url)
+        url = str(url)
         if url.startswith('update:'):
-            calibre_version, number_of_plugin_updates = cPickle.loads(binascii.unhexlify(url[len('update:'):]))
+            calibre_version, number_of_plugin_updates = pickle.loads(binascii.unhexlify(url[len('update:'):]))
             self.update_found(calibre_version, number_of_plugin_updates, force=True)
 
 

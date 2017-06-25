@@ -152,14 +152,14 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
             self.clear_fields(new_boxes=False)
             return
         self.clear_fields(new_boxes=True)
-        self.current_device = unicode(txt)
+        self.current_device = str(txt)
         fpb = self.current_plugboards.get(self.current_format, None)
         if fpb is None:
-            print 'edit_device_changed: none format!'
+            print('edit_device_changed: none format!')
             return
         dpb = fpb.get(self.current_device, None)
         if dpb is None:
-            print 'edit_device_changed: none device!'
+            print('edit_device_changed: none device!')
             return
         self.set_fields()
         for i,op in enumerate(dpb):
@@ -175,10 +175,10 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
             self.clear_fields(new_boxes=False)
             return
         self.clear_fields(new_boxes=True)
-        txt = unicode(txt)
+        txt = str(txt)
         fpb = self.current_plugboards.get(txt, None)
         if fpb is None:
-            print 'edit_format_changed: none editable format!'
+            print('edit_format_changed: none editable format!')
             return
         self.current_format = txt
         self.check_if_writer_disabled(txt)
@@ -207,7 +207,7 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
             self.clear_fields(edit_boxes=False)
             return
         self.clear_fields(edit_boxes=True)
-        self.current_device = unicode(txt)
+        self.current_device = str(txt)
 
         if self.current_format in self.current_plugboards and \
                 self.current_device in self.current_plugboards[self.current_format]:
@@ -291,7 +291,7 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
         self.new_device.setCurrentIndex(0)
         if txt:
             self.clear_fields(edit_boxes=True)
-            self.current_format = unicode(txt)
+            self.current_format = str(txt)
             self.check_if_writer_disabled(self.current_format)
         else:
             self.clear_fields(edit_boxes=False)
@@ -299,7 +299,7 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
     def ok_clicked(self):
         pb = []
         for i in range(0, len(self.source_widgets)):
-            s = unicode(self.source_widgets[i].text())
+            s = str(self.source_widgets[i].text())
             if s:
                 d = self.dest_widgets[i].currentIndex()
                 if d != 0:

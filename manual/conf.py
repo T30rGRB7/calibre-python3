@@ -156,7 +156,7 @@ def sort_languages(x):
     lc, name = x
     if lc == language:
         return ''
-    return sort_key(unicode(name))
+    return sort_key(str(name))
 
 
 html_context['other_languages'].sort(key=sort_languages)
@@ -164,13 +164,13 @@ html_context['support_text'] = _('Support calibre')
 html_context['support_tooltip'] = _('Contribute to support calibre development')
 del sort_languages, get_language
 
-epub_author      = u'Kovid Goyal'
-epub_publisher   = u'Kovid Goyal'
-epub_copyright   = u'© {} Kovid Goyal'.format(date.today().year)
-epub_description = u'Comprehensive documentation for calibre'
-epub_identifier  = u'https://manual.calibre-ebook.com'
-epub_scheme      = u'url'
-epub_uid         = u'S54a88f8e9d42455e9c6db000e989225f'
+epub_author      = 'Kovid Goyal'
+epub_publisher   = 'Kovid Goyal'
+epub_copyright   = '© {} Kovid Goyal'.format(date.today().year)
+epub_description = 'Comprehensive documentation for calibre'
+epub_identifier  = 'https://manual.calibre-ebook.com'
+epub_scheme      = 'url'
+epub_uid         = 'S54a88f8e9d42455e9c6db000e989225f'
 epub_tocdepth    = 4
 epub_tocdup      = True
 epub_cover       = ('epub_cover.jpg', 'epub_cover_template.html')

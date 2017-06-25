@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
@@ -99,7 +99,7 @@ class Widget(QWidget):
                     buddy = g.buddy()
                     if buddy is not None and hasattr(buddy, '_help'):
                         g._help = buddy._help
-                        htext = unicode(buddy.toolTip()).strip()
+                        htext = str(buddy.toolTip()).strip()
                         g.setToolTip(htext)
                         g.setWhatsThis(htext)
                         g.__class__.enterEvent = lambda obj, event: self.set_help(getattr(obj, '_help', obj.toolTip()))
@@ -129,7 +129,7 @@ class Widget(QWidget):
         return recs
 
     def apply_recommendations(self, recs):
-        for name, val in recs.items():
+        for name, val in list(recs.items()):
             gui_opt = getattr(self, 'opt_'+name, None)
             if gui_opt is None:
                 continue
@@ -148,18 +148,18 @@ class Widget(QWidget):
             return g.value()
         elif isinstance(g, (QLineEdit, QTextEdit, QPlainTextEdit)):
             func = getattr(g, 'toPlainText', getattr(g, 'text', None))()
-            ans = unicode(func)
+            ans = str(func)
             if self.STRIP_TEXT_FIELDS:
                 ans = ans.strip()
             if not ans:
                 ans = None
             return ans
         elif isinstance(g, QFontComboBox):
-            return unicode(QFontInfo(g.currentFont()).family())
+            return str(QFontInfo(g.currentFont()).family())
         elif isinstance(g, FontFamilyChooser):
             return g.font_family
         elif isinstance(g, EncodingComboBox):
-            ans = unicode(g.currentText()).strip()
+            ans = str(g.currentText()).strip()
             try:
                 codecs.lookup(ans)
             except:
@@ -168,7 +168,7 @@ class Widget(QWidget):
                 ans = None
             return ans
         elif isinstance(g, QComboBox):
-            return unicode(g.currentText())
+            return str(g.currentText())
         elif isinstance(g, QCheckBox):
             return bool(g.isChecked())
         elif isinstance(g, XPathEdit):
@@ -244,7 +244,7 @@ class Widget(QWidget):
             g.edit.setText(val if val else '')
         else:
             raise Exception('Can\'t set value %s in %s'%(repr(val),
-                unicode(g.objectName())))
+                str(g.objectName())))
         self.post_set_value(g, val)
 
     def set_help(self, msg):
@@ -269,7 +269,7 @@ class Widget(QWidget):
 
     def setup_widget_help(self, g):
         w = textwrap.TextWrapper(80)
-        htext = u'<div>%s</div>'%prepare_string_for_xml('\n'.join(w.wrap(g._help)))
+        htext = '<div>%s</div>'%prepare_string_for_xml('\n'.join(w.wrap(g._help)))
         g.setToolTip(htext)
         g.setWhatsThis(htext)
         g.__class__.enterEvent = lambda obj, event: self.set_help(getattr(obj, '_help', obj.toolTip()))

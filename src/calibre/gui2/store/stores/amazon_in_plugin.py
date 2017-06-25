@@ -7,7 +7,7 @@ from __future__ import (unicode_literals, division, absolute_import,
 store_version = 4  # Needed for dynamic plugin loading
 
 from contextlib import closing
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from lxml import html
 
@@ -43,8 +43,8 @@ def search_amazon(query, max_results=10, timeout=60,
         if isinstance(x, type('')):
             x = x.encode('utf-8')
         return x
-    uquery = {asbytes(k):asbytes(v) for k, v in uquery.iteritems()}
-    url = base_url + '?' + urllib.urlencode(uquery).decode('ascii')
+    uquery = {asbytes(k):asbytes(v) for k, v in uquery.items()}
+    url = base_url + '?' + urllib.parse.urlencode(uquery).decode('ascii')
     br = browser(user_agent=get_user_agent())
 
     counter = max_results

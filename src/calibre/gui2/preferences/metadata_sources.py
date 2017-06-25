@@ -117,7 +117,7 @@ class SourcesModel(QAbstractTableModel):  # {{{
         return Qt.ItemIsEditable | ans
 
     def commit(self):
-        for plugin, val in self.enabled_overrides.iteritems():
+        for plugin, val in self.enabled_overrides.items():
             if val == Qt.Checked:
                 enable_plugin(plugin)
             elif val == Qt.Unchecked:
@@ -125,7 +125,7 @@ class SourcesModel(QAbstractTableModel):  # {{{
 
         if self.cover_overrides:
             cp = msprefs['cover_priorities']
-            for plugin, val in self.cover_overrides.iteritems():
+            for plugin, val in self.cover_overrides.items():
                 if val == 1:
                     cp.pop(plugin.name, None)
                 else:
@@ -235,7 +235,7 @@ class FieldsModel(QAbstractListModel):  # {{{
     def commit(self):
         ignored_fields = set([x for x in msprefs['ignore_fields'] if x not in
             self.overrides])
-        changed = set([k for k, v in self.overrides.iteritems() if v ==
+        changed = set([k for k, v in self.overrides.items() if v ==
             Qt.Unchecked])
         msprefs['ignore_fields'] = list(ignored_fields.union(changed))
 
@@ -251,7 +251,7 @@ class FieldsModel(QAbstractListModel):  # {{{
     def commit_user_defaults(self):
         default_ignored_fields = set([x for x in msprefs['user_default_ignore_fields'] if x not in
             self.overrides])
-        changed = set([k for k, v in self.overrides.iteritems() if v ==
+        changed = set([k for k, v in self.overrides.items() if v ==
             Qt.Unchecked])
         msprefs['user_default_ignore_fields'] = list(default_ignored_fields.union(changed))
 

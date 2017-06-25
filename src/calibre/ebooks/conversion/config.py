@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
@@ -71,13 +71,13 @@ class GuiRecommendations(dict):
 
     def to_recommendations(self, level=OptionRecommendation.LOW):
         ans = []
-        for key, val in self.items():
+        for key, val in list(self.items()):
             ans.append((key, val, level))
         return ans
 
     def __str__(self):
         ans = ['{']
-        for key, val in self.items():
+        for key, val in list(self.items()):
             ans.append('\t'+repr(key)+' : '+repr(val)+',')
         ans.append('}')
         return '\n'.join(ans)

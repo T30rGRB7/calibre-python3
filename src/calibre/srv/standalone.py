@@ -84,7 +84,7 @@ def manage_users(path=None):
 
     def get_input(prompt):
         prints(prompt, end=' ')
-        return raw_input().decode(enc)
+        return input().decode(enc)
 
     def choice(question=_('What do you want to do?'), choices=(), default=None, banner=''):
         prints(banner)
@@ -189,7 +189,7 @@ def manage_users(path=None):
                 username, ', '.join(r['blocked_library_names'])))
         if r['library_restrictions']:
             prints(_('{} has the following additional per-library restrictions:').format(username))
-            for k, v in r['library_restrictions'].iteritems():
+            for k, v in r['library_restrictions'].items():
                 prints(k + ':', v)
         else:
             prints(_('{} has the no additional per-library restrictions'))
@@ -218,7 +218,7 @@ def manage_users(path=None):
             pass
         else:
             names = get_input(_('Enter a comma separated list of library names:'))
-            names = filter(None, [x.strip() for x in names.split(',')])
+            names = [_f for _f in [x.strip() for x in names.split(',')] if _f]
             w = 'allowed_library_names' if c == 1 else 'blocked_library_names'
             t = _('Allowing access only to libraries: {}') if c == 1 else _(
                 'Allowing access to all libraries, except: {}')

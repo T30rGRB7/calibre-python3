@@ -71,7 +71,7 @@ class MetadataSingleDialogBase(QDialog):
             QKeySequence.PortableText))
         p = self.parent()
         if hasattr(p, 'keyboard'):
-            kname = u'Interface Action: Edit Metadata (Edit Metadata) : menu action : download'
+            kname = 'Interface Action: Edit Metadata (Edit Metadata) : menu action : download'
             sc = p.keyboard.keys_map.get(kname, None)
             if sc:
                 self.download_shortcut.setKey(sc[0])
@@ -306,9 +306,9 @@ class MetadataSingleDialogBase(QDialog):
     def edit_prefix_list(self):
         prefixes, ok = QInputDialog.getMultiLineText(
             self, _('Edit prefixes'), _('Enter prefixes, one on a line. The first prefix becomes the default.'),
-            '\n'.join(list(map(type(u''), gprefs['paste_isbn_prefixes']))))
+            '\n'.join(list(map(type(''), gprefs['paste_isbn_prefixes']))))
         if ok:
-            gprefs['paste_isbn_prefixes'] = list(filter(None, (x.strip() for x in prefixes.splitlines()))) or gprefs.defaults['paste_isbn_prefixes']
+            gprefs['paste_isbn_prefixes'] = list([_f for _f in (x.strip() for x in prefixes.splitlines()) if _f]) or gprefs.defaults['paste_isbn_prefixes']
             self.update_paste_identifiers_menu()
 
     def create_custom_metadata_widgets(self):  # {{{
@@ -370,7 +370,7 @@ class MetadataSingleDialogBase(QDialog):
     def update_window_title(self, *args):
         title = self.title.current_val
         if len(title) > 50:
-            title = title[:50] + u'\u2026'
+            title = title[:50] + '\u2026'
         self.setWindowTitle(BASE_TITLE + ' - ' +
                 title + ' - ' +
                 _(' [%(num)d of %(tot)d]')%dict(num=self.current_row+1,
@@ -528,7 +528,7 @@ class MetadataSingleDialogBase(QDialog):
         if self.metadata_before_fetch is None:
             return error_dialog(self, _('No downloaded metadata'), _(
                 'There is no downloaded metadata to undo'), show=True)
-        for field, val in self.metadata_before_fetch.iteritems():
+        for field, val in self.metadata_before_fetch.items():
             getattr(self, field).current_val = val
         self.metadata_before_fetch = None
 
@@ -677,7 +677,7 @@ class MetadataSingleDialogBase(QDialog):
         self.button_box.button(self.button_box.Ok).setDefault(True)
         self.button_box.button(self.button_box.Ok).setFocus(Qt.OtherFocusReason)
         self(self.db.id(self.row_list[self.current_row]))
-        for w, state in self.comments_edit_state_at_apply.iteritems():
+        for w, state in self.comments_edit_state_at_apply.items():
             if state == 'code':
                 w.tab = 'code'
 

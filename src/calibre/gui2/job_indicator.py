@@ -79,7 +79,7 @@ class Pointer(QWidget):
         self.animation.setEndValue(self.rect_at(1.0))
         self.animation.setDirection(self.animation.Backward)
         num_keys = 100
-        for i in xrange(1, num_keys):
+        for i in range(1, num_keys):
             i /= num_keys
             self.animation.setKeyValueAt(i, self.rect_at(i))
         self.animation.start()

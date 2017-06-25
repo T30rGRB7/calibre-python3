@@ -7,7 +7,7 @@ __license__ = 'GPL 3'
 __copyright__ = '2013-2016, Tomasz Długosz <tomek3d@gmail.com>'
 __docformat__ = 'restructuredtext en'
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from base64 import b64encode
 from contextlib import closing
 
@@ -51,7 +51,7 @@ class CdpStore(BasicStoreConfig, StorePlugin):
 
         counter = max_results
         while counter:
-            with closing(br.open(u'https://cdp.pl/ksiazki/e-book.html?q=' + urllib.quote_plus(query) + '&p=' + str(page), timeout=timeout)) as f:
+            with closing(br.open('https://cdp.pl/ksiazki/e-book.html?q=' + urllib.parse.quote_plus(query) + '&p=' + str(page), timeout=timeout)) as f:
                 doc = html.fromstring(f.read())
                 for data in doc.xpath('//ul[@class="products"]/li'):
                     if counter <= 0:

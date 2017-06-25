@@ -125,7 +125,7 @@ def hfix(name, raw):
     return raw
 
 
-CLI_HELP = {x:hfix(x, re.sub('<.*?>', '', y)) for x, y in HELP.iteritems()}
+CLI_HELP = {x:hfix(x, re.sub('<.*?>', '', y)) for x, y in HELP.items()}
 # }}}
 
 
@@ -222,7 +222,7 @@ def polish_one(ebook, opts, report, customization=None):
 
 def polish(file_map, opts, log, report):
     st = time.time()
-    for inbook, outbook in file_map.iteritems():
+    for inbook, outbook in file_map.items():
         report(_('## Polishing: %s')%(inbook.rpartition('.')[-1].upper()))
         ebook = get_container(inbook, log)
         polish_one(ebook, opts, report)
@@ -243,7 +243,7 @@ def gui_polish(data):
     file_map = {x:x for x in files}
     opts = ALL_OPTS.copy()
     opts.update(data)
-    O = namedtuple('Options', ' '.join(ALL_OPTS.iterkeys()))
+    O = namedtuple('Options', ' '.join(iter(ALL_OPTS.keys())))
     opts = O(**opts)
     log = Log(level=Log.DEBUG)
     report = []
@@ -258,7 +258,7 @@ def gui_polish(data):
 def tweak_polish(container, actions, customization=None):
     opts = ALL_OPTS.copy()
     opts.update(actions)
-    O = namedtuple('Options', ' '.join(ALL_OPTS.iterkeys()))
+    O = namedtuple('Options', ' '.join(iter(ALL_OPTS.keys())))
     opts = O(**opts)
     report = []
     changed = polish_one(container, opts, report.append, customization=customization)
@@ -310,13 +310,13 @@ def main(args=None):
         inbook, outbook = args
 
     popts = ALL_OPTS.copy()
-    for k, v in popts.iteritems():
+    for k, v in popts.items():
         popts[k] = getattr(opts, k, None)
 
-    O = namedtuple('Options', ' '.join(popts.iterkeys()))
+    O = namedtuple('Options', ' '.join(iter(popts.keys())))
     popts = O(**popts)
     report = []
-    if not tuple(filter(None, (getattr(popts, name) for name in ALL_OPTS))):
+    if not tuple([_f for _f in (getattr(popts, name) for name in ALL_OPTS) if _f]):
         parser.print_help()
         log.error(_('You must specify at least one action to perform'))
         raise SystemExit(1)

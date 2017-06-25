@@ -271,7 +271,7 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
         self.help_text.setText(tt)
 
     def what_changed(self, idx):
-        key = unicode(self.what.itemData(idx) or '')
+        key = str(self.what.itemData(idx) or '')
         if key == 'blank':
             self.actions_widget.setVisible(False)
             self.spacer_widget.setVisible(True)
@@ -344,12 +344,12 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
             raise AbortCommit()
 
         # Save data.
-        for am, cm in self.models.values():
+        for am, cm in list(self.models.values()):
             cm.commit()
         return False
 
     def restore_defaults(self):
-        for am, cm in self.models.values():
+        for am, cm in list(self.models.values()):
             cm.restore_defaults()
             am.restore_defaults()
         self.changed_signal.emit()

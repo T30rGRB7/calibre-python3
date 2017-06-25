@@ -55,8 +55,8 @@ def next_tag_boundary(block, offset, forward=True, max_lines=10000):
                     return block, boundary
                 if not forward and boundary.offset < offset:
                     return block, boundary
-        block = block.next() if forward else block.previous()
-        offset = -1 if forward else sys.maxint
+        block = next(block) if forward else block.previous()
+        offset = -1 if forward else sys.maxsize
         max_lines -= 1
     return None, None
 
@@ -71,12 +71,12 @@ def next_attr_boundary(block, offset, forward=True):
                     return block, boundary
                 if not forward and boundary.offset <= offset:
                     return block, boundary
-        block = block.next() if forward else block.previous()
-        offset = -1 if forward else sys.maxint
+        block = next(block) if forward else block.previous()
+        offset = -1 if forward else sys.maxsize
     return None, None
 
 
-def find_closest_containing_tag(block, offset, max_tags=sys.maxint):
+def find_closest_containing_tag(block, offset, max_tags=sys.maxsize):
     ''' Find the closest containing tag. To find it, we search for the first
     opening tag that does not have a matching closing tag before the specified
     position. Search through at most max_tags. '''
@@ -178,7 +178,7 @@ def find_end_of_attribute(block, offset):
     return block, boundary.offset
 
 
-def find_closing_tag(tag, max_tags=sys.maxint):
+def find_closing_tag(tag, max_tags=sys.maxsize):
     ''' Find the closing tag corresponding to the specified tag. To find it we
     search for the first closing tag after the specified tag that does not
     match a previous opening tag. Search through at most max_tags. '''
@@ -212,7 +212,7 @@ def find_closing_tag(tag, max_tags=sys.maxint):
 def select_tag(cursor, tag):
     cursor.setPosition(tag.start_block.position() + tag.start_offset)
     cursor.setPosition(tag.end_block.position() + tag.end_offset + 1, cursor.KeepAnchor)
-    return unicode(cursor.selectedText()).replace(PARAGRAPH_SEPARATOR, '\n').rstrip('\0')
+    return str(cursor.selectedText()).replace(PARAGRAPH_SEPARATOR, '\n').rstrip('\0')
 
 
 def rename_tag(cursor, opening_tag, closing_tag, new_name, insert=False):
@@ -320,10 +320,10 @@ class Smarts(NullSmarts):
             a = QTextEdit.ExtraSelection()
             a.cursor, a.format = editor.textCursor(), editor.match_paren_format
             a.cursor.setPosition(tag.start_block.position()), a.cursor.movePosition(a.cursor.EndOfBlock, a.cursor.KeepAnchor)
-            text = unicode(a.cursor.selectedText())
+            text = str(a.cursor.selectedText())
             start_pos = utf16_length(text[:tag.start_offset])
             a.cursor.setPosition(tag.end_block.position()), a.cursor.movePosition(a.cursor.EndOfBlock, a.cursor.KeepAnchor)
-            text = unicode(a.cursor.selectedText())
+            text = str(a.cursor.selectedText())
             end_pos = utf16_length(text[:tag.end_offset + 1])
             a.cursor.setPosition(tag.start_block.position() + start_pos)
             a.cursor.setPosition(tag.end_block.position() + end_pos, a.cursor.KeepAnchor)
@@ -470,7 +470,7 @@ class Smarts(NullSmarts):
                             if boundary.is_start and not boundary.closing and boundary.offset <= offset:
                                 start_block, start_offset = block, boundary.offset
                                 break
-                    block, offset = block.previous(), sys.maxint
+                    block, offset = block.previous(), sys.maxsize
             end_block = None
             if start_block is not None:
                 end_block, boundary = next_tag_boundary(start_block, start_offset)
@@ -567,7 +567,7 @@ class Smarts(NullSmarts):
                             nblock, boundary = next_tag_boundary(block, tb.offset)
                             if boundary is not None and not boundary.is_start and not boundary.self_closing:
                                 tags.append(Tag(block, tb, nblock, boundary))
-                block = block.next()
+                block = next(block)
         if not tags:
             c = editor.textCursor()
             block, offset = c.block(), c.positionInBlock()
@@ -669,7 +669,7 @@ class Smarts(NullSmarts):
 
         c = editor.textCursor()
         block, offset = c.block(), c.positionInBlock()
-        if check_if_in_tag(block, offset) or check_if_in_tag(block.next()):
+        if check_if_in_tag(block, offset) or check_if_in_tag(next(block)):
             return False
         tag = find_closest_containing_tag(block, offset - 1, max_tags=4000)
         if tag is None:
@@ -765,7 +765,7 @@ class Smarts(NullSmarts):
                     c.movePosition(c.EndOfBlock, c.KeepAnchor)
                     if c.hasSelection():
                         append(c.selectedText() + '\n', c.anchor())
-            block = block.next()
+            block = next(block)
         s, e = find_text_in_chunks(pat, chunks)
         return s != -1 and e != -1, s, e
 

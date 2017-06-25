@@ -5,11 +5,11 @@
 """
 import struct
 import zlib
-import StringIO
+import io
 import codecs
 import os
 
-from pylrfopt import tagListOptimizer
+from .pylrfopt import tagListOptimizer
 
 PYLRF_VERSION = "1.0"
 
@@ -473,7 +473,7 @@ class LrfTagStream(LrfStreamBase):
 
     def getStreamTags(self, encoding,
             optimizeTags=False, optimizeCompression=False):
-        stream = StringIO.StringIO()
+        stream = io.StringIO()
         if optimizeTags:
             tagListOptimizer(self.tags)
 
@@ -526,7 +526,7 @@ class LrfObject(object):
         # belongs somewhere, so here it is.
         #
         composites = {}
-        for name, value in tagDict.iteritems():
+        for name, value in tagDict.items():
             if name == 'rubyAlignAndAdjust':
                 continue
             if name in {
@@ -587,7 +587,7 @@ class LrfToc(LrfObject):
         self.tags.extend(stream.getStreamTags())
 
     def _makeTocStream(self, toc, se):
-        stream = StringIO.StringIO()
+        stream = io.StringIO()
         nEntries = len(toc)
 
         writeDWord(stream, nEntries)

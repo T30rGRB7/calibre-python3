@@ -55,19 +55,19 @@ class Matches(QAbstractItemModel):
         self.sort(self.sort_col, self.sort_order)
 
     def enable_all(self):
-        for i in xrange(len(self.matches)):
+        for i in range(len(self.matches)):
             index = self.createIndex(i, 0)
             data = (True)
             self.setData(index, data, Qt.CheckStateRole)
 
     def enable_none(self):
-        for i in xrange(len(self.matches)):
+        for i in range(len(self.matches)):
             index = self.createIndex(i, 0)
             data = (False)
             self.setData(index, data, Qt.CheckStateRole)
 
     def enable_invert(self):
-        for i in xrange(len(self.matches)):
+        for i in range(len(self.matches)):
             self.toggle_plugin(self.createIndex(i, 0))
 
     def toggle_plugin(self, index):
@@ -182,7 +182,7 @@ class Matches(QAbstractItemModel):
             return
         descending = order == Qt.DescendingOrder
         self.matches.sort(None,
-            lambda x: sort_key(unicode(self.data_as_text(x, col))),
+            lambda x: sort_key(str(self.data_as_text(x, col))),
             descending)
         if reset:
             self.beginResetModel(), self.endResetModel()

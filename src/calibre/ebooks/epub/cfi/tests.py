@@ -60,7 +60,7 @@ class Tests(unittest.TestCase):
             if after is not None:
                 ta['after'] = after
             if params:
-                ta['params'] = {unicode(k):(v,) if isinstance(v, unicode) else v for k, v in params.iteritems()}
+                ta['params'] = {str(k):(v,) if isinstance(v, str) else v for k, v in params.items()}
             if ta:
                 step['text_assertion'] = ta
             return ans

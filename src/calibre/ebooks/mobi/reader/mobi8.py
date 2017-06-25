@@ -9,8 +9,8 @@ __docformat__ = 'restructuredtext en'
 
 import struct, re, os
 from collections import namedtuple
-from itertools import repeat, izip
-from urlparse import urldefrag
+from itertools import repeat
+from urllib.parse import urldefrag
 from uuid import uuid4
 
 from lxml import etree
@@ -124,7 +124,7 @@ class Mobi8Reader(object):
             sec_start, num_sections = struct.unpack_from(b'>LL', header, 4)
             secs = struct.unpack_from(b'>%dL' % (num_sections*2),
                     header, sec_start)
-            self.flow_table = tuple(izip(secs[::2], secs[1::2]))
+            self.flow_table = tuple(zip(secs[::2], secs[1::2]))
 
         self.files = []
         if self.header.skelidx != NULL_INDEX:
@@ -133,7 +133,7 @@ class Mobi8Reader(object):
             File = namedtuple('File',
                 'file_number name divtbl_count start_position length')
 
-            for i, text in enumerate(table.iterkeys()):
+            for i, text in enumerate(table.keys()):
                 tag_map = table[text]
                 self.files.append(File(i, text, tag_map[1][0],
                     tag_map[6][0], tag_map[6][1]))
@@ -142,7 +142,7 @@ class Mobi8Reader(object):
         if self.header.dividx != NULL_INDEX:
             table, cncx = read_index(self.kf8_sections, self.header.dividx,
                     self.header.codec)
-            for i, text in enumerate(table.iterkeys()):
+            for i, text in enumerate(table.keys()):
                 tag_map = table[text]
                 toc_text = cncx[tag_map[2][0]]
                 self.elems.append(Elem(int(text), toc_text, tag_map[3][0],
@@ -155,14 +155,14 @@ class Mobi8Reader(object):
             Item = namedtuple('Item',
                 'type title pos_fid')
 
-            for i, ref_type in enumerate(table.iterkeys()):
+            for i, ref_type in enumerate(table.keys()):
                 tag_map = table[ref_type]
                 # ref_type, ref_title, div/frag number
                 title = cncx[tag_map[1][0]]
                 fileno = None
-                if 3 in tag_map.keys():
+                if 3 in list(tag_map.keys()):
                     fileno  = tag_map[3][0]
-                if 6 in tag_map.keys():
+                if 6 in list(tag_map.keys()):
                     fileno = tag_map[6]
                 self.guide.append(Item(ref_type.decode(self.header.codec),
                     title, fileno))
@@ -193,7 +193,7 @@ class Mobi8Reader(object):
             baseptr = skelpos + skellen
             skeleton = text[skelpos:baseptr]
             inspos_warned = False
-            for i in xrange(divcnt):
+            for i in range(divcnt):
                 insertpos, idtext, filenum, seqnum, startpos, length = \
                                     self.elems[divptr]
                 if i == 0:
@@ -253,7 +253,7 @@ class Mobi8Reader(object):
         self.flowinfo.append(FlowInfo(None, None, None, None))
         svg_tag_pattern = re.compile(br'''(<svg[^>]*>)''', re.IGNORECASE)
         image_tag_pattern = re.compile(br'''(<(?:svg:)?image[^>]*>)''', re.IGNORECASE)
-        for j in xrange(1, len(self.flows)):
+        for j in range(1, len(self.flows)):
             flowpart = self.flows[j]
             nstr = '%04d' % j
             m = svg_tag_pattern.search(flowpart)
@@ -355,7 +355,7 @@ class Mobi8Reader(object):
             linktgt, idtext = self.get_id_tag_by_pos_fid(*pos_fid)
             if idtext:
                 linktgt += b'#' + idtext
-            g = Guide.Reference(linktgt, os.getcwdu())
+            g = Guide.Reference(linktgt, os.getcwd())
             g.title, g.type = ref_title, ref_type
             if g.title == 'start' or g.type == 'text':
                 has_start = True
@@ -369,7 +369,7 @@ class Mobi8Reader(object):
                 linktgt = fi.filename
                 if idtext:
                     linktgt += '#' + idtext
-                g = Guide.Reference('%s/%s'%(fi.type, linktgt), os.getcwdu())
+                g = Guide.Reference('%s/%s'%(fi.type, linktgt), os.getcwd())
                 g.title, g.type = 'start', 'text'
                 guide.append(g)
 
@@ -483,7 +483,7 @@ class Mobi8Reader(object):
                         except:
                             self.log.exception('Failed to read inline ToC')
 
-        opf = OPFCreator(os.getcwdu(), mi)
+        opf = OPFCreator(os.getcwd(), mi)
         opf.guide = guide
 
         def exclude(path):
@@ -503,7 +503,7 @@ class Mobi8Reader(object):
             except:
                 pass
 
-        opf.create_manifest_from_files_in([os.getcwdu()], exclude=exclude)
+        opf.create_manifest_from_files_in([os.getcwd()], exclude=exclude)
         for entry in opf.manifest:
             if entry.mime_type == 'text/html':
                 entry.mime_type = 'application/xhtml+xml'

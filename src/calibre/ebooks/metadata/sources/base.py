@@ -65,7 +65,7 @@ class InternalMetadataCompareKeyGen(object):
     def __init__(self, mi, source_plugin, title, authors, identifiers):
         same_identifier = 2
         idents = mi.get_identifiers()
-        for k, v in identifiers.iteritems():
+        for k, v in identifiers.items():
             if idents.get(k) == v:
                 same_identifier = 1
                 break
@@ -304,7 +304,7 @@ class Source(Plugin):
 
     def get_related_isbns(self, id_):
         with self.cache_lock:
-            for isbn, q in self._isbn_to_identifier_cache.iteritems():
+            for isbn, q in self._isbn_to_identifier_cache.items():
                 if q == id_:
                     yield isbn
 

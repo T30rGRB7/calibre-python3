@@ -60,7 +60,7 @@ class LRFConverter(object):
 
     def create_page_styles(self):
         self.page_css = ''
-        for obj in self.lrf.objects.values():
+        for obj in list(self.lrf.objects.values()):
             if isinstance(obj, PageAttr):
                 selector = 'body.'+str(obj.id)
                 self.page_css = selector + ' {\n'
@@ -69,16 +69,16 @@ class LRFConverter(object):
 
     def create_block_styles(self):
         self.block_css = ''
-        for obj in self.lrf.objects.values():
+        for obj in list(self.lrf.objects.values()):
             if isinstance(obj, BlockAttr):
                 self.block_css += str(BlockStyle(obj))
 
     def create_text_styles(self):
         self.text_css = ''
-        for obj in self.lrf.objects.values():
+        for obj in list(self.lrf.objects.values()):
             if isinstance(obj, TextAttr):
                 self.text_css += str(TextStyle(obj))
-        print self.text_css
+        print(self.text_css)
 
     def create_styles(self):
         self.logger.info('Creating CSS stylesheet...')
@@ -100,7 +100,7 @@ def process_file(lrfpath, opts, logger=None):
         logger = logging.getLogger('lrf2html')
         setup_cli_handlers(logger, level)
     if opts.out is None:
-        opts.out = os.getcwdu()
+        opts.out = os.getcwd()
     else:
         opts.out = os.path.abspath(opts.out)
         if not os.path.isdir(opts.out):

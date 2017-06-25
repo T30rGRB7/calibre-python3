@@ -44,7 +44,7 @@ def get_plugin_updates_available(raise_error=False):
         return None
     display_plugins = read_available_plugins(raise_error=raise_error)
     if display_plugins:
-        update_plugins = filter(filter_upgradeable_plugins, display_plugins)
+        update_plugins = list(filter(filter_upgradeable_plugins, display_plugins))
         if len(update_plugins) > 0:
             return update_plugins
     return None
@@ -71,7 +71,7 @@ def read_available_plugins(raise_error=False):
             raise
         traceback.print_exc()
         return
-    for plugin in raw.itervalues():
+    for plugin in raw.values():
         try:
             display_plugin = DisplayPlugin(plugin)
             get_installed_plugin_status(display_plugin)
@@ -267,7 +267,7 @@ class DisplayPluginSortFilterModel(QSortFilterProxyModel):
         self.invalidateFilter()
 
     def set_filter_text(self, filter_text_value):
-        self.filter_text = icu_lower(unicode(filter_text_value))
+        self.filter_text = icu_lower(str(filter_text_value))
         self.invalidateFilter()
 
 
@@ -276,8 +276,8 @@ class DisplayPluginModel(QAbstractTableModel):
     def __init__(self, display_plugins):
         QAbstractTableModel.__init__(self)
         self.display_plugins = display_plugins
-        self.headers = map(unicode, [_('Plugin name'), _('Donate'), _('Status'), _('Installed'),
-                                      _('Available'), _('Released'), _('calibre'), _('Author')])
+        self.headers = list(map(str, [_('Plugin name'), _('Donate'), _('Status'), _('Installed'),
+                                      _('Available'), _('Released'), _('calibre'), _('Author')]))
 
     def rowCount(self, *args):
         return len(self.display_plugins)
@@ -588,7 +588,7 @@ class PluginUpdaterDialog(SizePersistedDialog):
 
     def _finished(self, *args):
         if self.model:
-            update_plugins = filter(filter_upgradeable_plugins, self.model.display_plugins)
+            update_plugins = list(filter(filter_upgradeable_plugins, self.model.display_plugins))
             self.gui.recalc_update_label(len(update_plugins))
 
     def _plugin_current_changed(self, current, previous):
@@ -726,7 +726,7 @@ class PluginUpdaterDialog(SizePersistedDialog):
                 plugin = add_plugin(zip_path)
             except NameConflict as e:
                 return error_dialog(self.gui, _('Already exists'),
-                        unicode(e), show=True)
+                        str(e), show=True)
             # Check for any toolbars to add to.
             widget = ConfigWidget(self.gui)
             widget.gui = self.gui
@@ -841,7 +841,7 @@ class PluginUpdaterDialog(SizePersistedDialog):
                     continue
                 if heading_node.text_content().lower().find('version history') != -1:
                     div_node = spoiler_node.xpath('div')[0]
-                    text = html.tostring(div_node, method='html', encoding=unicode)
+                    text = html.tostring(div_node, method='html', encoding=str)
                     return re.sub('<div\s.*?>', '<div>', text)
             except:
                 if DEBUG:

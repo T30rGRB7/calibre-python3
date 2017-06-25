@@ -1,4 +1,4 @@
-from __future__ import with_statement
+
 __license__   = 'GPL v3'
 __copyright__ = '2008, Kovid Goyal <kovid at kovidgoyal.net>'
 
@@ -113,7 +113,7 @@ def extract_calibre_cover(raw, base, log):
     if matches is None:
         body = soup.find('body')
         if body is not None:
-            text = u''.join(map(unicode, body.findAll(text=True)))
+            text = ''.join(map(str, body.findAll(text=True)))
             if text.strip():
                 # Body has text, abort
                 return
@@ -210,7 +210,7 @@ def check_ebook_format(stream, current_guess):
 
 
 def normalize(x):
-    if isinstance(x, unicode):
+    if isinstance(x, str):
         import unicodedata
         x = unicodedata.normalize('NFC', x)
     return x
@@ -232,7 +232,7 @@ UNIT_RE = re.compile(r'^(-*[0-9]*[.]?[0-9]*)\s*(%|em|ex|en|px|mm|cm|in|pt|pc|rem
 
 def unit_convert(value, base, font, dpi, body_font_size=12):
     ' Return value in pts'
-    if isinstance(value, (int, long, float)):
+    if isinstance(value, (int, float)):
         return value
     try:
         return float(value) * 72.0 / dpi

@@ -254,7 +254,7 @@ def extract_metadata(container_data):
 
     for entity_type, entity_id, entity_value in container_data:
         if entity_type == PROP_METADATA:
-            for key, value in entity_value.items():
+            for key, value in list(entity_value.items()):
                 if key in METADATA_PROPERTIES:
                     metadata[METADATA_PROPERTIES[key]].append(value)
 
@@ -319,7 +319,7 @@ def read_metadata_kfx(stream, read_cover=True):
     elif has('content_id'):
         mi.set_identifier('mobi-asin', get('content_id'))
     if has('languages'):
-        langs = list(filter(None, (canonicalize_lang(x) for x in get('languages', False))))
+        langs = list([_f for _f in (canonicalize_lang(x) for x in get('languages', False)) if _f])
         if langs:
             mi.languages = langs
     if has('issue_date'):
@@ -345,4 +345,4 @@ if __name__ == '__main__':
     from calibre import prints
     with open(sys.argv[-1], 'rb') as f:
         mi = read_metadata_kfx(f)
-        prints(unicode(mi))
+        prints(str(mi))

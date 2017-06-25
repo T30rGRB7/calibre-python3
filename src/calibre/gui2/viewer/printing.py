@@ -6,7 +6,7 @@ from __future__ import (unicode_literals, division, absolute_import,
 __license__ = 'GPL v3'
 __copyright__ = '2015, Kovid Goyal <kovid at kovidgoyal.net>'
 
-import os, subprocess, cPickle, sys
+import os, subprocess, pickle, sys
 from threading import Thread
 
 from PyQt5.Qt import (
@@ -143,7 +143,7 @@ class DoPrint(Thread):
         try:
             with PersistentTemporaryFile('print-to-pdf-log.txt') as f:
                 p = self.worker = start_pipe_worker('from calibre.gui2.viewer.printing import do_print; do_print()', stdout=f, stderr=subprocess.STDOUT)
-                p.stdin.write(cPickle.dumps(self.data, -1)), p.stdin.flush(), p.stdin.close()
+                p.stdin.write(pickle.dumps(self.data, -1)), p.stdin.flush(), p.stdin.close()
                 rc = p.wait()
                 if rc != 0:
                     f.seek(0)
@@ -158,7 +158,7 @@ class DoPrint(Thread):
 
 
 def do_print():
-    data = cPickle.loads(sys.stdin.read())
+    data = pickle.loads(sys.stdin.read())
     args = ['ebook-convert', data['input'], data['output'], '--paper-size', data['paper_size'], '--pdf-add-toc',
             '--disable-remove-fake-margins', '--disable-font-rescaling', '--page-breaks-before', '/', '--chapter-mark', 'none', '-vv']
     if data['page_numbers']:

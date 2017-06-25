@@ -34,7 +34,7 @@ class UnpackBook(QDialog):
             index_is_id=True))
 
         button = self.fmt_choice_buttons[0]
-        button_map = {unicode(x.text()):x for x in self.fmt_choice_buttons}
+        button_map = {str(x.text()):x for x in self.fmt_choice_buttons}
         of = prefs['output_format'].upper()
         df = tweaks.get('default_tweak_format', None)
         lf = gprefs.get('last_tweak_format', None)
@@ -281,7 +281,7 @@ class UnpackBook(QDialog):
     def current_format(self):
         for b in self.fmt_choice_buttons:
             if b.isChecked():
-                return unicode(b.text())
+                return str(b.text())
 
 
 class UnpackBookAction(InterfaceAction):

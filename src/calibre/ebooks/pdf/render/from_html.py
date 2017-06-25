@@ -90,10 +90,10 @@ class Page(QWebPage):  # {{{
         self.longjs_counter = 0
 
     def javaScriptConsoleMessage(self, msg, lineno, msgid):
-        self.log.debug(u'JS:', unicode(msg))
+        self.log.debug('JS:', str(msg))
 
     def javaScriptAlert(self, frame, msg):
-        self.log(unicode(msg))
+        self.log(str(msg))
 
     @pyqtSlot(result=bool)
     def shouldInterruptJavaScript(self):
@@ -127,19 +127,19 @@ def draw_image_page(page_rect, painter, p, preserve_aspect_ratio=True):
 
 class PDFWriter(QObject):
 
-    @pyqtSlot(result=unicode)
+    @pyqtSlot(result=str)
     def title(self):
         return self.doc_title
 
-    @pyqtSlot(result=unicode)
+    @pyqtSlot(result=str)
     def author(self):
         return self.doc_author
 
-    @pyqtSlot(result=unicode)
+    @pyqtSlot(result=str)
     def section(self):
         return self.current_section
 
-    @pyqtSlot(result=unicode)
+    @pyqtSlot(result=str)
     def tl_section(self):
         return self.current_tl_section
 
@@ -274,7 +274,7 @@ class PDFWriter(QObject):
             self.loop.exit(1)
 
     def render_next(self):
-        item = unicode(self.render_queue.pop(0))
+        item = str(self.render_queue.pop(0))
 
         self.logger.debug('Processing %s...' % item)
         self.current_item = item
@@ -304,9 +304,9 @@ class PDFWriter(QObject):
 
     def load_mathjax(self):
         evaljs = self.view.page().mainFrame().evaluateJavaScript
-        mjpath = P(u'viewer/mathjax').replace(os.sep, '/')
+        mjpath = P('viewer/mathjax').replace(os.sep, '/')
         if iswindows:
-            mjpath = u'/' + mjpath
+            mjpath = '/' + mjpath
         if bool(evaljs('''
                     window.mathjax.base = %s;
                     mathjax.check_for_math(); mathjax.math_present
@@ -363,7 +363,7 @@ class PDFWriter(QObject):
 
         if not isinstance(amap, dict):
             amap = {'links':[], 'anchors':{}}  # Some javascript error occurred
-        for val in amap['anchors'].itervalues():
+        for val in amap['anchors'].values():
             if isinstance(val, dict) and 'column' in val:
                 val['column'] = int(val['column'])
         for href, val in amap['links']:

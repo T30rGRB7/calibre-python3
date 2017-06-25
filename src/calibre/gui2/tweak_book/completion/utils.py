@@ -24,4 +24,4 @@ class DataError(Exception):
         self.tb = tb
 
     def traceback(self):
-        return unicode(self) + '\n' + self.tb
+        return str(self) + '\n' + self.tb

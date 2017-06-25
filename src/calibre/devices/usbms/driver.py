@@ -105,14 +105,14 @@ class USBMS(CLI, Device):
         if not isinstance(dinfo, dict):
             dinfo = {}
         if dinfo.get('device_store_uuid', None) is None:
-            dinfo['device_store_uuid'] = unicode(uuid.uuid4())
+            dinfo['device_store_uuid'] = str(uuid.uuid4())
         if dinfo.get('device_name', None) is None:
             dinfo['device_name'] = self.get_gui_name()
         if name is not None:
             dinfo['device_name'] = name
         dinfo['location_code'] = location_code
         dinfo['last_library_uuid'] = getattr(self, 'current_library_uuid', None)
-        dinfo['calibre_version'] = '.'.join([unicode(i) for i in numeric_version])
+        dinfo['calibre_version'] = '.'.join([str(i) for i in numeric_version])
         dinfo['date_last_connected'] = isoformat(now())
         dinfo['prefix'] = prefix.replace('\\', '/')
         return dinfo
@@ -242,7 +242,7 @@ class USBMS(CLI, Device):
                     import traceback
                     traceback.print_exc()
             return changed
-        if isinstance(ebook_dirs, basestring):
+        if isinstance(ebook_dirs, str):
             ebook_dirs = [ebook_dirs]
         for ebook_dir in ebook_dirs:
             ebook_dir = self.path_to_unicode(ebook_dir)
@@ -280,7 +280,7 @@ class USBMS(CLI, Device):
         # Remove books that are no longer in the filesystem. Cache contains
         # indices into the booklist if book not in filesystem, None otherwise
         # Do the operation in reverse order so indices remain valid
-        for idx in sorted(bl_cache.itervalues(), reverse=True):
+        for idx in sorted(iter(bl_cache.values()), reverse=True):
             if idx is not None:
                 need_sync = True
                 del bl[idx]
@@ -310,7 +310,7 @@ class USBMS(CLI, Device):
         metadata = iter(metadata)
 
         for i, infile in enumerate(files):
-            mdata, fname = metadata.next(), names.next()
+            mdata, fname = next(metadata), next(names)
             filepath = self.normalize_path(self.create_upload_path(path, mdata, fname))
             if not hasattr(infile, 'read'):
                 infile = self.normalize_path(infile)
@@ -328,7 +328,7 @@ class USBMS(CLI, Device):
 
         self.report_progress(1.0, _('Transferring books to device...'))
         debug_print('USBMS: finished uploading %d books'%(len(files)))
-        return zip(paths, cycle([on_card]))
+        return list(zip(paths, cycle([on_card])))
 
     def upload_cover(self, path, filename, metadata, filepath):
         '''
@@ -349,7 +349,7 @@ class USBMS(CLI, Device):
         metadata = iter(metadata)
         for i, location in enumerate(locations):
             self.report_progress((i+1) / float(len(locations)), _('Adding books to device metadata listing...'))
-            info = metadata.next()
+            info = next(metadata)
             blist = 2 if location[1] == 'cardb' else 1 if location[1] == 'carda' else 0
 
             # Extract the correct prefix from the pathname. To do this correctly,

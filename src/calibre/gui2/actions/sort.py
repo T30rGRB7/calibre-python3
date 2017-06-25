@@ -59,7 +59,7 @@ class SortByAction(InterfaceAction):
         except TypeError:
             sort_col, order = 'date', True
         fm = db.field_metadata
-        name_map = {v:k for k, v in fm.ui_sortable_field_keys().iteritems()}
+        name_map = {v:k for k, v in fm.ui_sortable_field_keys().items()}
         for name in sorted(name_map, key=sort_key):
             key = name_map[name]
             if key == 'ondevice' and self.gui.device_connected is None:

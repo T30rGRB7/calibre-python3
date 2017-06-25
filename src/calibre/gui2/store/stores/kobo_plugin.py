@@ -7,7 +7,7 @@ __license__ = 'GPL 3'
 __copyright__ = '2011, John Schember <john@nachtimwald.com>'
 __docformat__ = 'restructuredtext en'
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from contextlib import closing
 
 from lxml import html, etree
@@ -23,7 +23,7 @@ from calibre.gui2.store.web_store_dialog import WebStoreDialog
 
 def search_kobo(query, max_results=10, timeout=60, write_html_to=None):
     from css_selectors import Select
-    url = 'https://www.kobobooks.com/search/search.html?q=' + urllib.quote_plus(query)
+    url = 'https://www.kobobooks.com/search/search.html?q=' + urllib.parse.quote_plus(query)
 
     br = browser()
 
@@ -46,7 +46,7 @@ def search_kobo(query, max_results=10, timeout=60, write_html_to=None):
                 cover_url = None
 
             for p in select('p.title', item):
-                title = etree.tostring(p, method='text', encoding=unicode).strip()
+                title = etree.tostring(p, method='text', encoding=str).strip()
                 for a in select('a[href]', p):
                     url = a.get('href')
                     break
@@ -58,11 +58,11 @@ def search_kobo(query, max_results=10, timeout=60, write_html_to=None):
 
             authors = []
             for a in select('p.contributor-list a.contributor-name', item):
-                authors.append(etree.tostring(a, method='text', encoding=unicode).strip())
+                authors.append(etree.tostring(a, method='text', encoding=str).strip())
             authors = authors_to_string(authors)
 
             for p in select('p.price', item):
-                price = etree.tostring(p, method='text', encoding=unicode).strip()
+                price = etree.tostring(p, method='text', encoding=str).strip()
                 break
             else:
                 price = None
@@ -89,7 +89,7 @@ class KoboStore(BasicStoreConfig, StorePlugin):
         murl = 'https://click.linksynergy.com/fs-bin/click?id=%s&subid=&offerid=280046.1&type=10&tmpid=9310&RD_PARM1=http%%3A%%2F%%2Fkobo.com' % pub_id
 
         if detail_item:
-            purl = 'https://click.linksynergy.com/link?id=%s&offerid=280046&type=2&murl=%s' % (pub_id, urllib.quote_plus(detail_item))
+            purl = 'https://click.linksynergy.com/link?id=%s&offerid=280046&type=2&murl=%s' % (pub_id, urllib.parse.quote_plus(detail_item))
             url = purl
         else:
             purl = None

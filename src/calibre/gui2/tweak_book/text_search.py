@@ -79,7 +79,7 @@ class WhereBox(QComboBox):
             return wm[self.currentIndex()]
 
         def fset(self, val):
-            self.setCurrentIndex({v:k for k, v in wm.iteritems()}[val])
+            self.setCurrentIndex({v:k for k, v in wm.items()}[val])
         return property(fget=fget, fset=fset)
 
     def showPopup(self):
@@ -172,7 +172,7 @@ def run_text_search(search, current_editor, current_editor_name, searchable_name
                 return True
             if not files and editor.find_text(pat, wrap=True):
                 return True
-        for fname, syntax in files.iteritems():
+        for fname, syntax in files.items():
             ed = editors.get(fname, None)
             if ed is not None:
                 if ed.find_text(pat, complete=True):
@@ -181,7 +181,7 @@ def run_text_search(search, current_editor, current_editor_name, searchable_name
             else:
                 root = current_container().parsed(fname)
                 if hasattr(root, 'xpath'):
-                    raw = tostring(root, method='text', encoding=unicode, with_tail=True)
+                    raw = tostring(root, method='text', encoding=str, with_tail=True)
                 else:
                     raw = current_container().raw_data(fname)
                 if pat.search(raw) is not None:

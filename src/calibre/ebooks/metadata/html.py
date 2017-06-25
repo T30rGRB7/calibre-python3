@@ -60,7 +60,7 @@ attr_pat = r'''(?:(?P<sq>')|(?P<dq>"))(?P<content>(?(sq)[^']+|[^"]+))(?(sq)'|")'
 
 def parse_meta_tags(src):
     rmap = {}
-    for field, names in META_NAMES.iteritems():
+    for field, names in META_NAMES.items():
         for name in names:
             rmap[name.lower()] = field
     all_names = '|'.join(rmap)
@@ -89,8 +89,8 @@ def parse_meta_tags(src):
 
 
 def parse_comment_tags(src):
-    all_names = '|'.join(COMMENT_NAMES.itervalues())
-    rmap = {v:k for k, v in COMMENT_NAMES.iteritems()}
+    all_names = '|'.join(iter(COMMENT_NAMES.values()))
+    rmap = {v:k for k, v in COMMENT_NAMES.items()}
     ans = {}
     for match in re.finditer(r'''<!--\s*(?P<name>%s)\s*=\s*%s''' % (all_names, attr_pat), src):
         field = rmap[match.group('name')]

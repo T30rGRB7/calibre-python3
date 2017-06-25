@@ -1,5 +1,5 @@
 #!/usr/bin/env python2
-from __future__ import print_function
+
 
 '''SMTP/ESMTP client class.
 
@@ -592,7 +592,7 @@ class SMTP:
 
         def encode_cram_md5(challenge, user, password):
             challenge = base64.decodestring(challenge)
-            if isinstance(password, unicode):  # Added by Kovid, see http://bugs.python.org/issue5285
+            if isinstance(password, str):  # Added by Kovid, see http://bugs.python.org/issue5285
                 password = password.encode('utf-8')
             response = user + " " + hmac.HMAC(password, challenge).hexdigest()
             return encode_base64(response, eol="")
@@ -760,7 +760,7 @@ class SMTP:
             self.rset()
             raise SMTPSenderRefused(code, resp, from_addr)
         senderrs = {}
-        if isinstance(to_addrs, basestring):
+        if isinstance(to_addrs, str):
             to_addrs = [to_addrs]
         for each in to_addrs:
             (code, resp) = self.rcpt(each, rcpt_options)

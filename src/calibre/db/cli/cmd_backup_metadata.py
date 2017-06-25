@@ -2,7 +2,7 @@
 # vim:fileencoding=utf-8
 # License: GPLv3 Copyright: 2017, Kovid Goyal <kovid at kovidgoyal.net>
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 
 from calibre import prints
 
@@ -55,7 +55,7 @@ class BackupProgress(object):
         else:
             self.count += 1
             prints(
-                u'%.1f%% %s - %s' % ((self.count * 100) / float(self.total), book_id,
+                '%.1f%% %s - %s' % ((self.count * 100) / float(self.total), book_id,
                                      getattr(mi, 'title', 'Unknown'))
             )
 

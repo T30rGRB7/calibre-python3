@@ -83,7 +83,7 @@ class Sfnt(object):
 
     def __iter__(self):
         '''Iterate over the table tags in order.'''
-        for x in sorted(self.tables.iterkeys()):
+        for x in sorted(self.tables.keys()):
             yield x
         # Although the optimal order is not alphabetical, the OTF spec says
         # they should be alphabetical, so we stick with that. See

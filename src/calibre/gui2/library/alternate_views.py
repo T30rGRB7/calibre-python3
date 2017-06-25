@@ -9,7 +9,7 @@ __copyright__ = '2013, Kovid Goyal <kovid at kovidgoyal.net>'
 import itertools, operator, os, math
 from types import MethodType
 from threading import Event, Thread
-from Queue import LifoQueue
+from queue import LifoQueue
 from functools import wraps, partial
 from textwrap import wrap
 
@@ -196,7 +196,7 @@ def paths_from_event(self, event):
     md = event.mimeData()
     if md.hasFormat('text/uri-list') and not \
             md.hasFormat('application/calibre+from_library'):
-        urls = [unicode(u.toLocalFile()) for u in md.urls()]
+        urls = [str(u.toLocalFile()) for u in md.urls()]
         return [u for u in urls if os.path.splitext(u)[1] and
                 os.path.exists(u)]
 
@@ -278,7 +278,7 @@ class AlternateViews(object):
             view.setFocus(Qt.OtherFocusReason)
 
     def set_database(self, db, stage=0):
-        for view in self.views.itervalues():
+        for view in self.views.values():
             if view is not self.main_view:
                 view.set_database(db, stage=stage)
 
@@ -307,7 +307,7 @@ class AlternateViews(object):
         self.current_view.select_rows(rows)
 
     def set_context_menu(self, menu):
-        for view in self.views.itervalues():
+        for view in self.views.values():
             if view is not self.main_view:
                 view.set_context_menu(menu)
 
@@ -415,7 +415,7 @@ class CoverDelegate(QStyledItemDelegate):
                 if fm and fm['datatype'] == 'rating':
                     ans = rating_to_stars(val, fm['display'].get('allow_half_stars', False))
                     is_stars = True
-            return ('' if ans is None else unicode(ans)), is_stars
+            return ('' if ans is None else str(ans)), is_stars
         except Exception:
             if DEBUG:
                 import traceback
@@ -680,8 +680,8 @@ class GridView(QListView):
     @property
     def first_visible_row(self):
         geom = self.viewport().geometry()
-        for y in xrange(geom.top(), (self.spacing()*2) + geom.top(), 5):
-            for x in xrange(geom.left(), (self.spacing()*2) + geom.left(), 5):
+        for y in range(geom.top(), (self.spacing()*2) + geom.top(), 5):
+            for x in range(geom.left(), (self.spacing()*2) + geom.left(), 5):
                 ans = self.indexAt(QPoint(x, y)).row()
                 if ans > -1:
                     return ans
@@ -689,8 +689,8 @@ class GridView(QListView):
     @property
     def last_visible_row(self):
         geom = self.viewport().geometry()
-        for y in xrange(geom.bottom(), geom.bottom() - 2 * self.spacing(), -5):
-            for x in xrange(geom.left(), (self.spacing()*2) + geom.left(), 5):
+        for y in range(geom.bottom(), geom.bottom() - 2 * self.spacing(), -5):
+            for x in range(geom.left(), (self.spacing()*2) + geom.left(), 5):
                 ans = self.indexAt(QPoint(x, y)).row()
                 if ans > -1:
                     item_width = self.delegate.item_size.width() + 2*self.spacing()
@@ -700,7 +700,7 @@ class GridView(QListView):
         self.ignore_render_requests.clear()
         self.update_timer.stop()
         m = self.model()
-        for r in xrange(self.first_visible_row or 0, self.last_visible_row or (m.count() - 1)):
+        for r in range(self.first_visible_row or 0, self.last_visible_row or (m.count() - 1)):
             self.update(m.index(r, 0))
 
     def double_clicked(self, index):
@@ -906,7 +906,7 @@ class GridView(QListView):
         # Create a range based selector for each set of contiguous rows
         # as supplying selectors for each individual row causes very poor
         # performance if a large number of rows has to be selected.
-        for k, g in itertools.groupby(enumerate(rows), lambda (i,x):i-x):
+        for k, g in itertools.groupby(enumerate(rows), lambda i_x:i_x[0]-i_x[1]):
             group = list(map(operator.itemgetter(1), g))
             sel.merge(QItemSelection(m.index(min(group), 0), m.index(max(group), 0)), sm.Select)
         sm.select(sel, sm.ClearAndSelect)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
@@ -8,8 +8,8 @@ __docformat__ = 'restructuredtext en'
 
 _count = 0
 
-import time, cStringIO
-from Queue import Queue, Empty
+import time, io
+from queue import Queue, Empty
 
 from calibre import prints
 from calibre.constants import DEBUG
@@ -146,7 +146,7 @@ class BaseJob(object):
     def log_file(self):
         if self.log_path:
             return open(self.log_path, 'rb')
-        return cStringIO.StringIO(_('No details available.').encode('utf-8',
+        return io.StringIO(_('No details available.').encode('utf-8',
             'replace'))
 
     @property

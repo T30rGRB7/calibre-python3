@@ -155,7 +155,7 @@ class CascadeTest(BaseTest):
             files = {'index.html':html, 'X.otf':b'xxx', 'XB.otf': b'xbxb'}
             for font in fonts:
                 styles.append('@font-face {')
-                for k, v in font.iteritems():
+                for k, v in font.items():
                     if k == 'src':
                         files[v] = b'xxx'
                         v = 'url(%s)' % v
@@ -186,7 +186,7 @@ class CascadeTest(BaseTest):
         def fkey(*args, **kw):
             f = font(*args, **kw)
             f['font-family'] = icu_lower(f['font-family'][0])
-            return frozenset((k, v) for k, v in f.iteritems() if k in font_keys)
+            return frozenset((k, v) for k, v in f.items() if k in font_keys)
 
         def fu(text, *args, **kw):
             key = fkey(*args, **kw)

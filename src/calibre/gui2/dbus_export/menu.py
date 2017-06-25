@@ -124,7 +124,7 @@ class DBusMenu(QObject):
             return {}
         ans = self._action_properties.get(action_id, PropDict())
         if restrict_to:
-            ans = PropDict({k:v for k, v in ans.iteritems() if k in restrict_to})
+            ans = PropDict({k:v for k, v in ans.items() if k in restrict_to})
         return ans
 
     def publish_new_menu(self, qmenu=None):
@@ -195,7 +195,7 @@ class DBusMenu(QObject):
             removed = set(old_props) - set(new_props)
             if removed:
                 removed_props.append((ac_id, dbus.Array(removed, signature='as')))
-            updated = PropDict({k:v for k, v in new_props.iteritems() if v != old_props.get(k, null)})
+            updated = PropDict({k:v for k, v in new_props.items() if v != old_props.get(k, null)})
             if updated:
                 updated_props.append((ac_id, updated))
         self.action_changes = set()

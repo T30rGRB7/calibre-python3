@@ -193,7 +193,7 @@ class MTP_DEVICE(MTPDeviceBase):
         self.libmtp = p[0]
         if self.libmtp is None:
             print ('Failed to load libmtp, MTP device detection disabled')
-            print (p[1])
+            print((p[1]))
         else:
             self.known_devices = frozenset(self.libmtp.known_devices())
 
@@ -318,7 +318,7 @@ class MTP_DEVICE(MTPDeviceBase):
                     storage.append({'id':sid, 'size':capacity,
                         'is_folder':True, 'name':name, 'can_delete':False,
                         'is_system':True})
-                    self._currently_getting_sid = unicode(sid)
+                    self._currently_getting_sid = str(sid)
                     items, errs = self.dev.get_filesystem(sid,
                             partial(self._filesystem_callback, {}))
                     all_items.extend(items), all_errs.extend(errs)
@@ -370,7 +370,7 @@ class MTP_DEVICE(MTPDeviceBase):
         e = parent.folder_named(name)
         if e is not None:
             return e
-        ename = name.encode('utf-8') if isinstance(name, unicode) else name
+        ename = name.encode('utf-8') if isinstance(name, str) else name
         sid, pid = parent.storage_id, parent.object_id
         if pid == sid:
             pid = 0
@@ -393,7 +393,7 @@ class MTP_DEVICE(MTPDeviceBase):
                 raise ValueError('Cannot upload file %s, it already exists'%(
                     e.full_path,))
             self.delete_file_or_folder(e)
-        ename = name.encode('utf-8') if isinstance(name, unicode) else name
+        ename = name.encode('utf-8') if isinstance(name, str) else name
         sid, pid = parent.storage_id, parent.object_id
         if pid == sid:
             pid = 0xFFFFFFFF

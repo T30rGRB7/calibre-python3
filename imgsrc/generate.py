@@ -52,7 +52,7 @@ def render(src, output_files):
     for dest in output_files:
         oname = os.path.basename(dest).rpartition('.')[0]
         size = sizes.get(oname, '128')
-        print('Rendering', oname, 'at size:', size)
+        print(('Rendering', oname, 'at size:', size))
         rsvg(src, size, dest)
 
 

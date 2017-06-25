@@ -32,7 +32,7 @@ TRANSITIONAL_NAMES = {
 
 STRICT_NAMES = {
     k:v.replace('http://schemas.openxmlformats.org/officeDocument/2006',  'http://purl.oclc.org/ooxml/officeDocument')
-    for k, v in TRANSITIONAL_NAMES.iteritems()
+    for k, v in TRANSITIONAL_NAMES.items()
 }
 
 TRANSITIONAL_NAMESPACES = {
@@ -71,7 +71,7 @@ STRICT_NAMESPACES = {
         'http://schemas.openxmlformats.org/officeDocument/2006', 'http://purl.oclc.org/ooxml/officeDocument').replace(
         'http://schemas.openxmlformats.org/wordprocessingml/2006', 'http://purl.oclc.org/ooxml/wordprocessingml').replace(
         'http://schemas.openxmlformats.org/drawingml/2006', 'http://purl.oclc.org/ooxml/drawingml')
-    for k, v in TRANSITIONAL_NAMESPACES.iteritems()
+    for k, v in TRANSITIONAL_NAMESPACES.items()
 }
 # }}}
 
@@ -137,7 +137,7 @@ class DOCXNamespace(object):
         return self.XPath('|'.join('descendant::%s' % a for a in args))(elem)
 
     def makeelement(self, root, tag, append=True, **attrs):
-        ans = root.makeelement(self.expand(tag), **{self.expand(k, sep='_'):v for k, v in attrs.iteritems()})
+        ans = root.makeelement(self.expand(tag), **{self.expand(k, sep='_'):v for k, v in attrs.items()})
         if append:
             root.append(ans)
         return ans

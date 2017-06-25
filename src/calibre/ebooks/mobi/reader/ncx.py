@@ -56,13 +56,13 @@ def read_ncx(sections, index, codec):
     if index != NULL_INDEX:
         table, cncx = read_index(sections, index, codec)
 
-        for num, x in enumerate(table.iteritems()):
+        for num, x in enumerate(table.items()):
             text, tag_map = x
             entry = default_entry.copy()
             entry['name'] = text
             entry['num'] = num
 
-            for tag in tag_fieldname_map.iterkeys():
+            for tag in tag_fieldname_map.keys():
                 fieldname, i = tag_fieldname_map[tag]
                 if tag in tag_map:
                     fieldvalue = tag_map[tag][i]
@@ -73,7 +73,7 @@ def read_ncx(sections, index, codec):
                     entry[fieldname] = fieldvalue
                     for which, name in {3:'text', 5:'kind', 70:'description',
                             71:'author', 72:'image_caption',
-                            73:'image_attribution'}.iteritems():
+                            73:'image_attribution'}.items():
                         if tag == which:
                             entry[name] = cncx.get(fieldvalue,
                                     default_entry[name])
@@ -83,7 +83,7 @@ def read_ncx(sections, index, codec):
 
 
 def build_toc(index_entries):
-    ans = TOC(base_path=os.getcwdu())
+    ans = TOC(base_path=os.getcwd())
     levels = {x['hlvl'] for x in index_entries}
     num_map = {-1: ans}
     level_map = {l:[x for x in index_entries if x['hlvl'] == l] for l in

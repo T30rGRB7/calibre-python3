@@ -313,7 +313,7 @@ class Quickview(QDialog, Ui_Quickview):
     def item_selected(self, txt):
         if self.no_valid_items:
             return
-        self.fill_in_books_box(unicode(txt))
+        self.fill_in_books_box(str(txt))
         self.set_search_text(self.current_key + ':"=' + txt.replace('"', '\\"') + '"')
 
     # Given a cell in the library view, display the information
@@ -350,7 +350,7 @@ class Quickview(QDialog, Ui_Quickview):
         if vals:
             self.no_valid_items = False
             if self.db.field_metadata[key]['datatype'] == 'rating':
-                vals = unicode(vals/2)
+                vals = str(vals/2)
             if not isinstance(vals, list):
                 vals = [vals]
             vals.sort(key=sort_key)

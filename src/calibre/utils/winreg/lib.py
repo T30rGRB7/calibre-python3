@@ -6,7 +6,7 @@ from __future__ import (unicode_literals, division, absolute_import,
 __license__ = 'GPL v3'
 __copyright__ = '2015, Kovid Goyal <kovid at kovidgoyal.net>'
 
-import ctypes, ctypes.wintypes as types, _winreg as winreg, struct, datetime
+import ctypes, ctypes.wintypes as types, winreg as winreg, struct, datetime
 import winerror, win32con
 
 # Binding to C library {{{
@@ -106,7 +106,7 @@ def convert_to_registry_data(value, has_expansions=False):
     if isinstance(value, (list, tuple)):
         buf = ctypes.create_unicode_buffer('\0'.join(map(type(''), value)) + '\0\0')
         return buf, winreg.REG_MULTI_SZ, len(buf) * 2
-    if isinstance(value, (int, long)):
+    if isinstance(value, int):
         try:
             raw, dtype = struct.pack(str('L'), value), winreg.REG_DWORD
         except struct.error:
@@ -327,7 +327,7 @@ class Key(object):
     def __exit__(self, *args):
         self.close()
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.hkey)
 
     def close(self):

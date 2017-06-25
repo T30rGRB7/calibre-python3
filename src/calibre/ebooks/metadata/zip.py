@@ -1,4 +1,4 @@
-from __future__ import with_statement
+
 __license__   = 'GPL v3'
 __copyright__ = '2008, Kovid Goyal <kovid at kovidgoyal.net>'
 
@@ -47,7 +47,7 @@ def zip_opf_metadata(opfpath, zf):
     from calibre.ebooks.metadata.opf2 import OPF
     if hasattr(opfpath, 'read'):
         f = opfpath
-        opfpath = getattr(f, 'name', os.getcwdu())
+        opfpath = getattr(f, 'name', os.getcwd())
     else:
         f = open(opfpath, 'rb')
     opf = OPF(f, os.path.dirname(opfpath))

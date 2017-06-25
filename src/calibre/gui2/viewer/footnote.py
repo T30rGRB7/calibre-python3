@@ -60,7 +60,7 @@ class FootnotesPage(QWebPage):
 
     def javaScriptConsoleMessage(self, msg, lineno, source_id):
         if DEBUG:
-            prints('FootnoteView:%s:%s:'%(unicode(source_id), lineno), unicode(msg))
+            prints('FootnoteView:%s:%s:'%(str(source_id), lineno), str(msg))
 
 
 class FootnotesView(QWidget):

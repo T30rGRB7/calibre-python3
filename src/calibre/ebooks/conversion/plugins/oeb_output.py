@@ -1,4 +1,4 @@
-from __future__ import with_statement
+
 __license__ = 'GPL 3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
 __docformat__ = 'restructuredtext en'
@@ -20,7 +20,7 @@ class OEBOutput(OutputFormatPlugin):
     recommendations = set([('pretty_print', True, OptionRecommendation.HIGH)])
 
     def convert(self, oeb_book, output_path, input_plugin, opts, log):
-        from urllib import unquote
+        from urllib.parse import unquote
         from lxml import etree
 
         self.log, self.opts = log, opts

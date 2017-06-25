@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
@@ -12,7 +12,7 @@ BASH completion for calibre commands that are too complex for simple
 completion.
 '''
 
-import sys, os, shlex, glob, re, cPickle
+import sys, os, shlex, glob, re, pickle
 
 
 def prints(*args, **kwargs):
@@ -28,7 +28,7 @@ def prints(*args, **kwargs):
     enc = 'utf-8'
     safe_encode = kwargs.get('safe_encode', False)
     for i, arg in enumerate(args):
-        if isinstance(arg, unicode):
+        if isinstance(arg, str):
             try:
                 arg = arg.encode(enc)
             except UnicodeEncodeError:
@@ -39,8 +39,8 @@ def prints(*args, **kwargs):
             try:
                 arg = str(arg)
             except ValueError:
-                arg = unicode(arg)
-            if isinstance(arg, unicode):
+                arg = str(arg)
+            if isinstance(arg, str):
                 try:
                     arg = arg.encode(enc)
                 except UnicodeEncodeError:
@@ -113,7 +113,7 @@ class EbookConvert(object):
         self.words = words
         self.prefix = prefix
         self.previous = words[-2 if prefix else -1]
-        self.cache = cPickle.load(open(os.path.join(sys.resources_location,
+        self.cache = pickle.load(open(os.path.join(sys.resources_location,
             'ebook-convert-complete.pickle'), 'rb'))
         self.complete(wc)
 

@@ -30,7 +30,7 @@ class KernTable(UnknownTable):
             raise UnsupportedFont('kern table has version: %x'%self._version)
         offset = 4 if (self._version == 0) else 8
         tables = []
-        for i in xrange(self.num_tables):
+        for i in range(self.num_tables):
             if self._version == 0:
                 version, length, coverage = unpack_from(b'>3H', self.raw, offset)
                 table_format = version
@@ -57,7 +57,7 @@ class KernTable(UnknownTable):
         offset = calcsize(headerfmt + b'4H')
         entries = []
         entrysz = calcsize(b'>2Hh')
-        for i in xrange(npairs):
+        for i in range(npairs):
             try:
                 left, right, value = unpack_from(b'>2Hh', raw, offset)
             except struct_error:

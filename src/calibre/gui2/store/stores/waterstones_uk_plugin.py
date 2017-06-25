@@ -7,7 +7,7 @@ __license__ = 'GPL 3'
 __copyright__ = '2011, John Schember <john@nachtimwald.com>'
 __docformat__ = 'restructuredtext en'
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from contextlib import closing
 
 from lxml import html
@@ -42,7 +42,7 @@ class WaterstonesUKStore(BasicStoreConfig, StorePlugin):
             d.exec_()
 
     def search(self, query, max_results=10, timeout=60):
-        url = 'http://www.waterstones.com/waterstonesweb/simpleSearch.do?simpleSearchString=ebook+' + urllib2.quote(query)
+        url = 'http://www.waterstones.com/waterstonesweb/simpleSearch.do?simpleSearchString=ebook+' + urllib.parse.quote(query)
 
         br = browser()
 

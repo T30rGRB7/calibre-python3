@@ -2,7 +2,7 @@
 Retrieve and modify in-place Mobipocket book metadata.
 '''
 
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal kovid@kovidgoyal.net and ' \
@@ -11,7 +11,7 @@ __docformat__ = 'restructuredtext en'
 
 import os
 from struct import pack, unpack
-from cStringIO import StringIO
+from io import StringIO
 
 from calibre.ebooks import normalize
 from calibre.ebooks.mobi import MobiError, MAX_THUMB_DIMEN
@@ -45,7 +45,7 @@ class StreamSlicer(object):
     def __getitem__(self, key):
         stream = self._stream
         base = self.start
-        if isinstance(key, (int, long)):
+        if isinstance(key, int):
             stream.seek(base + key)
             return stream.read(1)
         if isinstance(key, slice):
@@ -65,7 +65,7 @@ class StreamSlicer(object):
     def __setitem__(self, key, value):
         stream = self._stream
         base = self.start
-        if isinstance(key, (int, long)):
+        if isinstance(key, int):
             if len(value) != 1:
                 raise ValueError("key and value lengths must match")
             stream.seek(base + key)
@@ -161,7 +161,7 @@ class MetadataUpdater(object):
         nitems, = unpack('>I', exth[8:12])
         pos = 12
         # Store any EXTH fields not specifiable in GUI
-        for i in xrange(nitems):
+        for i in range(nitems):
             id, size = unpack('>II', exth[pos:pos + 8])
             content = exth[pos + 8: pos + size]
             pos += size
@@ -222,7 +222,7 @@ class MetadataUpdater(object):
 
     def create_exth(self, new_title=None, exth=None):
         # Add an EXTH block to record 0, rewrite the stream
-        if isinstance(new_title, unicode):
+        if isinstance(new_title, str):
             new_title = new_title.encode(self.codec, 'replace')
 
         # Fetch the existing title
@@ -289,11 +289,11 @@ class MetadataUpdater(object):
             s = s.translate(FILTER)
             result += "%04X   %-*s   %s\n" % (N, length*3, hexa, s)
             N+=length
-        print result
+        print(result)
 
     def get_pdbrecords(self):
         pdbrecords = []
-        for i in xrange(self.nrecs):
+        for i in range(self.nrecs):
             offset, a1,a2,a3,a4 = unpack('>LBBBB', self.data[78+i*8:78+i*8+8])
             flags, val = a1, a2<<16|a3<<8|a4
             pdbrecords.append([offset, flags, val])
@@ -308,11 +308,11 @@ class MetadataUpdater(object):
 
     def dump_pdbrecords(self):
         # Diagnostic
-        print "MetadataUpdater.dump_pdbrecords()"
-        print "%10s %10s %10s" % ("offset","flags","val")
-        for i in xrange(len(self.pdbrecords)):
+        print("MetadataUpdater.dump_pdbrecords()")
+        print("%10s %10s %10s" % ("offset","flags","val"))
+        for i in range(len(self.pdbrecords)):
             pdbrecord = self.pdbrecords[i]
-            print "%10X %10X %10X" % (pdbrecord[0], pdbrecord[1], pdbrecord[2])
+            print("%10X %10X %10X" % (pdbrecord[0], pdbrecord[1], pdbrecord[2]))
 
     def record(self, n):
         if n >= self.nrecs:
@@ -401,7 +401,7 @@ class MetadataUpdater(object):
         # Add a 112 record with actual UUID
         if getattr(mi, 'uuid', None):
             update_exth_record((112,
-                    (u"calibre:%s" % mi.uuid).encode(self.codec, 'replace')))
+                    ("calibre:%s" % mi.uuid).encode(self.codec, 'replace')))
         if 503 in self.original_exth_records:
             update_exth_record((503, mi.title.encode(self.codec, 'replace')))
 

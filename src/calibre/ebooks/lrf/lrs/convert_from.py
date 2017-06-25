@@ -94,7 +94,7 @@ class LrsParser(object):
             if isinstance(contents[0], NavigableString):
                 contents[0] = contents[0].string.lstrip()
             for item in contents:
-                if isinstance(item, basestring):
+                if isinstance(item, str):
                     p.append(item)
                 elif isinstance(item, NavigableString):
                     p.append(item.string)
@@ -160,24 +160,24 @@ class LrsParser(object):
                    'blockstyle' : 'blockStyle',
                    'textstyle'  : 'textStyle',
                    }
-        for id, tag in self.objects.items():
-            if tag.name in map.keys():
+        for id, tag in list(self.objects.items()):
+            if tag.name in list(map.keys()):
                 settings = self.attrs_to_dict(tag, map[tag.name][1]+['objid', 'objlabel'])
                 for a in ('pagestyle', 'blockstyle', 'textstyle'):
                     label = tag.get(a, False)
                     if label and \
                         (label in self._style_labels or label in self.parsed_objects):
                         _obj = (self.parsed_objects[label] if
-                            self.parsed_objects.has_key(label) else  # noqa
+                            label in self.parsed_objects else  # noqa
                             self._style_labels[label])
                         settings[attrmap[a]] = _obj
                 for a in ('evenfooterid', 'oddfooterid', 'evenheaderid', 'oddheaderid'):
-                    if tag.has_key(a):  # noqa
+                    if a in tag:  # noqa
                         settings[a.replace('id', '')] = self.parsed_objects[tag.get(a)]
                 args = []
-                if tag.has_key('refstream'):  # noqa
+                if 'refstream' in tag:  # noqa
                     args.append(self.parsed_objects[tag.get('refstream')])
-                if tag.has_key('canvaswidth'):  # noqa
+                if 'canvaswidth' in tag:  # noqa
                     args += [tag.get('canvaswidth'), tag.get('canvasheight')]
                 self.parsed_objects[id] = map[tag.name][0](*args, **settings)
 
@@ -190,12 +190,12 @@ class LrsParser(object):
                'registfont' : (Font, [])
                }
         self._style_labels = {}
-        for id, tag in self.objects.items():
-            if tag.name in map.keys():
+        for id, tag in list(self.objects.items()):
+            if tag.name in list(map.keys()):
                 settings = self.attrs_to_dict(tag, map[tag.name][1]+['objid'])
                 if tag.name == 'pagestyle':
                     for a in ('evenheaderid', 'oddheaderid', 'evenfooterid', 'oddfooterid'):
-                        if tag.has_key(a):  # noqa
+                        if a in tag:  # noqa
                             settings[a.replace('id', '')] = self.parsed_objects[tag.get(a)]
                 settings.pop('autoindex', '')
                 self.parsed_objects[id] = map[tag.name][0](**settings)
@@ -222,7 +222,7 @@ class LrsParser(object):
                 res = cls.tag_to_string(item)
                 if res:
                     strings.append(res)
-        return u''.join(strings)
+        return ''.join(strings)
 
     def first_pass(self):
         info = self.soup.find('bbebxylog').find('bookinformation').find('info')
@@ -233,7 +233,7 @@ class LrsParser(object):
             tag = base.find(tagname.lower())
             if tag is None:
                 return ('', '', '')
-            tag = (self.tag_to_string(tag), tag.get('reading') if tag.has_key('reading') else '')  # noqa
+            tag = (self.tag_to_string(tag), tag.get('reading') if 'reading' in tag else '')  # noqa
             return tag
 
         title          = me(bookinfo, 'Title')
@@ -259,7 +259,7 @@ class LrsParser(object):
             if os.access(f, os.R_OK):
                 settings['thumbnail'] = f
             else:
-                print _('Could not read from thumbnail file:'), f
+                print(_('Could not read from thumbnail file:'), f)
 
         self.book = Book(title=title, author=author, publisher=publisher,
                          category=category, classification=classification,

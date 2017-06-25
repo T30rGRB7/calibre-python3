@@ -97,7 +97,7 @@ def iterdeclaration(decl):
         if n is None:
             yield p
         else:
-            for k, v in n(p.name, p.propertyValue).iteritems():
+            for k, v in n(p.name, p.propertyValue).items():
                 yield Property(k, v, p.literalpriority)
 
 
@@ -154,7 +154,7 @@ def resolve_pseudo_declarations(decls):
     groups = defaultdict(list)
     for d in decls:
         groups[d.pseudo_element].append(d)
-    return {k:resolve_declarations(v) for k, v in groups.iteritems()}
+    return {k:resolve_declarations(v) for k, v in groups.items()}
 
 
 def resolve_styles(container, name, select=None, sheet_callback=None):
@@ -163,7 +163,7 @@ def resolve_styles(container, name, select=None, sheet_callback=None):
     style_map = defaultdict(list)
     pseudo_style_map = defaultdict(list)
     rule_index_counter = count()
-    pseudo_pat = re.compile(ur':{1,2}(%s)' % ('|'.join(INAPPROPRIATE_PSEUDO_CLASSES)), re.I)
+    pseudo_pat = re.compile(r':{1,2}(%s)' % ('|'.join(INAPPROPRIATE_PSEUDO_CLASSES)), re.I)
 
     def process_sheet(sheet, sheet_name):
         if sheet_callback is not None:
@@ -216,11 +216,11 @@ def resolve_styles(container, name, select=None, sheet_callback=None):
             style_map[elem].append(StyleDeclaration(Specificity(1, 0, 0, 0, 0), normalize_style_declaration(style, name), None))
 
     for l in (style_map, pseudo_style_map):
-        for x in l.itervalues():
+        for x in l.values():
             x.sort(key=itemgetter(0), reverse=True)
 
-    style_map = {elem:resolve_declarations(x) for elem, x in style_map.iteritems()}
-    pseudo_style_map = {elem:resolve_pseudo_declarations(x) for elem, x in pseudo_style_map.iteritems()}
+    style_map = {elem:resolve_declarations(x) for elem, x in style_map.items()}
+    pseudo_style_map = {elem:resolve_pseudo_declarations(x) for elem, x in pseudo_style_map.items()}
 
     return partial(resolve_property, style_map), partial(resolve_pseudo_property, style_map, pseudo_style_map), select
 
@@ -231,7 +231,7 @@ def defvals():
     global _defvals
     if _defvals is None:
         u = type('')
-        _defvals = {k:Values(Property(k, u(val)).propertyValue) for k, val in DEFAULTS.iteritems()}
+        _defvals = {k:Values(Property(k, u(val)).propertyValue) for k, val in DEFAULTS.items()}
     return _defvals
 
 

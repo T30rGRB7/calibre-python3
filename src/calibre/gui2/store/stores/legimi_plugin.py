@@ -8,7 +8,7 @@ __copyright__ = '2011-2016, Tomasz Długosz <tomek3d@gmail.com>'
 __docformat__ = 'restructuredtext en'
 
 import re
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from base64 import b64encode
 from contextlib import closing
 
@@ -46,7 +46,7 @@ class LegimiStore(BasicStoreConfig, StorePlugin):
             d.exec_()
 
     def search(self, query, max_results=10, timeout=60):
-        url = 'http://www.legimi.com/pl/ebooki/?szukaj=' + urllib.quote_plus(query)
+        url = 'http://www.legimi.com/pl/ebooki/?szukaj=' + urllib.parse.quote_plus(query)
 
         br = browser()
 

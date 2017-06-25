@@ -7,7 +7,7 @@ __license__ = 'GPL 3'
 __copyright__ = '2013-2016, Tomasz Długosz <tomek3d@gmail.com>'
 __docformat__ = 'restructuredtext en'
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from base64 import b64encode
 from contextlib import closing
 
@@ -51,7 +51,7 @@ class KoobeStore(BasicStoreConfig, StorePlugin):
 
         counter = max_results
         while counter:
-            with closing(br.open('http://www.koobe.pl/s,p,' + str(page) + ',szukaj/fraza:' + urllib.quote(query), timeout=timeout)) as f:
+            with closing(br.open('http://www.koobe.pl/s,p,' + str(page) + ',szukaj/fraza:' + urllib.parse.quote(query), timeout=timeout)) as f:
                 doc = html.fromstring(f.read().decode('utf-8'))
                 for data in doc.xpath('//div[@class="seach_result"]/div[@class="result"]'):
                     if counter <= 0:

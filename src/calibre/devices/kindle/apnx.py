@@ -267,7 +267,7 @@ class APNXBuilder(object):
                     p_char_count = 0
 
         # Every 30 lines is a new page
-        for i in xrange(0, len(lines), 32):
+        for i in range(0, len(lines), 32):
             pages.append(lines[i])
 
         return pages

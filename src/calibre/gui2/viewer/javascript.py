@@ -26,7 +26,7 @@ class JavaScriptLoader(object):
             'hyphenator':'viewer/hyphenate/Hyphenator.js',
             'images':None
 
-        }.iteritems()}
+        }.items()}
 
     CS = {
             'cfi':'ebooks.oeb.display.cfi',
@@ -103,6 +103,6 @@ class JavaScriptLoader(object):
 
         lang = lang_name(lang)
 
-        evaljs('\n\n'.join(self._hp_cache.itervalues()))
+        evaljs('\n\n'.join(iter(self._hp_cache.values())))
 
         return lang

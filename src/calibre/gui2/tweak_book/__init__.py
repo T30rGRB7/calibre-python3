@@ -116,7 +116,7 @@ dictionaries = Dictionaries()
 
 
 def editor_name(editor):
-    for n, ed in editors.iteritems():
+    for n, ed in editors.items():
         if ed is editor:
             return n
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # vim:fileencoding=utf-8
 # License: GPLv3 Copyright: 2015, Kovid Goyal <kovid at kovidgoyal.net>
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 
 import atexit
 import errno
@@ -14,7 +14,7 @@ import subprocess
 import sys
 from functools import partial
 from io import BytesIO
-from Queue import Empty, Queue
+from queue import Empty, Queue
 from threading import Thread, local
 
 from calibre import force_unicode
@@ -59,7 +59,7 @@ tls = local()
 
 
 def to_dict(obj):
-    return dict(zip(obj.keys(), obj.values()))
+    return dict(list(zip(list(obj.keys()), list(obj.values()))))
 
 
 def compiler():
@@ -107,7 +107,7 @@ def compile_pyj(data, filename='<stdin>', beautify=True, private_scope=True, lib
         'private_scope':private_scope,
         'omit_baselib': omit_baselib,
         'libdir': libdir or default_lib_dir(),
-        'basedir': os.getcwdu() if not filename or filename == '<stdin>' else os.path.dirname(filename),
+        'basedir': os.getcwd() if not filename or filename == '<stdin>' else os.path.dirname(filename),
         'filename': filename,
     }
     c.g.rs_source_code = data
@@ -184,9 +184,9 @@ def create_manifest(html):
     import hashlib
     from calibre.library.field_metadata import category_icon_map
     h = hashlib.sha256(html)
-    for ci in category_icon_map.itervalues():
+    for ci in category_icon_map.values():
         h.update(I(ci, data=True))
-    icons = {'icon/' + x for x in category_icon_map.itervalues()}
+    icons = {'icon/' + x for x in category_icon_map.values()}
     icons.add('favicon.png')
     h.update(I('lt.png', data=True))
     manifest = '\n'.join(sorted(icons))
@@ -203,7 +203,7 @@ def compile_srv():
     base = base_dir()
     iconf = os.path.join(base, 'imgsrc', 'srv', 'generate.py')
     g = {'__file__': iconf}
-    execfile(iconf, g)
+    exec(compile(open(iconf).read(), iconf, 'exec'), g)
     icons = g['merge']().encode('utf-8')
     with lopen(os.path.join(base, 'resources', 'content-server', 'reset.css'), 'rb') as f:
         reset = f.read()
@@ -382,7 +382,7 @@ class Repl(Thread):
                     import traceback
                     traceback.print_exc()
 
-                for i in xrange(100):
+                for i in range(100):
                     # Do this many times to ensure we dont deadlock
                     self.from_repl.put(None)
 
@@ -400,7 +400,7 @@ class Repl(Thread):
         def completer(text, num):
             if self.completions is None:
                 self.to_repl.put(('complete', text))
-                self.completions = filter(None, self.get_from_repl())
+                self.completions = [_f for _f in self.get_from_repl() if _f]
                 if self.completions is None:
                     return None
             try:
@@ -421,7 +421,7 @@ class Repl(Thread):
             else:
                 q += lw
             try:
-                line = raw_input(q)
+                line = input(q)
                 self.to_repl.put(('line', line))
             except EOFError:
                 return

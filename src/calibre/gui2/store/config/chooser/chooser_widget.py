@@ -32,7 +32,7 @@ class StoreChooserWidget(QWidget, Ui_Form):
         self.results_view.activated.connect(self.results_view.model().toggle_plugin)
 
     def do_search(self):
-        self.results_view.model().search(unicode(self.query.text()))
+        self.results_view.model().search(str(self.query.text()))
 
     def build_adv_search(self):
         adv = AdvSearchBuilderDialog(self)

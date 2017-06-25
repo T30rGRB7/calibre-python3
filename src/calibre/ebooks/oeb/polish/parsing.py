@@ -56,9 +56,9 @@ class Element(ElementBase):
     def __str__(self):
         attrs = ''
         if self.attrib:
-            attrs = ' ' + ' '.join('%s="%s"' % (k, v) for k, v in self.attrib.iteritems())
+            attrs = ' ' + ' '.join('%s="%s"' % (k, v) for k, v in self.attrib.items())
         ns = self.tag.rpartition('}')[0][1:]
-        prefix = {v:k for k, v in self.nsmap.iteritems()}[ns] or ''
+        prefix = {v:k for k, v in self.nsmap.items()}[ns] or ''
         if prefix:
             prefix += ':'
         return '<%s%s%s (%s)>' % (prefix, getattr(self, 'name', self.tag), attrs, hex(id(self)))
@@ -228,7 +228,7 @@ def clean_attrib(name, val, nsmap, attrib, namespaced_attribs):
             return None, True
         nsmap_changed = False
         if ns == xlink_ns and 'xlink' not in nsmap:
-            for prefix, nns in tuple(nsmap.iteritems()):
+            for prefix, nns in tuple(nsmap.items()):
                 if nns == xlink_ns:
                     del nsmap[prefix]
             nsmap['xlink'] = xlink_ns
@@ -240,7 +240,7 @@ def clean_attrib(name, val, nsmap, attrib, namespaced_attribs):
         if prefix == 'xmlns':
             # Use an existing prefix for this namespace, if
             # possible
-            existing = {x:k for k, x in nsmap.iteritems()}.get(val, False)
+            existing = {x:k for k, x in nsmap.items()}.get(val, False)
             if existing is not False:
                 name = existing
             nsmap[name] = val
@@ -271,7 +271,7 @@ def makeelement_ns(ctx, namespace, prefix, name, attrib, nsmap):
     # constructor, therefore they have to be set one by one.
     nsmap_changed = False
     namespaced_attribs = {}
-    for k, v in attrib.iteritems():
+    for k, v in attrib.items():
         try:
             elem.set(k, v)
         except (ValueError, TypeError):
@@ -284,9 +284,9 @@ def makeelement_ns(ctx, namespace, prefix, name, attrib, nsmap):
                     elem.set(to_xml_name(k), v)
     if nsmap_changed:
         nelem = ctx.makeelement(elem.tag, nsmap=nsmap)
-        for k, v in elem.items():  # Only elem.items() preserves attrib order
+        for k, v in list(elem.items()):  # Only elem.items() preserves attrib order
             nelem.set(k, v)
-        for (prefix, name), v in namespaced_attribs.iteritems():
+        for (prefix, name), v in namespaced_attribs.items():
             ns = nsmap.get(prefix, None)
             if ns is not None:
                 try:
@@ -302,18 +302,18 @@ def makeelement_ns(ctx, namespace, prefix, name, attrib, nsmap):
         namespace = nsmap.get(prefix, None)
         if namespace is not None and namespace != elem.nsmap[elem.prefix]:
             nelem = ctx.makeelement('{%s}%s' %(nsmap[prefix], elem.tag.rpartition('}')[2]), nsmap=nsmap)
-            for k, v in elem.items():
+            for k, v in list(elem.items()):
                 nelem.set(k, v)
             elem = nelem
 
     # Ensure that svg and mathml elements get no namespace prefixes
     if elem.prefix is not None and namespace in known_namespaces:
-        for k, v in tuple(nsmap.iteritems()):
+        for k, v in tuple(nsmap.items()):
             if v == namespace:
                 del nsmap[k]
         nsmap[None] = namespace
         nelem = ctx.makeelement(elem.tag, nsmap=nsmap)
-        for k, v in elem.items():
+        for k, v in list(elem.items()):
             nelem.set(k, v)
         elem = nelem
 
@@ -412,7 +412,7 @@ class TreeBuilder(BaseTreeBuilder):
         nelem = self.lxml_context.makeelement(elem.tag, nsmap=nsmap)
         self.promote_elem(nelem, elem.tag.rpartition('}')[2])
         nelem.sourceline = elem.sourceline
-        for k, v in elem.items():
+        for k, v in list(elem.items()):
             nelem.set(k, v)
         nelem.text, nelem.tail = elem.text, elem.tail
         return nelem
@@ -421,7 +421,7 @@ class TreeBuilder(BaseTreeBuilder):
         if not attrs:
             return
         html = self.openElements[0]
-        for k, v in attrs.iteritems():
+        for k, v in attrs.items():
             if k not in html.attrib and k != 'xmlns':
                 try:
                     html.set(k, v)
@@ -449,7 +449,7 @@ class TreeBuilder(BaseTreeBuilder):
         if not attrs:
             return
         body = self.openElements[1]
-        for k, v in attrs.iteritems():
+        for k, v in attrs.items():
             if k not in body.attrib and k !='xmlns':
                 try:
                     body.set(k, v)
@@ -474,7 +474,7 @@ def makeelement(ctx, name, attrib):
         elem = ctx.makeelement(name)
     except ValueError:
         elem = ctx.makeelement(to_xml_name(name))
-    for k, v in attrib.iteritems():
+    for k, v in attrib.items():
         try:
             elem.set(k, v)
         except TypeError:
@@ -518,7 +518,7 @@ class NoNamespaceTreeBuilder(TreeBuilder):
         if not attrs:
             return
         html = self.openElements[0]
-        for k, v in attrs.iteritems():
+        for k, v in attrs.items():
             if k not in html.attrib and k != 'xmlns':
                 try:
                     html.set(k, v)
@@ -531,7 +531,7 @@ class NoNamespaceTreeBuilder(TreeBuilder):
         if not attrs:
             return
         body = self.openElements[1]
-        for k, v in attrs.iteritems():
+        for k, v in attrs.items():
             if k not in body.attrib and k != 'xmlns':
                 try:
                     body.set(k, v)
@@ -712,5 +712,5 @@ def parse(raw, decoder=None, log=None, line_numbers=True, linenumber_attribute=N
 if __name__ == '__main__':
     from lxml import etree
     root = parse_html5('\n<html><head><title>a\n</title><p b=1 c=2 a=0>&nbsp;\n<b>b<svg ass="wipe" viewbox="0">', discard_namespaces=False)
-    print (etree.tostring(root, encoding='utf-8'))
+    print((etree.tostring(root, encoding='utf-8')))
     print()

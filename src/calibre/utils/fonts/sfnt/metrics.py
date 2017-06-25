@@ -95,7 +95,7 @@ class FontMetrics(object):
         Return the advance widths (in pixels) for all glyphs corresponding to
         the characters in string at the specified pixel_size and stretch factor.
         '''
-        if not isinstance(string, type(u'')):
+        if not isinstance(string, type('')):
             raise ValueError('Must supply a unicode object')
         chars = tuple(map(ord, string))
         cmap = self.cmap.get_character_map(chars)
@@ -120,11 +120,11 @@ if __name__ == '__main__':
         raw = f.read()
     sfnt = Sfnt(raw)
     m = FontMetrics(sfnt)
-    print ('Ascent:', m.pdf_ascent)
-    print ('Descent:', m.pdf_descent)
-    print ('PDF BBox:', m.pdf_bbox)
-    print ('CapHeight:', m.pdf_capheight)
-    print ('AvgWidth:', m.pdf_avg_width)
-    print ('ItalicAngle', m.post.italic_angle)
-    print ('StemV', m.pdf_stemv)
+    print(('Ascent:', m.pdf_ascent))
+    print(('Descent:', m.pdf_descent))
+    print(('PDF BBox:', m.pdf_bbox))
+    print(('CapHeight:', m.pdf_capheight))
+    print(('AvgWidth:', m.pdf_avg_width))
+    print(('ItalicAngle', m.post.italic_angle))
+    print(('StemV', m.pdf_stemv))
 

@@ -244,7 +244,7 @@ def download(all_ids, tf, db, do_identify, covers, ensure_fields,
                 title_map[i] = metadata[i].title
                 lm_map[i] = metadata[i].last_modified
             metadata = {i:metadata_to_opf(mi, default_lang='und') for i, mi in
-                    metadata.iteritems()}
+                    metadata.items()}
             try:
                 ret = fork_job('calibre.ebooks.metadata.sources.worker', 'main',
                         (do_identify, covers, metadata, ensure_fields, tdir),

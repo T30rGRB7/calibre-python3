@@ -73,7 +73,7 @@ class SimpleText(Base):
         self.widgets = [QLabel('&'+self.col_metadata['name']+':', parent), QLineEdit(parent)]
 
     def setter(self, val):
-        self.widgets[1].setText(type(u'')(val or ''))
+        self.widgets[1].setText(type('')(val or ''))
 
     def getter(self):
         return self.widgets[1].text().strip()
@@ -92,7 +92,7 @@ class LongText(Base):
         self.widgets = [self._box]
 
     def setter(self, val):
-        self._tb.setPlainText(type(u'')(val or ''))
+        self._tb.setPlainText(type('')(val or ''))
 
     def getter(self):
         return self._tb.toPlainText()
@@ -308,7 +308,7 @@ class Comments(Base):
         self._box = QGroupBox(parent)
         self._box.setTitle('&'+self.col_metadata['name'])
         self._layout = QVBoxLayout()
-        self._tb = CommentsEditor(self._box, toolbar_prefs_name=u'metadata-comments-editor-widget-hidden-toolbars')
+        self._tb = CommentsEditor(self._box, toolbar_prefs_name='metadata-comments-editor-widget-hidden-toolbars')
         self._tb.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
         # self._tb.setTabChangesFocus(True)
         self._layout.addWidget(self._tb)
@@ -324,7 +324,7 @@ class Comments(Base):
         self._tb.wyswyg_dirtied()
 
     def getter(self):
-        val = unicode(self._tb.html).strip()
+        val = str(self._tb.html).strip()
         if not val:
             val = None
         return val
@@ -438,12 +438,12 @@ class Text(Base):
 
     def getter(self):
         if self.col_metadata['is_multiple']:
-            val = unicode(self.widgets[1].text()).strip()
+            val = str(self.widgets[1].text()).strip()
             ans = [x.strip() for x in val.split(self.sep['ui_to_list']) if x.strip()]
             if not ans:
                 ans = None
             return ans
-        val = unicode(self.widgets[1].currentText()).strip()
+        val = str(self.widgets[1].currentText()).strip()
         if not val:
             val = None
         return val
@@ -512,7 +512,7 @@ class Series(Base):
         self.initial_val, self.initial_index = self.current_val
 
     def getter(self):
-        n = unicode(self.name_widget.currentText()).strip()
+        n = str(self.name_widget.currentText()).strip()
         i = self.idx_widget.value()
         return n, i
 
@@ -579,7 +579,7 @@ class Enumeration(Base):
         self.widgets[1].setCurrentIndex(self.widgets[1].findText(val))
 
     def getter(self):
-        return unicode(self.widgets[1].currentText())
+        return str(self.widgets[1].currentText())
 
     def normalize_db_val(self, val):
         if val is None:
@@ -745,7 +745,7 @@ class BulkBase(Base):
                 break
         ans = None
         if len(values) == 1:
-            ans = iter(values).next()
+            ans = next(iter(values))
         if isinstance(ans, frozenset):
             ans = list(ans)
         return ans
@@ -1007,7 +1007,7 @@ class BulkSeries(BulkBase):
         self.a_c_checkbox.setChecked(False)
 
     def getter(self):
-        n = unicode(self.main_widget.currentText()).strip()
+        n = str(self.main_widget.currentText()).strip()
         i = self.idx_widget.checkState()
         f = self.force_number.checkState()
         s = self.series_start_number.value()
@@ -1076,7 +1076,7 @@ class BulkEnumeration(BulkBase, Enumeration):
         self.main_widget.blockSignals(False)
 
     def getter(self):
-        return unicode(self.main_widget.currentText())
+        return str(self.main_widget.currentText())
 
     def setter(self, val):
         if val is None:
@@ -1189,10 +1189,10 @@ class BulkText(BulkBase):
         if self.col_metadata['is_multiple']:
             if not self.col_metadata['display'].get('is_names', False):
                 return self.removing_widget.checkbox.isChecked(), \
-                        unicode(self.adding_widget.text()), \
-                        unicode(self.removing_widget.tags_box.text())
-            return unicode(self.adding_widget.text())
-        val = unicode(self.main_widget.currentText()).strip()
+                        str(self.adding_widget.text()), \
+                        str(self.removing_widget.tags_box.text())
+            return str(self.adding_widget.text())
+        val = str(self.main_widget.currentText()).strip()
         if not val:
             val = None
         return val

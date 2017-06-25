@@ -16,10 +16,10 @@ from calibre.utils.icu import sort_key
 class tableItem(QTableWidgetItem):
 
     def __ge__(self, other):
-        return sort_key(unicode(self.text())) >= sort_key(unicode(other.text()))
+        return sort_key(str(self.text())) >= sort_key(str(other.text()))
 
     def __lt__(self, other):
-        return sort_key(unicode(self.text())) < sort_key(unicode(other.text()))
+        return sort_key(str(self.text())) < sort_key(str(other.text()))
 
 
 class EditAuthorsDialog(QDialog, Ui_EditAuthorsDialog):
@@ -195,28 +195,28 @@ class EditAuthorsDialog(QDialog, Ui_EditAuthorsDialog):
 
     def copy_to_clipboard(self):
         cb = QApplication.clipboard()
-        cb.setText(unicode(self.context_item.text()))
+        cb.setText(str(self.context_item.text()))
 
     def paste_from_clipboard(self):
         cb = QApplication.clipboard()
         self.context_item.setText(cb.text())
 
     def upper_case(self):
-        self.context_item.setText(icu_upper(unicode(self.context_item.text())))
+        self.context_item.setText(icu_upper(str(self.context_item.text())))
 
     def lower_case(self):
-        self.context_item.setText(icu_lower(unicode(self.context_item.text())))
+        self.context_item.setText(icu_lower(str(self.context_item.text())))
 
     def swap_case(self):
-        self.context_item.setText(unicode(self.context_item.text()).swapcase())
+        self.context_item.setText(str(self.context_item.text()).swapcase())
 
     def title_case(self):
         from calibre.utils.titlecase import titlecase
-        self.context_item.setText(titlecase(unicode(self.context_item.text())))
+        self.context_item.setText(titlecase(str(self.context_item.text())))
 
     def capitalize(self):
         from calibre.utils.icu import capitalize
-        self.context_item.setText(capitalize(unicode(self.context_item.text())))
+        self.context_item.setText(capitalize(str(self.context_item.text())))
 
     def copy_aus_to_au(self):
         row = self.context_item.row()
@@ -242,14 +242,14 @@ class EditAuthorsDialog(QDialog, Ui_EditAuthorsDialog):
         self.buttonBox.button(QDialogButtonBox.Ok).setAutoDefault(False)
         self.buttonBox.button(QDialogButtonBox.Cancel).setDefault(False)
         self.buttonBox.button(QDialogButtonBox.Cancel).setAutoDefault(False)
-        st = icu_lower(unicode(self.find_box.currentText()))
+        st = icu_lower(str(self.find_box.currentText()))
 
         for i in range(0, self.table.rowCount()*2):
             self.start_find_pos = (self.start_find_pos + 1) % (self.table.rowCount()*2)
             r = (self.start_find_pos/2)%self.table.rowCount()
             c = self.start_find_pos % 2
             item = self.table.item(r, c)
-            text = icu_lower(unicode(item.text()))
+            text = icu_lower(str(item.text()))
             if st in text:
                 self.table.setCurrentItem(item)
                 self.table.setFocus(True)
@@ -281,9 +281,9 @@ class EditAuthorsDialog(QDialog, Ui_EditAuthorsDialog):
         self.result = []
         for row in range(0,self.table.rowCount()):
             id   = int(self.table.item(row, 0).data(Qt.UserRole))
-            aut  = unicode(self.table.item(row, 0).text()).strip()
-            sort = unicode(self.table.item(row, 1).text()).strip()
-            link = unicode(self.table.item(row, 2).text()).strip()
+            aut  = str(self.table.item(row, 0).text()).strip()
+            sort = str(self.table.item(row, 1).text()).strip()
+            link = str(self.table.item(row, 2).text()).strip()
             orig_aut,orig_sort,orig_link = self.authors[id]
             if orig_aut != aut or orig_sort != sort or orig_link != link:
                 self.result.append((id, orig_aut, aut, sort, link))
@@ -292,7 +292,7 @@ class EditAuthorsDialog(QDialog, Ui_EditAuthorsDialog):
         self.table.cellChanged.disconnect()
         for row in range(0,self.table.rowCount()):
             item = self.table.item(row, 0)
-            aut  = unicode(item.text()).strip()
+            aut  = str(item.text()).strip()
             c = self.table.item(row, 1)
             # Sometimes trailing commas are left by changing between copy algs
             c.setText(author_to_author_sort(aut).rstrip(','))
@@ -303,7 +303,7 @@ class EditAuthorsDialog(QDialog, Ui_EditAuthorsDialog):
         self.table.cellChanged.disconnect()
         for row in range(0,self.table.rowCount()):
             item = self.table.item(row, 1)
-            aus  = unicode(item.text()).strip()
+            aus  = str(item.text()).strip()
             c = self.table.item(row, 0)
             # Sometimes trailing commas are left by changing between copy algs
             c.setText(aus)
@@ -313,7 +313,7 @@ class EditAuthorsDialog(QDialog, Ui_EditAuthorsDialog):
     def cell_changed(self, row, col):
         if col == 0:
             item = self.table.item(row, 0)
-            aut  = unicode(item.text()).strip()
+            aut  = str(item.text()).strip()
             aut_list = string_to_authors(aut)
             if len(aut_list) != 1:
                 error_dialog(self.parent(), _('Invalid author name'),

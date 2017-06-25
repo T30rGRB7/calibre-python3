@@ -121,7 +121,7 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
         viewer = self.opt_blocked_auto_formats
         for i in range(viewer.count()):
             if viewer.item(i).checkState() == Qt.Checked:
-                fmts.append(unicode(viewer.item(i).text()))
+                fmts.append(str(viewer.item(i).text()))
         return fmts
     # }}}
 
@@ -133,7 +133,7 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
         self.add_filter_rules = []
 
     def commit(self):
-        path = unicode(self.opt_auto_add_path.text()).strip()
+        path = str(self.opt_auto_add_path.text()).strip()
         if path != gprefs['auto_add_path']:
             if path:
                 path = os.path.abspath(path)

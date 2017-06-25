@@ -120,11 +120,11 @@ def extractText(odfElement):
             elif child.nodeType == Node.ELEMENT_NODE:
                 subElement = child
                 tagName = subElement.qname;
-                if tagName == (u"urn:oasis:names:tc:opendocument:xmlns:text:1.0", u"line-break"):
+                if tagName == ("urn:oasis:names:tc:opendocument:xmlns:text:1.0", "line-break"):
                     result.append("\n")
-                elif tagName == (u"urn:oasis:names:tc:opendocument:xmlns:text:1.0", u"tab"):
+                elif tagName == ("urn:oasis:names:tc:opendocument:xmlns:text:1.0", "tab"):
                     result.append("\t")
-                elif tagName == (u"urn:oasis:names:tc:opendocument:xmlns:text:1.0", u"s"):
+                elif tagName == ("urn:oasis:names:tc:opendocument:xmlns:text:1.0", "s"):
                     c = subElement.getAttribute('c')
                     if c:
                         spaceCount =  int(c)

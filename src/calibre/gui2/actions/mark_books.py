@@ -117,7 +117,7 @@ class MarkBooksAction(InterfaceAction):
 
     def clear_all_marked(self):
         self.gui.current_db.data.set_marked_ids(())
-        if unicode(self.gui.search.text()).startswith('marked:'):
+        if str(self.gui.search.text()).startswith('marked:'):
             self.gui.search.set_search_string('')
 
     def mark_field(self, field, add):

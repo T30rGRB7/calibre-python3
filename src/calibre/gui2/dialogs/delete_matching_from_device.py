@@ -116,7 +116,7 @@ class DeleteMatchingFromDeviceDialog(QDialog, Ui_DeleteMatchingFromDeviceDialog)
             if self.table.item(row, 0).checkState() == Qt.Unchecked:
                 continue
             (model, id, path) = self.table.item(row, 0).data(Qt.UserRole)
-            path = unicode(path)
+            path = str(path)
             self.result.append((model, id, path))
         return
 

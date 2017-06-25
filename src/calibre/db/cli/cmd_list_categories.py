@@ -2,7 +2,7 @@
 # vim:fileencoding=utf-8
 # License: GPLv3 Copyright: 2017, Kovid Goyal <kovid at kovidgoyal.net>
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 
 import csv
 import sys
@@ -76,16 +76,16 @@ def do_list(fields, data, opts):
     from calibre.utils.terminal import geometry, ColoredStream
 
     separator = ' '
-    widths = list(map(lambda x: 0, fields))
+    widths = list([0 for x in fields])
     for i in data:
         for j, field in enumerate(fields):
-            widths[j] = max(widths[j], max(len(field), len(unicode(i[field]))))
+            widths[j] = max(widths[j], max(len(field), len(str(i[field]))))
 
     screen_width = geometry()[0]
     if not screen_width:
         screen_width = 80
     field_width = screen_width // len(fields)
-    base_widths = map(lambda x: min(x + 1, field_width), widths)
+    base_widths = [min(x + 1, field_width) for x in widths]
 
     while sum(base_widths) < screen_width:
         adjusted = False
@@ -100,20 +100,20 @@ def do_list(fields, data, opts):
             break
 
     widths = list(base_widths)
-    titles = map(
+    titles = list(map(
         lambda x, y: '%-*s%s' % (x - len(separator), y, separator), widths, fields
-    )
+    ))
     with ColoredStream(sys.stdout, fg='green'):
         prints(''.join(titles))
 
-    wrappers = map(lambda x: TextWrapper(x - 1), widths)
+    wrappers = [TextWrapper(x - 1) for x in widths]
 
     for record in data:
         text = [
-            wrappers[i].wrap(unicode(record[field]))
+            wrappers[i].wrap(str(record[field]))
             for i, field in enumerate(fields)
         ]
-        lines = max(map(len, text))
+        lines = max(list(map(len, text)))
         for l in range(lines):
             for i, field in enumerate(text):
                 ft = text[i][l] if l < len(text[i]) else ''
@@ -129,7 +129,7 @@ def do_csv(fields, data, opts):
     for d in data:
         row = [d[f] for f in fields]
         csv_print.writerow([
-            x if isinstance(x, bytes) else unicode(x).encode('utf-8') for x in row
+            x if isinstance(x, bytes) else str(x).encode('utf-8') for x in row
         ])
     print(buf.getvalue())
 
@@ -143,7 +143,7 @@ def main(opts, args, dbctx):
         return field_metadata.get(k)
 
     categories = [
-        k for k in category_data.keys()
+        k for k in list(category_data.keys())
         if category_metadata(k)['kind'] not in ['user', 'search'] and
         (not report_on or k in report_on)
     ]
@@ -164,11 +164,11 @@ def main(opts, args, dbctx):
             is_rating = category_metadata(category)['datatype'] == 'rating'
             for tag in category_data[category]:
                 if is_rating:
-                    tag.name = unicode(len(tag.name))
+                    tag.name = str(len(tag.name))
                 data.append({
                     'category': category,
                     'tag_name': tag.name,
-                    'count': unicode(tag.count),
+                    'count': str(tag.count),
                     'rating': fmtr(tag.avg_rating),
                 })
     else:
@@ -176,7 +176,7 @@ def main(opts, args, dbctx):
             data.append({
                 'category': category,
                 'tag_name': _('CATEGORY ITEMS'),
-                'count': unicode(len(category_data[category])),
+                'count': str(len(category_data[category])),
                 'rating': ''
             })
 

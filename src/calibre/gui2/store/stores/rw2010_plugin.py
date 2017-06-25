@@ -8,7 +8,7 @@ __copyright__ = '2011, Tomasz Długosz <tomek3d@gmail.com>'
 __docformat__ = 'restructuredtext en'
 
 import re
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from contextlib import closing
 
 from lxml import html
@@ -46,7 +46,7 @@ class RW2010Store(BasicStoreConfig, StorePlugin):
         br = browser()
 
         counter = max_results
-        with closing(br.open(url, data=urllib.urlencode(values), timeout=timeout)) as f:
+        with closing(br.open(url, data=urllib.parse.urlencode(values), timeout=timeout)) as f:
             doc = html.fromstring(f.read())
             for data in doc.xpath('//div[@class="ProductDetail"]'):
                 if counter <= 0:

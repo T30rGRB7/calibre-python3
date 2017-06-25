@@ -7,7 +7,7 @@ __license__ = 'GPL 3'
 __copyright__ = '2011, John Schember <john@nachtimwald.com>'
 __docformat__ = 'restructuredtext en'
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from contextlib import closing
 
 from lxml import html
@@ -36,7 +36,7 @@ class WeightlessBooksStore(BasicStoreConfig, StorePlugin):
             d.exec_()
 
     def search(self, query, max_results=10, timeout=60):
-        url = 'http://weightlessbooks.com/?s=' + urllib.quote_plus(query)
+        url = 'http://weightlessbooks.com/?s=' + urllib.parse.quote_plus(query)
 
         br = browser()
 

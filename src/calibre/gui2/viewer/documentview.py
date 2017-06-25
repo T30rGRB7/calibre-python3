@@ -149,7 +149,7 @@ class Document(QWebPage):  # {{{
 
     def findText(self, q, flags):
         if self.hyphenatable:
-            q = unicode(q)
+            q = str(q)
             hyphenated_q = self.javascript(
                 'hyphenate_text(%s, "%s")' % (json.dumps(q, ensure_ascii=False), self.loaded_lang), typ='string')
             if hyphenated_q and QWebPage.findText(self, hyphenated_q, flags):
@@ -205,7 +205,7 @@ class Document(QWebPage):  # {{{
         evaljs('window.calibre_utils.setup_epub_reading_system(%s, %s, %s, %s)' % tuple(map(json.dumps, (
             'calibre-desktop', __version__, 'paginated' if self.in_paged_mode else 'scrolling',
             'dom-manipulation layout-changes mouse-events keyboard-events'.split()))))
-        self.javascript(u'window.mathjax.base = %s'%(json.dumps(self.nam.mathjax_base, ensure_ascii=False)))
+        self.javascript('window.mathjax.base = %s'%(json.dumps(self.nam.mathjax_base, ensure_ascii=False)))
         for pl in self.all_viewer_plugins:
             pl.load_javascript(evaljs)
         evaljs('py_bridge.mark_element.connect(window.calibre_extract.mark)')
@@ -259,7 +259,7 @@ class Document(QWebPage):  # {{{
         if not isinstance(self.anchor_positions, dict):
             # Some weird javascript error happened
             self.anchor_positions = {}
-        return {k:tuple(v) for k, v in self.anchor_positions.iteritems()}
+        return {k:tuple(v) for k, v in self.anchor_positions.items()}
 
     def switch_to_paged_mode(self, onresize=False, last_loaded_path=None):
         if onresize and not self.loaded_javascript:
@@ -299,7 +299,7 @@ class Document(QWebPage):  # {{{
     def column_boundaries(self):
         if not self.loaded_javascript:
             return (0, 1)
-        ans = self.javascript(u'JSON.stringify(paged_display.column_boundaries())')
+        ans = self.javascript('JSON.stringify(paged_display.column_boundaries())')
         return tuple(int(x) for x in json.loads(ans))
 
     def after_resize(self):
@@ -320,7 +320,7 @@ class Document(QWebPage):  # {{{
 
     @pyqtSlot(str)
     def debug(self, msg):
-        prints(unicode(msg))
+        prints(str(msg))
 
     @pyqtSlot(int)
     def jump_to_cfi_finished(self, job_id):
@@ -359,7 +359,7 @@ class Document(QWebPage):  # {{{
             except (TypeError, ValueError):
                 return 0.0
         if typ == 'string':
-            return ans or u''
+            return ans or ''
         if typ in {bool, 'bool'}:
             return bool(ans)
         return ans
@@ -393,7 +393,7 @@ class Document(QWebPage):  # {{{
         return ans
 
     def elem_outer_xml(self, elem):
-        return unicode(elem.toOuterXml())
+        return str(elem.toOuterXml())
 
     def bookmark(self):
         pos = self.page_position.current_pos
@@ -512,7 +512,7 @@ class Document(QWebPage):  # {{{
         self.setPreferredContentsSize(s)
 
     def extract_node(self):
-        return unicode(self.mainFrame().evaluateJavaScript(
+        return str(self.mainFrame().evaluateJavaScript(
             'window.calibre_extract.extract()'))
 
 # }}}
@@ -666,7 +666,7 @@ class DocumentView(QWebView):  # {{{
 
     @property
     def selected_text(self):
-        return self.document.selectedText().replace(u'\u00ad', u'').strip()
+        return self.document.selectedText().replace('\u00ad', '').strip()
 
     def copy(self):
         self.document.triggerAction(self.document.Copy)
@@ -674,7 +674,7 @@ class DocumentView(QWebView):  # {{{
         md = c.mimeData()
         if iswindows:
             nmd = QMimeData()
-            nmd.setHtml(md.html().replace(u'\u00ad', ''))
+            nmd.setHtml(md.html().replace('\u00ad', ''))
             md = nmd
         md.setText(self.selected_text)
         QApplication.clipboard().setMimeData(md)
@@ -684,12 +684,12 @@ class DocumentView(QWebView):  # {{{
             self.manager.selection_changed(self.selected_text)
 
     def _selectedText(self):
-        t = unicode(self.selectedText()).strip()
+        t = str(self.selectedText()).strip()
         if not t:
-            return u''
+            return ''
         if len(t) > 40:
-            t = t[:40] + u'...'
-        t = t.replace(u'&', u'&&')
+            t = t[:40] + '...'
+        t = t.replace('&', '&&')
         return _("S&earch online for '%s'")%t
 
     def popup_table(self):
@@ -713,8 +713,8 @@ class DocumentView(QWebView):  # {{{
         table = None
         parent = elem
         while not parent.isNull():
-            if (unicode(parent.tagName()) == u'table' or
-                unicode(parent.localName()) == u'table'):
+            if (str(parent.tagName()) == 'table' or
+                str(parent.localName()) == 'table'):
                 table = parent
                 break
             parent = parent.parent()
@@ -739,10 +739,10 @@ class DocumentView(QWebView):  # {{{
             self.search_online_action.setText(text)
             for x, sc in (('search_online', 'Search online'), ('dictionary', 'Lookup word'), ('search', 'Next occurrence')):
                 ac = getattr(self, '%s_action' % x)
-                menu.addAction(ac.icon(), '%s [%s]' % (unicode(ac.text()), ','.join(self.shortcuts.get_shortcuts(sc))), ac.trigger)
+                menu.addAction(ac.icon(), '%s [%s]' % (str(ac.text()), ','.join(self.shortcuts.get_shortcuts(sc))), ac.trigger)
 
         if from_touch and self.manager is not None:
-            word = unicode(mf.evaluateJavaScript('window.calibre_utils.word_at_point(%f, %f)' % (ev.pos().x(), ev.pos().y())) or '')
+            word = str(mf.evaluateJavaScript('window.calibre_utils.word_at_point(%f, %f)' % (ev.pos().x(), ev.pos().y())) or '')
             if word:
                 menu.addAction(self.dictionary_action.icon(), _('Lookup %s in the dictionary') % word, partial(self.manager.lookup, word))
                 menu.addAction(self.search_online_action.icon(), _('Search for %s online') % word, partial(self.do_search_online, word))
@@ -802,18 +802,18 @@ class DocumentView(QWebView):  # {{{
 
     def lookup(self, *args):
         if self.manager is not None:
-            t = unicode(self.selectedText()).strip()
+            t = str(self.selectedText()).strip()
             if t:
                 self.manager.lookup(t.split()[0])
 
     def search_next(self):
         if self.manager is not None:
-            t = unicode(self.selectedText()).strip()
+            t = str(self.selectedText()).strip()
             if t:
                 self.manager.search.set_search_string(t)
 
     def search_online(self):
-        t = unicode(self.selectedText()).strip()
+        t = str(self.selectedText()).strip()
         if t:
             self.do_search_online(t)
 
@@ -852,7 +852,7 @@ class DocumentView(QWebView):  # {{{
         return (l, d.ypos, r, d.ypos + d.window_height)
 
     def link_hovered(self, link, text, context):
-        link, text = unicode(link), unicode(text)
+        link, text = str(link), str(text)
         if link:
             self.setCursor(Qt.PointingHandCursor)
         else:
@@ -1179,12 +1179,12 @@ class DocumentView(QWebView):  # {{{
         old_pos = (self.document.xpos if self.document.in_paged_mode else
                 self.document.ypos)
         if self.document.in_paged_mode:
-            if isinstance(pos, basestring):
+            if isinstance(pos, str):
                 self.document.jump_to_anchor(pos)
             else:
                 self.document.scroll_fraction = pos
         else:
-            if isinstance(pos, basestring):
+            if isinstance(pos, str):
                 self.document.jump_to_anchor(pos)
             else:
                 if pos >= 1:

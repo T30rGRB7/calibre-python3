@@ -9,7 +9,7 @@ __docformat__ = 'restructuredtext en'
 
 import json, traceback, posixpath, importlib, os
 from io import BytesIO
-from itertools import izip
+
 
 from calibre import prints
 from calibre.constants import iswindows, numeric_version
@@ -75,7 +75,7 @@ class MTP_DEVICE(BASE):
 
     def is_folder_ignored(self, storage_or_storage_id, path,
                           ignored_folders=None):
-        storage_id = unicode(getattr(storage_or_storage_id, 'object_id',
+        storage_id = str(getattr(storage_or_storage_id, 'object_id',
                              storage_or_storage_id))
         lpath = tuple(icu_lower(name) for name in path)
         if ignored_folders is None:
@@ -166,14 +166,14 @@ class MTP_DEVICE(BASE):
                 traceback.print_exc()
                 dinfo = {}
         if dinfo.get('device_store_uuid', None) is None:
-            dinfo['device_store_uuid'] = unicode(uuid.uuid4())
+            dinfo['device_store_uuid'] = str(uuid.uuid4())
         if dinfo.get('device_name', None) is None:
             dinfo['device_name'] = self.current_friendly_name
         if name is not None:
             dinfo['device_name'] = name
         dinfo['location_code'] = location_code
         dinfo['last_library_uuid'] = getattr(self, 'current_library_uuid', None)
-        dinfo['calibre_version'] = '.'.join([unicode(i) for i in numeric_version])
+        dinfo['calibre_version'] = '.'.join([str(i) for i in numeric_version])
         dinfo['date_last_connected'] = isoformat(now())
         dinfo['mtp_prefix'] = storage.storage_prefix
         raw = json.dumps(dinfo, default=to_json)
@@ -276,7 +276,7 @@ class MTP_DEVICE(BASE):
             book.path = mtp_file.mtp_id_path
 
         # Remove books in the cache that no longer exist
-        for idx in sorted(relpath_cache.itervalues(), reverse=True):
+        for idx in sorted(iter(relpath_cache.values()), reverse=True):
             del bl[idx]
             need_sync = True
 
@@ -420,7 +420,7 @@ class MTP_DEVICE(BASE):
 
         routing = {fmt:dest for fmt,dest in self.get_pref('rules')}
 
-        for infile, fname, mi in izip(files, names, metadata):
+        for infile, fname, mi in zip(files, names, metadata):
             path = self.create_upload_path(prefix, mi, fname, routing)
             if path and self.is_folder_ignored(storage, path):
                 raise MTPInvalidSendPathError('/'.join(path))
@@ -455,7 +455,7 @@ class MTP_DEVICE(BASE):
 
         i, total = 0, len(mtp_files)
         self.report_progress(0, _('Adding books to device metadata listing...'))
-        for x, mi in izip(mtp_files, metadata):
+        for x, mi in zip(mtp_files, metadata):
             mtp_file, bl_idx = x
             bl = booklists[bl_idx]
             book = Book(mtp_file.storage_id, '/'.join(mtp_file.mtp_relpath),
@@ -546,7 +546,7 @@ class MTP_DEVICE(BASE):
     def get_user_blacklisted_devices(self):
         bl = frozenset(self.prefs['blacklist'])
         ans = {}
-        for dev, x in self.prefs['history'].iteritems():
+        for dev, x in self.prefs['history'].items():
             name = x[0]
             if dev in bl:
                 ans[dev] = name
@@ -572,6 +572,6 @@ if __name__ == '__main__':
         dev.set_progress_reporter(prints)
         dev.open(cd, None)
         dev.filesystem_cache.dump()
-        print ('Prefix for main mem:', dev.prefix_for_location(None))
+        print(('Prefix for main mem:', dev.prefix_for_location(None)))
     finally:
         dev.shutdown()

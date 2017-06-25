@@ -8,7 +8,7 @@ __copyright__ = '2011, John Schember <john@nachtimwald.com>'
 __docformat__ = 'restructuredtext en'
 
 import re
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from contextlib import closing
 
 from lxml import html
@@ -44,7 +44,7 @@ class EbookscomStore(BasicStoreConfig, StorePlugin):
             d.exec_()
 
     def search(self, query, max_results=10, timeout=60):
-        url = 'http://www.ebooks.com/SearchApp/SearchResults.net?term=' + urllib.quote_plus(query)
+        url = 'http://www.ebooks.com/SearchApp/SearchResults.net?term=' + urllib.parse.quote_plus(query)
 
         br = browser()
 

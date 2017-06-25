@@ -1,6 +1,6 @@
-from __future__ import absolute_import, division, unicode_literals
+
 try:
-    text_type = unicode
+    text_type = str
 except NameError:
     text_type = str
 
@@ -45,7 +45,7 @@ class Node(object):
     def __str__(self):
         attributesStr = " ".join(["%s=\"%s\"" % (name, value)
                                   for name, value in
-                                  self.attributes.items()])
+                                  list(self.attributes.items())])
         if attributesStr:
             return "<%s %s>" % (self.name, attributesStr)
         else:
@@ -273,12 +273,12 @@ class TreeBuilder(object):
         return element
 
     def apply_html_attributes(self, attrs):
-        for attr, value in attrs.items():
+        for attr, value in list(attrs.items()):
             if attr not in self.openElements[0].attributes:
                 self.openElements[0].attributes[attr] = value
 
     def apply_body_attributes(self, attrs):
-        for attr, value in attrs.items():
+        for attr, value in list(attrs.items()):
             if attr not in self.openElements[1].attributes:
                 self.openElements[1].attributes[attr] = value
 

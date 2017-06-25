@@ -67,7 +67,7 @@ class ShareConnMenu(QMenu):  # {{{
                 if not (iswindows or isosx) and attr == 'itunes':
                     continue
                 ac = getattr(self, 'connect_to_%s_action'%attr)
-                r(prefix + attr, unicode(ac.text()), action=ac,
+                r(prefix + attr, str(ac.text()), action=ac,
                         group=gr)
             r(prefix+' content server', _('Start/stop Content server'),
                     action=self.toggle_server_action, group=gr)
@@ -119,7 +119,7 @@ class ShareConnMenu(QMenu):  # {{{
                         (alias or account) + ' ' + _('(delete from library)'))
                 self.email_to_menu.addAction(action1)
                 self.email_to_and_delete_menu.addAction(action2)
-                map(self.memory.append, (action1, action2))
+                list(map(self.memory.append, (action1, action2)))
                 if default:
                     ac = DeviceAction(dest, False, False,
                             I('mail.png'), _('Email to') + ' ' +(alias or
@@ -135,7 +135,7 @@ class ShareConnMenu(QMenu):  # {{{
                     _('Select recipients') + ' ' + _('(delete from library)'))
             self.email_to_menu.addAction(action1)
             self.email_to_and_delete_menu.addAction(action2)
-            map(self.memory.append, (action1, action2))
+            list(map(self.memory.append, (action1, action2)))
             tac1 = DeviceAction('choosemail:', False, False, I('mail.png'),
                     _('Email to selected recipients...'))
             self.addAction(tac1)

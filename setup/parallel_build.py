@@ -50,7 +50,7 @@ def run_worker(job, decorate=True):
     try:
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     except Exception as err:
-        return False, human_text, unicode(err)
+        return False, human_text, str(err)
     stdout, stderr = p.communicate()
     if decorate:
         stdout = bytes(human_text) + b'\n' + (stdout or b'')

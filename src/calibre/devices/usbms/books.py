@@ -255,10 +255,10 @@ class CollectionsBookList(BookList):
                     elif is_series:
                         if doing_dc:
                             collections[cat_name][lpath] = \
-                                (book, book.get('series_index', sys.maxint), tsval)
+                                (book, book.get('series_index', sys.maxsize), tsval)
                         else:
                             collections[cat_name][lpath] = \
-                                (book, book.get(attr+'_index', sys.maxint), tsval)
+                                (book, book.get(attr+'_index', sys.maxsize), tsval)
                     else:
                         if lpath not in collections[cat_name]:
                             collections[cat_name][lpath] = (book, tsval, tsval)
@@ -291,7 +291,7 @@ class CollectionsBookList(BookList):
                 return 1
             if y is None:
                 return -1
-            if isinstance(x, basestring) and isinstance(y, basestring):
+            if isinstance(x, str) and isinstance(y, str):
                 x, y = sort_key(force_unicode(x)), sort_key(force_unicode(y))
             try:
                 c = cmp(x, y)
@@ -305,8 +305,8 @@ class CollectionsBookList(BookList):
             except TypeError:
                 return 0
 
-        for category, lpaths in collections.items():
-            books = lpaths.values()
+        for category, lpaths in list(collections.items()):
+            books = list(lpaths.values())
             books.sort(cmp=none_cmp)
             result[category] = [x[0] for x in books]
         return result

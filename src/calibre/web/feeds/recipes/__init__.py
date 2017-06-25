@@ -30,12 +30,12 @@ def compile_recipe(src):
 
     :return: Recipe class or None, if no such class was found in src
     '''
-    if not isinstance(src, unicode):
+    if not isinstance(src, str):
         match = re.search(r'coding[:=]\s*([-\w.]+)', src[:200])
         enc = match.group(1) if match else 'utf-8'
         src = src.decode(enc)
     # Python complains if there is a coding declaration in a unicode string
-    src = re.sub(r'^#.*coding\s*[:=]\s*([-\w.]+)', '#', src.lstrip(u'\ufeff'), flags=re.MULTILINE)
+    src = re.sub(r'^#.*coding\s*[:=]\s*([-\w.]+)', '#', src.lstrip('\ufeff'), flags=re.MULTILINE)
     # Translate newlines to \n
     src = io.StringIO(src, newline=None).getvalue()
 
@@ -45,9 +45,9 @@ def compile_recipe(src):
             'time':time, 're':re,
             'BeautifulSoup':BeautifulSoup
     }
-    exec src in namespace
+    exec(src, namespace)
 
-    for x in namespace.itervalues():
+    for x in namespace.values():
         if (isinstance(x, type) and issubclass(x, BasicNewsRecipe) and x not
                 in basic_recipes):
             return x

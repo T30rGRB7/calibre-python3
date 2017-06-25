@@ -232,8 +232,8 @@ class CheckLibraryDialog(QDialog):
         return True
 
     def accept(self):
-        self.db.new_api.set_pref('check_library_ignore_extensions', unicode(self.ext_ignores.text()))
-        self.db.new_api.set_pref('check_library_ignore_names', unicode(self.name_ignores.text()))
+        self.db.new_api.set_pref('check_library_ignore_extensions', str(self.ext_ignores.text()))
+        self.db.new_api.set_pref('check_library_ignore_names', str(self.name_ignores.text()))
         QDialog.accept(self)
 
     def box_to_list(self, txt):
@@ -241,8 +241,8 @@ class CheckLibraryDialog(QDialog):
 
     def run_the_check(self):
         checker = CheckLibrary(self.db.library_path, self.db)
-        checker.scan_library(self.box_to_list(unicode(self.name_ignores.text())),
-                             self.box_to_list(unicode(self.ext_ignores.text())))
+        checker.scan_library(self.box_to_list(str(self.name_ignores.text())),
+                             self.box_to_list(str(self.ext_ignores.text())))
 
         plaintext = []
 
@@ -302,7 +302,7 @@ class CheckLibraryDialog(QDialog):
 
     def item_changed(self, item, column):
         self.fix_button.setEnabled(False)
-        for it in self.top_level_items.values():
+        for it in list(self.top_level_items.values()):
             if it.checkState(1):
                 self.fix_button.setEnabled(True)
 
@@ -313,7 +313,7 @@ class CheckLibraryDialog(QDialog):
                 return
 
     def mark_for_fix(self):
-        for it in self.top_level_items.values():
+        for it in list(self.top_level_items.values()):
             if it.flags() & Qt.ItemIsUserCheckable:
                 it.setCheckState(1, Qt.Checked)
 
@@ -335,7 +335,7 @@ class CheckLibraryDialog(QDialog):
         for it in items:
             if it.checkState(1):
                 try:
-                    p = os.path.join(self.db.library_path ,unicode(it.text(1)))
+                    p = os.path.join(self.db.library_path ,str(it.text(1)))
                     if os.path.isdir(p):
                         delete_tree(p)
                     else:
@@ -343,7 +343,7 @@ class CheckLibraryDialog(QDialog):
                 except:
                     prints('failed to delete',
                             os.path.join(self.db.library_path,
-                                unicode(it.text(1))))
+                                str(it.text(1))))
         self.run_the_check()
 
     def fix_missing_formats(self):

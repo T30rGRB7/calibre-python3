@@ -22,7 +22,7 @@ def get_metadata(stream, extract_cover=True):
     mi = MetaInformation(name or _('Unknown'), [_('Unknown')])
     stream.seek(0)
 
-    mdata = u''
+    mdata = ''
     for x in range(0, 4):
         line = stream.readline().decode('utf-8', 'replace')
         if line == '':

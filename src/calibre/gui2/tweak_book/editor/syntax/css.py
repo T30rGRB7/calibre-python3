@@ -297,7 +297,7 @@ def create_formats(highlighter):
     for name, msg in {
         'unknown-normal': _('Invalid text'),
         'unterminated-string': _('Unterminated string'),
-    }.iteritems():
+    }.items():
         f = formats[name] = syntax_text_char_format(formats['error'])
         f.setToolTip(msg)
     formats['link'] = syntax_text_char_format(theme['Link'])

@@ -13,7 +13,7 @@ try:
 except ImportError:
     import Image
 
-import cStringIO
+import io
 
 from calibre.ebooks.rb.rbml import RBMLizer
 from calibre.ebooks.rb import HEADER
@@ -121,8 +121,8 @@ class RBWriter(object):
                 try:
                     data = ''
 
-                    im = Image.open(cStringIO.StringIO(item.data)).convert('L')
-                    data = cStringIO.StringIO()
+                    im = Image.open(io.StringIO(item.data)).convert('L')
+                    data = io.StringIO()
                     im.save(data, 'PNG')
                     data = data.getvalue()
 

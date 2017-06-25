@@ -97,7 +97,7 @@ class DemoDialog(QDialog):
         ''' View the most recently added book '''
         most_recent = most_recent_id = None
         db = self.db.new_api
-        for book_id, timestamp in db.all_field_for('timestamp', db.all_book_ids()).iteritems():
+        for book_id, timestamp in db.all_field_for('timestamp', db.all_book_ids()).items():
             if most_recent is None or timestamp > most_recent:
                 most_recent = timestamp
                 most_recent_id = book_id

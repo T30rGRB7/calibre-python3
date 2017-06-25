@@ -122,7 +122,7 @@ def encode_strands_as_sequences(strands, tbs_type=8):
     max_length_offset = 0
     first_entry = None
     for strand in strands:
-        for entries in strand.itervalues():
+        for entries in strand.values():
             for entry in entries:
                 if first_entry is None:
                     first_entry = entry
@@ -131,7 +131,7 @@ def encode_strands_as_sequences(strands, tbs_type=8):
 
     for strand in strands:
         strand_seqs = []
-        for depth, entries in strand.iteritems():
+        for depth, entries in strand.items():
             extra = {}
             if entries[-1].action == 'spans':
                 extra[0b1] = 0
@@ -207,7 +207,7 @@ def apply_trailing_byte_sequences(index_table, records, text_record_lengths):
     except NegativeStrandIndex:
         rmap = calculate_all_tbs(indexing_data, tbs_type=5)
 
-    for i, tbs_bytes in rmap.iteritems():
+    for i, tbs_bytes in rmap.items():
         records[i] += encode_trailing_data(tbs_bytes)
 
     return True

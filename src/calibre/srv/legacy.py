@@ -7,7 +7,7 @@ from __future__ import (unicode_literals, division, absolute_import,
 from functools import partial
 from lxml.html import tostring
 from lxml.html.builder import E as E_
-from urllib import urlencode
+from urllib.parse import urlencode
 
 from calibre import strftime
 from calibre.constants import __appname__
@@ -24,14 +24,14 @@ from calibre.utils.date import timestampfromdt, dt_as_local, is_date_undefined
 
 
 def clean(x):
-    if isinstance(x, basestring):
+    if isinstance(x, str):
         x = clean_xml_chars(x)
     return x
 
 
 def E(tag, *children, **attribs):
     children = list(map(clean, children))
-    attribs = {k.rstrip('_').replace('_', '-'):clean(v) for k, v in attribs.iteritems()}
+    attribs = {k.rstrip('_').replace('_', '-'):clean(v) for k, v in attribs.items()}
     return getattr(E_, tag)(*children, **attribs)
 
 
@@ -120,7 +120,7 @@ def build_navigation(start, num, total, url_base):  # {{{
 
 def build_choose_library(ctx, library_map):
     select = E.select(name='library_id')
-    for library_id, library_name in library_map.iteritems():
+    for library_id, library_name in library_map.items():
         select.append(E.option(library_name, value=library_id))
     return E.div(
         E.form(
@@ -165,7 +165,7 @@ def build_index(rd, books, num, search, sort, order, start, total, url_base, fie
                     href=ctx.url_for('/legacy/get', what=fmt, book_id=book.id, library_id=library_id, filename=book_filename(rd, book.id, book, fmt))
                 ),
                 class_='button')
-            s.tail = u''
+            s.tail = ''
             data.append(s)
 
         div = E.div(class_='data-container')
@@ -183,11 +183,11 @@ def build_index(rd, books, num, search, sort, order, start, total, url_base, fie
             if val:
                 ctext += '%s=[%s] '%(name, val)
 
-        first = E.span(u'\u202f%s %s by %s' % (book.title, series,
+        first = E.span('\u202f%s %s by %s' % (book.title, series,
             authors_to_string(book.authors)), class_='first-line')
         div.append(first)
         ds = '' if is_date_undefined(book.timestamp) else strftime('%d %b, %Y', t=dt_as_local(book.timestamp).timetuple())
-        second = E.span(u'%s %s %s' % (ds, tags, ctext), class_='second-line')
+        second = E.span('%s %s %s' % (ds, tags, ctext), class_='second-line')
         div.append(second)
 
         books_table.append(E.tr(thumbnail, data))
@@ -242,7 +242,7 @@ def mobile(ctx, rd):
     order = 'ascending' if ascending else 'descending'
     q = {b'search':search.encode('utf-8'), b'order':bytes(order), b'sort':sort_by.encode('utf-8'), b'num':bytes(num), 'library_id':library_id}
     url_base = ctx.url_for('/mobile') + '?' + urlencode(q)
-    lm = {k:v for k, v in library_map.iteritems() if k != library_id}
+    lm = {k:v for k, v in library_map.items() if k != library_id}
     return build_index(rd, books, num, search, sort_by, order, start, total, url_base, db.field_metadata, ctx, lm, library_id)
 # }}}
 

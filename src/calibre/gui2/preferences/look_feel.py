@@ -154,7 +154,7 @@ class IdLinksEditor(Dialog):
         la.setWordWrap(True)
         l.addWidget(la)
         items = []
-        for k, lx in msprefs['id_link_rules'].iteritems():
+        for k, lx in msprefs['id_link_rules'].items():
             for n, t in lx:
                 items.append((k, n, t))
         items.sort(key=lambda x:sort_key(x[1]))
@@ -192,7 +192,7 @@ class IdLinksEditor(Dialog):
     def edit_rule(self, r=-1):
         key = name = template = ''
         if r > -1:
-            key, name, template = map(lambda c: self.table.item(r, c).text(), range(3))
+            key, name, template = [self.table.item(r, c).text() for c in range(3)]
         d = IdLinksRuleEdit(key, name, template, self)
         if d.exec_() == d.Accepted:
             if r < 0:
@@ -464,8 +464,8 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
         self.tabWidget.setCurrentIndex(0)
         keys = [QKeySequence('F11', QKeySequence.PortableText), QKeySequence(
             'Ctrl+Shift+F', QKeySequence.PortableText)]
-        keys = [unicode(x.toString(QKeySequence.NativeText)) for x in keys]
-        self.fs_help_msg.setText(unicode(self.fs_help_msg.text())%(
+        keys = [str(x.toString(QKeySequence.NativeText)) for x in keys]
+        self.fs_help_msg.setText(str(self.fs_help_msg.text())%(
             _(' or ').join(keys)))
         self.size_calculated.connect(self.update_cg_cache_size, type=Qt.QueuedConnection)
         self.tabWidget.currentChanged.connect(self.tab_changed)
@@ -648,7 +648,7 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
     def update_font_display(self):
         font = self.build_font_obj()
         fi = QFontInfo(font)
-        name = unicode(fi.family())
+        name = str(fi.family())
 
         self.font_display.setFont(font)
         self.font_display.setText(name +
@@ -677,7 +677,7 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
         if fd.exec_() == fd.Accepted:
             font = fd.selectedFont()
             fi = QFontInfo(font)
-            self.current_font = [unicode(fi.family()), fi.pointSize(),
+            self.current_font = [str(fi.family()), fi.pointSize(),
                     fi.weight(), fi.italic(), font.stretch()]
             self.update_font_display()
             self.changed_signal.emit()

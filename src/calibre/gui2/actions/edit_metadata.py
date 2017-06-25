@@ -255,7 +255,7 @@ class EditMetadataAction(InterfaceAction):
                     failed_ids |= d.rejected_ids
                     restrict_to_failed = True
                 nid_map = {}
-                for book_id, (changed, mi) in d.accepted.iteritems():
+                for book_id, (changed, mi) in d.accepted.items():
                     if mi is None:  # discarded
                         continue
                     if changed:
@@ -547,7 +547,7 @@ class EditMetadataAction(InterfaceAction):
                 if not dest_mi.comments:
                     dest_mi.comments = src_mi.comments
                 else:
-                    dest_mi.comments = unicode(dest_mi.comments) + u'\n\n' + unicode(src_mi.comments)
+                    dest_mi.comments = str(dest_mi.comments) + '\n\n' + str(src_mi.comments)
             if src_mi.title and (not dest_mi.title or
                     dest_mi.title == _('Unknown')):
                 dest_mi.title = src_mi.title
@@ -602,7 +602,7 @@ class EditMetadataAction(InterfaceAction):
                     if not dest_value:
                         db.set_custom(dest_id, src_value, num=colnum)
                     else:
-                        dest_value = unicode(dest_value) + u'\n\n' + unicode(src_value)
+                        dest_value = str(dest_value) + '\n\n' + str(src_value)
                         db.set_custom(dest_id, dest_value, num=colnum)
                 if (dt in {'bool', 'int', 'float', 'rating', 'datetime'} and dest_value is None):
                     db.set_custom(dest_id, src_value, num=colnum)
@@ -627,8 +627,8 @@ class EditMetadataAction(InterfaceAction):
         if d.result() == d.Accepted:
             to_rename = d.to_rename  # dict of new text to old ids
             to_delete = d.to_delete  # list of ids
-            for old_id, new_name in to_rename.iteritems():
-                model.rename_collection(old_id, new_name=unicode(new_name))
+            for old_id, new_name in to_rename.items():
+                model.rename_collection(old_id, new_name=str(new_name))
             for item in to_delete:
                 model.delete_collection_using_id(item)
             self.gui.upload_collections(model.db, view=view, oncard=oncard)
@@ -655,7 +655,7 @@ class EditMetadataAction(InterfaceAction):
         '''
         if title is None:
             title = _('Applying changed metadata')
-        self.apply_id_map = list(id_map.iteritems())
+        self.apply_id_map = list(id_map.items())
         self.apply_current_idx = 0
         self.apply_failures = []
         self.applied_ids = set()

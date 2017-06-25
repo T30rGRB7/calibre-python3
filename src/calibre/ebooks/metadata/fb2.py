@@ -26,7 +26,7 @@ NAMESPACES = {
     'xlink' :   'http://www.w3.org/1999/xlink'
 }
 
-tostring = partial(etree.tostring, method='text', encoding=unicode)
+tostring = partial(etree.tostring, method='text', encoding=str)
 
 
 def XLINK(tag):
@@ -51,7 +51,7 @@ class Context(object):
 
     def get_or_create(self, parent, tag, attribs={}, at_start=True):
         xpathstr='./fb:'+tag
-        for n, v in attribs.items():
+        for n, v in list(attribs.items()):
             xpathstr += '[@%s="%s"]' % (n, v)
         ans = self.XPath(xpathstr)(parent)
         if ans:
@@ -95,7 +95,7 @@ def get_metadata(stream):
 
     # fallback for book_title
     if book_title:
-        book_title = unicode(book_title)
+        book_title = str(book_title)
     else:
         book_title = force_unicode(os.path.splitext(
             os.path.basename(getattr(stream, 'name',
@@ -232,7 +232,7 @@ def _parse_tags(root, mi, ctx):
         # -- i18n Translations-- ?
         tags = ctx.XPath('//fb:%s/fb:genre/text()' % genre_sec)(root)
         if tags:
-            mi.tags = list(map(unicode, tags))
+            mi.tags = list(map(str, tags))
             break
 
 
@@ -284,7 +284,7 @@ def _parse_pubdate(root, mi, ctx):
     year = ctx.XPath('number(//fb:publish-info/fb:year/text())')(root)
     if float.is_integer(year):
         # only year is available, so use 2nd of June
-        mi.pubdate = parse_only_date(type(u'')(int(year)))
+        mi.pubdate = parse_only_date(type('')(int(year)))
 
 
 def _parse_language(root, mi, ctx):
@@ -424,7 +424,7 @@ def ensure_namespace(doc):
                 break
     if bare_tags:
         import re
-        raw = etree.tostring(doc, encoding=unicode)
+        raw = etree.tostring(doc, encoding=str)
         raw = re.sub(r'''<(description|body)\s+xmlns=['"]['"]>''', r'<\1>', raw)
         doc = etree.fromstring(raw)
     return doc

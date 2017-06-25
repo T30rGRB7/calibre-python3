@@ -85,14 +85,14 @@ class RuleEdit(QWidget):
         l.addLayout(h)
         self.action = a = QComboBox(self)
         h.addWidget(a)
-        for action, text in self.ACTION_MAP.iteritems():
+        for action, text in self.ACTION_MAP.items():
             a.addItem(text, action)
         a.currentIndexChanged.connect(self.update_state)
         self.la1 = la = QLabel('\xa0' + self.SUBJECT + '\xa0')
         h.addWidget(la)
         self.match_type = q = QComboBox(self)
         h.addWidget(q)
-        for action, text in self.MATCH_TYPE_MAP.iteritems():
+        for action, text in self.MATCH_TYPE_MAP.items():
             q.addItem(text, action)
         q.currentIndexChanged.connect(self.update_state)
         self.la2 = la = QLabel(':\xa0')
@@ -154,7 +154,7 @@ class RuleEdit(QWidget):
 
     def edit_tags(self):
         from calibre.gui2.dialogs.tag_editor import TagEditor
-        d = TagEditor(self, get_gui().current_db, current_tags=filter(None, [x.strip() for x in self.query.text().split(',')]))
+        d = TagEditor(self, get_gui().current_db, current_tags=[_f for _f in [x.strip() for x in self.query.text().split(',')] if _f])
         if d.exec_() == d.Accepted:
             self.query.setText(', '.join(d.tags))
 
@@ -172,14 +172,14 @@ class RuleEdit(QWidget):
     def rule(self, rule):
         def sc(name):
             c = getattr(self, name)
-            idx = c.findData(unicode(rule.get(name, '')))
+            idx = c.findData(str(rule.get(name, '')))
             if idx < 0:
                 idx = 0
             c.setCurrentIndex(idx)
         sc('action'), sc('match_type')
         ac = self.action.currentData()
-        self.query.setText(intelligent_strip(ac, unicode(rule.get('query', ''))))
-        self.replace.setText(intelligent_strip(ac, unicode(rule.get('replace', ''))))
+        self.query.setText(intelligent_strip(ac, str(rule.get('query', ''))))
+        self.replace.setText(intelligent_strip(ac, str(rule.get('replace', ''))))
 
     def validate(self):
         rule = self.rule
@@ -368,7 +368,7 @@ class Rules(QWidget):
     @property
     def rules(self):
         ans = []
-        for r in xrange(self.rule_list.count()):
+        for r in range(self.rule_list.count()):
             ans.append(self.rule_list.item(r).data(DATA_ROLE))
         return ans
 
@@ -452,11 +452,11 @@ class SaveLoadMixin(object):
     def build_load_menu(self):
         self.load_menu.clear()
         if len(self.PREFS_OBJECT):
-            for name, rules in self.PREFS_OBJECT.iteritems():
+            for name, rules in self.PREFS_OBJECT.items():
                 self.load_menu.addAction(name).triggered.connect(partial(self.load_ruleset, name))
             self.load_menu.addSeparator()
             m = self.load_menu.addMenu(_('Delete saved rulesets'))
-            for name, rules in self.PREFS_OBJECT.iteritems():
+            for name, rules in self.PREFS_OBJECT.items():
                 m.addAction(name).triggered.connect(partial(self.delete_ruleset, name))
         else:
             self.load_menu.addAction(_('No saved rulesets available'))

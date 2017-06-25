@@ -114,7 +114,7 @@ every time you add an HTML file to the library.\
         config_dialog.exec_()
 
         if config_dialog.result() == QDialog.Accepted:
-            sc = unicode(sc.text()).strip()
+            sc = str(sc.text()).strip()
             if bf.isChecked():
                 sc += '|bf'
             customize_plugin(self, sc)

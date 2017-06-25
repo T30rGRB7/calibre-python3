@@ -48,6 +48,6 @@ class ChooseFormatDeviceDialog(QDialog, Ui_ChooseFormatDeviceDialog):
         return self._format
 
     def accept(self):
-        self._format = unicode(self.formats.currentItem().text(0))
+        self._format = str(self.formats.currentItem().text(0))
         return QDialog.accept(self)
 

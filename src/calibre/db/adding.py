@@ -67,7 +67,7 @@ def metadata_extensions():
     # but not actually added)
     global _metadata_extensions
     if _metadata_extensions is None:
-        _metadata_extensions =  frozenset(map(unicode, BOOK_EXTENSIONS)) | {'opf'}
+        _metadata_extensions =  frozenset(map(str, BOOK_EXTENSIONS)) | {'opf'}
     return _metadata_extensions
 
 
@@ -114,17 +114,17 @@ def find_books_in_directory(dirpath, single_book_per_directory, compiled_rules=(
             if allow_path(path, ext, compiled_rules):
                 formats[ext] = path
         if formats_ok(formats):
-            yield list(formats.itervalues())
+            yield list(formats.values())
     else:
         books = defaultdict(dict)
         for path in listdir_impl(dirpath, sort_by_mtime=True):
             key, ext = splitext(path)
             if allow_path(path, ext, compiled_rules):
-                books[icu_lower(key) if isinstance(key, unicode) else key.lower()][ext] = path
+                books[icu_lower(key) if isinstance(key, str) else key.lower()][ext] = path
 
-        for formats in books.itervalues():
+        for formats in books.values():
             if formats_ok(formats):
-                yield list(formats.itervalues())
+                yield list(formats.values())
 
 
 def create_format_map(formats):

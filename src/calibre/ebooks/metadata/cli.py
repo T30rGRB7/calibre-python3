@@ -1,4 +1,4 @@
-from __future__ import with_statement
+
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal kovid@kovidgoyal.net'
 __docformat__ = 'restructuredtext en'
@@ -149,7 +149,7 @@ def do_set_metadata(opts, mi, stream, stream_type):
         if val:
             orig = mi.get_identifiers()
             orig.update(val)
-            val = {k:v for k, v in orig.iteritems() if k and v}
+            val = {k:v for k, v in orig.items() if k and v}
             mi.set_identifiers(val)
 
     if getattr(opts, 'cover', None) is not None:
@@ -181,7 +181,7 @@ def main(args=sys.argv):
         mi = get_metadata(stream, stream_type, force_read_metadata=True)
     if trying_to_set:
         prints(_('Original metadata')+'::')
-    metadata = unicode(mi)
+    metadata = str(mi)
     if trying_to_set:
         metadata = '\t'+'\n\t'.join(metadata.split('\n'))
     prints(metadata, safe_encode=True)
@@ -198,7 +198,7 @@ def main(args=sys.argv):
                     lrf.book_id = opts.lrf_bookid
             mi = get_metadata(stream, stream_type, force_read_metadata=True)
         prints('\n' + _('Changed metadata') + '::')
-        metadata = unicode(mi)
+        metadata = str(mi)
         metadata = '\t'+'\n\t'.join(metadata.split('\n'))
         prints(metadata, safe_encode=True)
         if lrf is not None:
@@ -206,7 +206,7 @@ def main(args=sys.argv):
 
     if opts.to_opf is not None:
         from calibre.ebooks.metadata.opf2 import OPFCreator
-        opf = OPFCreator(os.getcwdu(), mi)
+        opf = OPFCreator(os.getcwd(), mi)
         with open(opts.to_opf, 'wb') as f:
             opf.render(f)
         prints(_('OPF created in'), opts.to_opf)

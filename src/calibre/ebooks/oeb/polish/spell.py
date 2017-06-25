@@ -36,7 +36,7 @@ class Patterns(object):
         # French words with prefixes are reduced to the stem word, so that the
         # words appear only once in the word list
         self.fr_elision_pat = regex.compile(
-            u"^(?:l|d|m|t|s|j|c|ç|lorsqu|puisqu|quoiqu|qu)['’]", flags=regex.UNICODE | regex.VERSION1 | regex.IGNORECASE)
+            "^(?:l|d|m|t|s|j|c|ç|lorsqu|puisqu|quoiqu|qu)['’]", flags=regex.UNICODE | regex.VERSION1 | regex.IGNORECASE)
 
 
 def patterns():
@@ -73,10 +73,10 @@ def filter_words(word):
 
 def get_words(text, lang):
     try:
-        ans = split_into_words(unicode(text), lang)
+        ans = split_into_words(str(text), lang)
     except (TypeError, ValueError):
         return ()
-    return filter(filter_words, ans)
+    return list(filter(filter_words, ans))
 
 
 def add_words(text, node, words, file_name, locale, node_item):
@@ -114,7 +114,7 @@ def add_words_from_escaped_html(text, words, file_name, node, attr, locale):
     ewords[None] = 0
     read_words_from_html(root, ewords, file_name, locale)
     words[None] += ewords.pop(None)
-    for k, locs in ewords.iteritems():
+    for k, locs in ewords.items():
         for loc in locs:
             loc.location_node, loc.node_item = node, (False, attr)
         words[k].extend(locs)
@@ -215,7 +215,7 @@ def get_all_words(container, book_locale, get_word_count=False):
         else:
             read_words_from_html(root, words, file_name, book_locale)
     count = words.pop(None)
-    ans = {k:group_sort(v) for k, v in words.iteritems()}
+    ans = {k:group_sort(v) for k, v in words.items()}
     if get_word_count:
         return count, ans
     return ans
@@ -227,7 +227,7 @@ def merge_locations(locs1, locs2):
 
 def replace(text, original_word, new_word, lang):
     indices = []
-    original_word, new_word, text = unicode(original_word), unicode(new_word), unicode(text)
+    original_word, new_word, text = str(original_word), str(new_word), str(text)
     q = text
     offset = 0
     while True:
@@ -267,7 +267,7 @@ def replace_word(container, new_word, locations, locale, undo_cache=None):
 
 def undo_replace_word(container, undo_cache):
     changed = set()
-    for (file_name, node, is_attr, attr), text in undo_cache.iteritems():
+    for (file_name, node, is_attr, attr), text in undo_cache.items():
         node.set(attr, text) if is_attr else setattr(node, attr, text)
         container.replace(file_name, node.getroottree().getroot())
         changed.add(file_name)

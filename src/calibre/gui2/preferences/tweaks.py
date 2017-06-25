@@ -60,7 +60,7 @@ class Tweak(object):  # {{{
             self.doc = translate(self.doc)
         self.var_names = var_names
         if self.var_names:
-            self.doc = u"%s: %s\n\n%s"%(_('ID'), self.var_names[0], self.doc)
+            self.doc = "%s: %s\n\n%s"%(_('ID'), self.var_names[0], self.doc)
         self.default_values = OrderedDict()
         for x in var_names:
             self.default_values[x] = defaults[x]
@@ -74,11 +74,11 @@ class Tweak(object):  # {{{
         for line in self.doc.splitlines():
             if line:
                 ans.append('# ' + line)
-        for key, val in self.default_values.iteritems():
+        for key, val in self.default_values.items():
             val = self.custom_values.get(key, val)
             ans.append('%s = %r'%(key, val))
         ans = '\n'.join(ans)
-        if isinstance(ans, unicode):
+        if isinstance(ans, str):
             ans = ans.encode('utf-8')
         return ans
 
@@ -88,7 +88,7 @@ class Tweak(object):  # {{{
 
     @property
     def is_customized(self):
-        for x, val in self.default_values.iteritems():
+        for x, val in self.default_values.items():
             if self.custom_values.get(x, val) != val:
                 return True
         return False
@@ -96,7 +96,7 @@ class Tweak(object):  # {{{
     @property
     def edit_text(self):
         ans = ['# %s'%self.name]
-        for x, val in self.default_values.iteritems():
+        for x, val in self.default_values.items():
             val = self.custom_values.get(x, val)
             ans.append('%s = %r'%(x, val))
         return '\n\n'.join(ans)
@@ -139,7 +139,7 @@ class Tweaks(QAbstractListModel, AdaptSQP):  # {{{
             if tweak.is_customized:
                 tt = '<p>'+_('This tweak has been customized')
                 tt += '<pre>'
-                for varn, val in tweak.custom_values.iteritems():
+                for varn, val in tweak.custom_values.items():
                     tt += '%s = %r\n\n'%(varn, val)
             return textwrap.fill(tt)
         if role == Qt.UserRole:
@@ -151,7 +151,7 @@ class Tweaks(QAbstractListModel, AdaptSQP):  # {{{
         try:
             exec(custom, g, l)
         except:
-            print 'Failed to load custom tweaks file'
+            print('Failed to load custom tweaks file')
             import traceback
             traceback.print_exc()
         dl, dg = {}, {}
@@ -166,8 +166,8 @@ class Tweaks(QAbstractListModel, AdaptSQP):  # {{{
             pos += 1
 
         self.tweaks.sort()
-        default_keys = set(dl.iterkeys())
-        custom_keys = set(l.iterkeys())
+        default_keys = set(dl.keys())
+        custom_keys = set(l.keys())
 
         self.plugin_tweaks = {}
         for key in custom_keys - default_keys:
@@ -234,14 +234,14 @@ class Tweaks(QAbstractListModel, AdaptSQP):  # {{{
         if self.plugin_tweaks:
             ans.extend(['', '',
                 '# The following are tweaks for installed plugins', ''])
-            for key, val in self.plugin_tweaks.iteritems():
+            for key, val in self.plugin_tweaks.items():
                 ans.extend(['%s = %r'%(key, val), '', ''])
         return '\n'.join(ans)
 
     @property
     def plugin_tweaks_string(self):
         ans = []
-        for key, val in self.plugin_tweaks.iteritems():
+        for key, val in self.plugin_tweaks.items():
             ans.extend(['%s = %r'%(key, val), '', ''])
         ans = '\n'.join(ans)
         if isbytestring(ans):
@@ -252,7 +252,7 @@ class Tweaks(QAbstractListModel, AdaptSQP):  # {{{
         self.plugin_tweaks = d
 
     def universal_set(self):
-        return set(xrange(self.rowCount()))
+        return set(range(self.rowCount()))
 
     def get_matches(self, location, query, candidates=None):
         if candidates is None:
@@ -263,7 +263,7 @@ class Tweaks(QAbstractListModel, AdaptSQP):  # {{{
         query = lower(query)
         for r in candidates:
             dat = self.data(self.index(r), Qt.UserRole)
-            var_names = u' '.join(dat.default_values)
+            var_names = ' '.join(dat.default_values)
             if query in lower(dat.name) or query in lower(var_names):
                 ans.add(r)
         return ans
@@ -444,7 +444,7 @@ class ConfigWidget(ConfigWidgetBase):
         self.context_menu.addAction(self.copy_icon,
                             _('Copy to clipboard'),
                             partial(self.copy_item_to_clipboard,
-                                    val=u"%s (%s: %s)"%(tweak.name,
+                                    val="%s (%s: %s)"%(tweak.name,
                                                         _('ID'),
                                                         tweak.var_names[0])))
         self.context_menu.popup(self.mapToGlobal(point))
@@ -461,7 +461,7 @@ class ConfigWidget(ConfigWidgetBase):
         if d.exec_() == d.Accepted:
             g, l = {}, {}
             try:
-                exec(unicode(d.edit.toPlainText()), g, l)
+                exec(str(d.edit.toPlainText()), g, l)
             except:
                 import traceback
                 return error_dialog(self, _('Failed'),
@@ -502,7 +502,7 @@ class ConfigWidget(ConfigWidgetBase):
         if idx.isValid():
             l, g = {}, {}
             try:
-                exec(unicode(self.edit_tweak.toPlainText()), g, l)
+                exec(str(self.edit_tweak.toPlainText()), g, l)
             except:
                 import traceback
                 error_dialog(self.gui, _('Failed'),
@@ -558,7 +558,7 @@ class ConfigWidget(ConfigWidgetBase):
         if not idx.isValid():
             idx = self._model.index(0)
         idx = self._model.find_next(idx,
-                unicode(self.search.currentText()))
+                str(self.search.currentText()))
         self.highlight_index(idx)
 
     def find_previous(self, *args):
@@ -566,7 +566,7 @@ class ConfigWidget(ConfigWidgetBase):
         if not idx.isValid():
             idx = self._model.index(0)
         idx = self._model.find_next(idx,
-            unicode(self.search.currentText()), backwards=True)
+            str(self.search.currentText()), backwards=True)
         self.highlight_index(idx)
 
 

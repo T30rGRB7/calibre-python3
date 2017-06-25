@@ -7,7 +7,7 @@ __docformat__ = 'restructuredtext en'
 import os
 import struct
 import zlib
-from urllib import unquote as urlunquote
+from urllib.parse import unquote as urlunquote
 
 from calibre import CurrentDir
 from calibre.ebooks.rb import HEADER
@@ -73,14 +73,14 @@ class Reader(object):
         if toc_item.flags in (1, 2):
             return
 
-        output = u''
+        output = ''
         self.stream.seek(toc_item.offset)
 
         if toc_item.flags == 8:
             count = self.read_i32()
             self.read_i32()  # Uncompressed size.
             chunck_sizes = []
-            for i in xrange(count):
+            for i in range(count):
                 chunck_sizes.append(self.read_i32())
 
             for size in chunck_sizes:

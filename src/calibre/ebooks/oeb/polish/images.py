@@ -7,7 +7,7 @@ from __future__ import (unicode_literals, division, absolute_import,
 import os
 from functools import partial
 from threading import Thread, Event
-from Queue import Queue, Empty
+from queue import Queue, Empty
 
 from calibre import detect_ncpus, human_readable, force_unicode, filesystem_encoding
 
@@ -82,10 +82,10 @@ def compress_images(container, report=None, names=None, jpeg_quality=None, progr
         if not keep_going:
             abort.set()
     progress_callback(0, len(images), '')
-    [Worker(abort, 'CompressImage%d' % i, queue, results, container, jpeg_quality, pc) for i in xrange(min(detect_ncpus(), len(images)))]
+    [Worker(abort, 'CompressImage%d' % i, queue, results, container, jpeg_quality, pc) for i in range(min(detect_ncpus(), len(images)))]
     queue.join()
     before_total = after_total = 0
-    for name, (ok, res) in results.iteritems():
+    for name, (ok, res) in results.items():
         name = force_unicode(name, filesystem_encoding)
         if ok:
             before, after = res

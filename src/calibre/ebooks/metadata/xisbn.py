@@ -101,8 +101,8 @@ xisbn = xISBN()
 if __name__ == '__main__':
     import sys, pprint
     isbn = sys.argv[-1]
-    print pprint.pprint(xisbn.get_data(isbn))
-    print
-    print xisbn.get_associated_isbns(isbn)
+    print(pprint.pprint(xisbn.get_data(isbn)))
+    print()
+    print(xisbn.get_associated_isbns(isbn))
 
 

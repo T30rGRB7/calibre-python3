@@ -30,12 +30,12 @@ class ItemDelegate(QStyledItemDelegate):
         return QStyledItemDelegate.sizeHint(self, *args) + QSize(0, 15)
 
     def setEditorData(self, editor, index):
-        name = unicode(index.data(Qt.DisplayRole) or '')
+        name = str(index.data(Qt.DisplayRole) or '')
         editor.setText(name)
         editor.lineEdit().selectAll()
 
     def setModelData(self, editor, model, index):
-        authors = string_to_authors(unicode(editor.text()))
+        authors = string_to_authors(str(editor.text()))
         model.setData(index, authors[0])
         self.edited.emit(index.row())
 
@@ -83,16 +83,16 @@ class List(QListWidget):
             self.mark_as_editable()
 
     def mark_as_editable(self):
-        for i in xrange(self.count()):
+        for i in range(self.count()):
             item = self.item(i)
             item.setFlags(item.flags() | Qt.ItemIsEditable)
 
     def edited(self, i):
         item = self.item(i)
-        q = unicode(item.text())
+        q = str(item.text())
         remove = []
-        for j in xrange(self.count()):
-            if i != j and unicode(self.item(j).text()) == q:
+        for j in range(self.count()):
+            if i != j and str(self.item(j).text()) == q:
                 remove.append(j)
         for x in sorted(remove, reverse=True):
             self.takeItem(x)
@@ -176,8 +176,8 @@ class AuthorsEdit(QDialog):
     @property
     def authors(self):
         ans = []
-        for i in xrange(self.al.count()):
-            ans.append(unicode(self.al.item(i).text()))
+        for i in range(self.al.count()):
+            ans.append(str(self.al.item(i).text()))
         return ans or [_('Unknown')]
 
     def add_author(self):
@@ -200,4 +200,4 @@ if __name__ == '__main__':
     app = QApplication([])
     d = AuthorsEdit(['kovid goyal', 'divok layog', 'other author'], ['kovid goyal', 'other author'])
     d.exec_()
-    print (d.authors)
+    print((d.authors))

@@ -57,7 +57,7 @@ class Footnotes(object):
         return None, None
 
     def __iter__(self):
-        for anchor, (counter, note) in self.notes.iteritems():
+        for anchor, (counter, note) in self.notes.items():
             yield anchor, counter, note
 
     @property

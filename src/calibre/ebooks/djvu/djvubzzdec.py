@@ -505,7 +505,7 @@ class BZZDecoder():
         markerpos = -1
         zc = lambda i: self.zpcodec_decode(self.ctx, i)
         dc = lambda i, bits: self.decode_binary(self.ctx, i, bits)
-        for i in xrange(self.xsize):
+        for i in range(self.xsize):
             ctxid = CTXIDS - 1
             if ctxid > mtfno:
                 ctxid = mtfno
@@ -735,7 +735,7 @@ def main():
     from calibre.constants import plugins
     raw = file(sys.argv[1], "rb").read()
     d = plugins['bzzdec'][0]
-    print (d.decompress(raw))
+    print((d.decompress(raw)))
 
 if __name__ == "__main__":
     main()

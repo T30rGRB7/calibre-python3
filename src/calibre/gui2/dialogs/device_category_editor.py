@@ -66,7 +66,7 @@ class DeviceCategoryEditor(QDialog, Ui_DeviceCategoryEditor):
         for k,v in data:
             self.all_tags[v] = k
             self.original_names[k] = v
-        for tag in sorted(self.all_tags.keys(), key=key):
+        for tag in sorted(list(self.all_tags.keys()), key=key):
             item = ListWidgetItem(tag)
             item.setData(Qt.UserRole, self.all_tags[tag])
             item.setFlags(item.flags() | Qt.ItemIsEditable)
@@ -90,7 +90,7 @@ class DeviceCategoryEditor(QDialog, Ui_DeviceCategoryEditor):
                 return
         if item.text() != item.initial_text():
             id_ = int(item.data(Qt.UserRole))
-            self.to_rename[id_] = unicode(item.text())
+            self.to_rename[id_] = str(item.text())
 
     def rename_tag(self):
         item = self.available_tags.currentItem()
@@ -109,7 +109,7 @@ class DeviceCategoryEditor(QDialog, Ui_DeviceCategoryEditor):
             error_dialog(self, _('No items selected'),
                          _('You must select at least one item from the list.')).exec_()
             return
-        ct = ', '.join([unicode(item.text()) for item in deletes])
+        ct = ', '.join([str(item.text()) for item in deletes])
         if not question_dialog(self, _('Are you sure?'),
             '<p>'+_('Are you sure you want to delete the following items?')+'<br>'+ct):
             return

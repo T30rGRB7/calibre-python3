@@ -38,7 +38,7 @@ class K2a (object):
         Hstr = ""
         max_len = -1
         r = min(10, len(text)+1)
-        for x in xrange(r):
+        for x in range(r):
             if text[:x] in self.kanwa.kanadict:
                 if max_len < x:
                     max_len = x

@@ -8,7 +8,7 @@ __license__   = 'GPL v3'
 __copyright__ = '2012, Kovid Goyal <kovid at kovidgoyal.net>'
 __docformat__ = 'restructuredtext en'
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from contextlib import closing
 
 from lxml import html, etree
@@ -38,7 +38,7 @@ class SonyStore(BasicStoreConfig, StorePlugin):
             open_url(QUrl('http://ebookstore.sony.com'))
 
     def search(self, query, max_results=10, timeout=60):
-        url = 'http://ebookstore.sony.com/search?keyword=%s'%urllib.quote_plus(
+        url = 'http://ebookstore.sony.com/search?keyword=%s'%urllib.parse.quote_plus(
                 query)
 
         br = browser()
@@ -59,7 +59,7 @@ class SonyStore(BasicStoreConfig, StorePlugin):
                 if not title:
                     continue
                 title = etree.tostring(title[0], method='text',
-                        encoding=unicode)
+                        encoding=str)
                 if not title:
                     continue
                 s.title = title.strip()

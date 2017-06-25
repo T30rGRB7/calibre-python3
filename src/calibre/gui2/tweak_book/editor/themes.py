@@ -34,10 +34,10 @@ def default_theme():
 # The solarized themes {{{
 SLDX = {'base03':'1c1c1c', 'base02':'262626', 'base01':'585858', 'base00':'626262', 'base0':'808080', 'base1':'8a8a8a', 'base2':'e4e4e4', 'base3':'ffffd7', 'yellow':'af8700', 'orange':'d75f00', 'red':'d70000', 'magenta':'af005f', 'violet':'5f5faf', 'blue':'0087ff', 'cyan':'00afaf', 'green':'5f8700'}  # noqa
 SLD  = {'base03':'002b36', 'base02':'073642', 'base01':'586e75', 'base00':'657b83', 'base0':'839496', 'base1':'93a1a1', 'base2':'eee8d5', 'base3':'fdf6e3', 'yellow':'b58900', 'orange':'cb4b16', 'red':'dc322f', 'magenta':'d33682', 'violet':'6c71c4', 'blue':'268bd2', 'cyan':'2aa198', 'green':'859900'}  # noqa
-m = {'base%d'%n:'base%02d'%n for n in xrange(1, 4)}
-m.update({'base%02d'%n:'base%d'%n for n in xrange(1, 4)})
-SLL = {m.get(k, k) : v for k, v in SLD.iteritems()}
-SLLX = {m.get(k, k) : v for k, v in SLDX.iteritems()}
+m = {'base%d'%n:'base%02d'%n for n in range(1, 4)}
+m.update({'base%02d'%n:'base%d'%n for n in range(1, 4)})
+SLL = {m.get(k, k) : v for k, v in SLD.items()}
+SLLX = {m.get(k, k) : v for k, v in SLDX.items()}
 SOLARIZED = \
     '''
     CursorLine   bg={base02}
@@ -192,7 +192,7 @@ def read_color(col):
     if QColor.isValidColor(col):
         return QBrush(QColor(col))
     if col.startswith('rgb('):
-        r, g, b = map(int, (x.strip() for x in col[4:-1].split(',')))
+        r, g, b = list(map(int, (x.strip() for x in col[4:-1].split(','))))
         return QBrush(QColor(r, g, b))
     try:
         r, g, b = col[0:2], col[2:4], col[4:6]
@@ -237,7 +237,7 @@ def read_theme(raw):
     return ans
 
 
-THEMES = {k:read_theme(raw) for k, raw in THEMES.iteritems()}
+THEMES = {k:read_theme(raw) for k, raw in THEMES.items()}
 
 
 def u(x):
@@ -259,7 +259,7 @@ def to_highlight(data):
 
 def read_custom_theme(data):
     dt = THEMES[default_theme()].copy()
-    dt.update({k:to_highlight(v) for k, v in data.iteritems()})
+    dt.update({k:to_highlight(v) for k, v in data.items()})
     return dt
 
 
@@ -308,11 +308,11 @@ def theme_format(theme, name):
 
 
 def custom_theme_names():
-    return tuple(tprefs['custom_themes'].iterkeys())
+    return tuple(tprefs['custom_themes'].keys())
 
 
 def builtin_theme_names():
-    return tuple(THEMES.iterkeys())
+    return tuple(THEMES.keys())
 
 
 def all_theme_names():
@@ -345,7 +345,7 @@ class CreateNewTheme(Dialog):
 
     @property
     def theme_name(self):
-        return unicode(self._name.text()).strip()
+        return str(self._name.text()).strip()
 
     def accept(self):
         if not self.theme_name:
@@ -474,7 +474,7 @@ class Property(QWidget):
         l.addStretch(1)
 
     def us_changed(self):
-        self.data['underline'] = unicode(self.underline.currentText()) or None
+        self.data['underline'] = str(self.underline.currentText()) or None
         self.changed.emit()
 
 # Help text {{{
@@ -610,15 +610,15 @@ class ThemeEditor(Dialog):
 
     def update_theme(self, name):
         data = tprefs['custom_themes'][name]
-        extra = set(data.iterkeys()) - set(THEMES[default_theme()].iterkeys())
-        missing = set(THEMES[default_theme()].iterkeys()) - set(data.iterkeys())
+        extra = set(data.keys()) - set(THEMES[default_theme()].keys())
+        missing = set(THEMES[default_theme()].keys()) - set(data.keys())
         for k in extra:
             data.pop(k)
         for k in missing:
             data[k] = dict(THEMES[default_theme()][k]._asdict())
-            for nk, nv in data[k].iteritems():
+            for nk, nv in data[k].items():
                 if isinstance(nv, QBrush):
-                    data[k][nk] = unicode(nv.color().name())
+                    data[k][nk] = str(nv.color().name())
         if extra or missing:
             tprefs['custom_themes'][name] = data
         return data
@@ -632,7 +632,7 @@ class ThemeEditor(Dialog):
             c.setParent(None)
             c.deleteLater()
         self.properties = []
-        name = unicode(self.theme.currentText())
+        name = str(self.theme.currentText())
         if not name:
             return
         data = self.update_theme(name)
@@ -649,7 +649,7 @@ class ThemeEditor(Dialog):
 
     @property
     def theme_name(self):
-        return unicode(self.theme.currentText())
+        return str(self.theme.currentText())
 
     def changed(self):
         name = self.theme_name
@@ -660,10 +660,10 @@ class ThemeEditor(Dialog):
         d = CreateNewTheme(self)
         if d.exec_() == d.Accepted:
             name = '*' + d.theme_name
-            base = unicode(d.base.currentText())
+            base = str(d.base.currentText())
             theme = {}
-            for key, val in THEMES[base].iteritems():
-                theme[key] = {k:col_to_string(v.color()) if isinstance(v, QBrush) else v for k, v in val._asdict().iteritems()}
+            for key, val in THEMES[base].items():
+                theme[key] = {k:col_to_string(v.color()) if isinstance(v, QBrush) else v for k, v in val._asdict().items()}
             tprefs['custom_themes'][name] = theme
             tprefs['custom_themes'] = tprefs['custom_themes']
             t = self.theme

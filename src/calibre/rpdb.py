@@ -96,7 +96,7 @@ def set_trace(port=4444, skip=None):
 def cli(port=4444):
     prints('Connecting to remote debugger on port %d...' % port)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    for i in xrange(20):
+    for i in range(20):
         try:
             sock.connect(('127.0.0.1', port))
             break
@@ -138,7 +138,7 @@ def cli(port=4444):
                 sys.stdout.write(recvd)
                 raw = b''
                 try:
-                    raw = raw_input(PROMPT) + b'\n'
+                    raw = input(PROMPT) + b'\n'
                 except (EOFError, KeyboardInterrupt):
                     pass
                 if not raw:

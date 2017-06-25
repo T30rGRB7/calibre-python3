@@ -1,4 +1,4 @@
-from __future__ import absolute_import, division, unicode_literals
+
 
 try:
     from collections import OrderedDict
@@ -11,8 +11,8 @@ except ImportError:
 import re
 
 try:
-    unicode
-    string_types = basestring,
+    str
+    string_types = str,
 except NameError:
     string_types = str,
 

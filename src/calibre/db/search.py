@@ -148,7 +148,7 @@ class DateSearch(object):  # {{{
 
         if query == 'false':
             for v, book_ids in field_iter():
-                if isinstance(v, (str, unicode)):
+                if isinstance(v, str):
                     v = parse_date(v)
                 if v is None or v <= UNDEFINED_DATE:
                     matches |= book_ids
@@ -156,13 +156,13 @@ class DateSearch(object):  # {{{
 
         if query == 'true':
             for v, book_ids in field_iter():
-                if isinstance(v, (str, unicode)):
+                if isinstance(v, str):
                     v = parse_date(v)
                 if v is not None and v > UNDEFINED_DATE:
                     matches |= book_ids
             return matches
 
-        for k, relop in self.operators.iteritems():
+        for k, relop in self.operators.items():
             if query.startswith(k):
                 query = query[len(k):]
                 break
@@ -198,7 +198,7 @@ class DateSearch(object):  # {{{
                     field_count = query.count('/') + 1
 
         for v, book_ids in field_iter():
-            if isinstance(v, (str, unicode)):
+            if isinstance(v, str):
                 v = parse_date(v)
             if v is not None and relop(dt_as_local(v), qd, field_count):
                 matches |= book_ids
@@ -249,7 +249,7 @@ class NumericSearch(object):  # {{{
             else:
                 relop = lambda x,y: x is not None
         else:
-            for k, relop in self.operators.iteritems():
+            for k, relop in self.operators.items():
                 if query.startswith(k):
                     query = query[len(k):]
                     break
@@ -367,7 +367,7 @@ class KeyPairSearch(object):  # {{{
             return found if valq == 'true' else candidates - found
 
         for m, book_ids in field_iter():
-            for key, val in m.iteritems():
+            for key, val in m.items():
                 if (keyq and not _match(keyq, (key,), keyq_mkind,
                                         use_primary_find_in_search=use_primary_find)):
                     continue
@@ -407,7 +407,7 @@ class SavedSearchQueries(object):  # {{{
         return self._db()
 
     def force_unicode(self, x):
-        if not isinstance(x, unicode):
+        if not isinstance(x, str):
             x = x.decode(preferred_encoding, 'replace')
         return x
 
@@ -440,7 +440,7 @@ class SavedSearchQueries(object):  # {{{
             db._set_pref(self.opt_name, smap)
 
     def names(self):
-        return sorted(self.queries.iterkeys(), key=sort_key)
+        return sorted(iter(self.queries.keys()), key=sort_key)
 # }}}
 
 
@@ -618,7 +618,7 @@ class Parser(SearchQueryParser):  # {{{
         text_fields = set()
         field_metadata = {}
 
-        for x, fm in self.field_metadata.iteritems():
+        for x, fm in self.field_metadata.items():
             if x.startswith('@'):
                 continue
             if fm['search_terms'] and x not in {'series_sort', 'id'}:
@@ -656,7 +656,7 @@ class Parser(SearchQueryParser):  # {{{
                 q = canonicalize_lang(query)
                 if q is None:
                     lm = lang_map()
-                    rm = {v.lower():k for k,v in lm.iteritems()}
+                    rm = {v.lower():k for k,v in lm.items()}
                     q = rm.get(query, query)
 
             if matchkind == CONTAINS_MATCH and q.lower() in {'true', 'false'}:
@@ -692,7 +692,7 @@ class Parser(SearchQueryParser):  # {{{
             if location in text_fields:
                 for val, book_ids in self.field_iter(location, current_candidates):
                     if val is not None:
-                        if isinstance(val, basestring):
+                        if isinstance(val, str):
                             val = (val,)
                         if _match(q, val, matchkind, use_primary_find_in_search=upf, case_sensitive=case_sensitive):
                             matches |= book_ids
@@ -785,7 +785,7 @@ class LRUCache(object):  # {{{
         return self.get(key)
 
     def __iter__(self):
-        return self.item_map.iteritems()
+        return iter(self.item_map.items())
 # }}}
 
 

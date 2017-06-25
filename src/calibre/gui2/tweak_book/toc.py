@@ -183,7 +183,7 @@ class TOCViewer(QWidget):
     def iteritems(self, parent=None):
         if parent is None:
             parent = self.invisibleRootItem()
-        for i in xrange(parent.childCount()):
+        for i in range(parent.childCount()):
             child = parent.child(i)
             yield child
             for gc in self.iteritems(parent=child):
@@ -192,8 +192,8 @@ class TOCViewer(QWidget):
     def emit_navigate(self, *args):
         item = self.view.currentItem()
         if item is not None:
-            dest = unicode(item.data(0, DEST_ROLE) or '')
-            frag = unicode(item.data(0, FRAG_ROLE) or '')
+            dest = str(item.data(0, DEST_ROLE) or '')
+            frag = str(item.data(0, FRAG_ROLE) or '')
             if not frag:
                 frag = TOP
             self.navigate_requested.emit(dest, frag)

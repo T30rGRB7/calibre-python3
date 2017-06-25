@@ -55,7 +55,7 @@ class ChooseFormat(QDialog):  # {{{
         def fget(self):
             for b in self.buttons:
                 if b.isChecked():
-                    yield unicode(b.text())[1:]
+                    yield str(b.text())[1:]
 
         def fset(self, formats):
             formats = {x.upper() for x in formats}
@@ -129,7 +129,7 @@ class ToCEditAction(InterfaceAction):
         return self.get_supported_books(ans)
 
     def do_edit(self, book_id_map):
-        for book_id, fmts in book_id_map.iteritems():
+        for book_id, fmts in book_id_map.items():
             if len(fmts) > 1:
                 d = ChooseFormat(fmts, self.gui)
                 if d.exec_() != d.Accepted:

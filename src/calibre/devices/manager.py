@@ -6,7 +6,7 @@ __copyright__ = '2008, Kovid Goyal <kovid at kovidgoyal.net>'
 Define a threaded interface for working with devices.
 '''
 
-import threading, Queue
+import threading, queue
 
 
 class DeviceManager(object):

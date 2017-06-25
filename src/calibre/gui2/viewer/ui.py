@@ -61,7 +61,7 @@ class Reference(QLineEdit):  # {{{
         self.editingFinished.connect(self.editing_finished)
 
     def editing_finished(self):
-        text = unicode(self.text())
+        text = str(self.text())
         self.setText('')
         self.goto.emit(text)
 # }}}
@@ -186,7 +186,7 @@ class History(list):  # {{{
 
 def test_history():
     h = History()
-    for i in xrange(4):
+    for i in range(4):
         h.add(i)
     for i in reversed(h):
         h.back(i)
@@ -215,7 +215,7 @@ class Main(MainWindow):
     def __init__(self, debug_javascript):
         MainWindow.__init__(self, None)
         self.setWindowTitle(_('E-book viewer'))
-        self.base_window_title = unicode(self.windowTitle())
+        self.base_window_title = str(self.windowTitle())
         self.setObjectName('EbookViewer')
         self.setWindowIcon(QIcon(I('viewer.png')))
         self.setDockOptions(self.AnimatedDocks | self.AllowTabbedDocks)
@@ -383,7 +383,7 @@ class Main(MainWindow):
             ac.setObjectName(name)
             (tb or self.tool_bar).addAction(ac)
             if sc_name:
-                ac.setToolTip(unicode(ac.text()) + (' [%s]' % _(' or ').join(self.view.shortcuts.get_shortcuts(sc_name))))
+                ac.setToolTip(str(ac.text()) + (' [%s]' % _(' or ').join(self.view.shortcuts.get_shortcuts(sc_name))))
             if menu_name is not None:
                 menu_name += '_menu'
                 m = QMenu()

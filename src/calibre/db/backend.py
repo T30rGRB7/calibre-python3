@@ -8,7 +8,7 @@ __copyright__ = '2011, Kovid Goyal <kovid@kovidgoyal.net>'
 __docformat__ = 'restructuredtext en'
 
 # Imports {{{
-import os, shutil, uuid, json, glob, time, cPickle, hashlib, errno, sys
+import os, shutil, uuid, json, glob, time, pickle, hashlib, errno, sys
 from functools import partial
 
 import apsw
@@ -91,7 +91,7 @@ class DBPrefs(dict):  # {{{
             dict.__setitem__(self, key, val)
 
     def raw_to_object(self, raw):
-        if not isinstance(raw, unicode):
+        if not isinstance(raw, str):
             raw = raw.decode(preferred_encoding)
         return json.loads(raw, object_hook=from_json)
 
@@ -118,7 +118,7 @@ class DBPrefs(dict):  # {{{
             raw = self.to_raw(val)
             with self.db.conn:
                 try:
-                    dbraw = self.db.execute('SELECT id,val FROM preferences WHERE key=?', (key,)).next()
+                    dbraw = next(self.db.execute('SELECT id,val FROM preferences WHERE key=?', (key,)))
                 except StopIteration:
                     dbraw = None
                 if dbraw is None or dbraw[1] != raw:
@@ -132,18 +132,18 @@ class DBPrefs(dict):  # {{{
         self.__setitem__(key, val)
 
     def get_namespaced(self, namespace, key, default=None):
-        key = u'namespaced:%s:%s'%(namespace, key)
+        key = 'namespaced:%s:%s'%(namespace, key)
         try:
             return dict.__getitem__(self, key)
         except KeyError:
             return default
 
     def set_namespaced(self, namespace, key, val):
-        if u':' in key:
+        if ':' in key:
             raise KeyError('Colons are not allowed in keys')
-        if u':' in namespace:
+        if ':' in namespace:
             raise KeyError('Colons are not allowed in the namespace')
-        key = u'namespaced:%s:%s'%(namespace, key)
+        key = 'namespaced:%s:%s'%(namespace, key)
         self[key] = val
 
     def write_serialized(self, library_path):
@@ -220,7 +220,7 @@ def SortedConcatenate(sep=','):
     def finalize(ctxt):
         if len(ctxt) == 0:
             return None
-        return sep.join(map(ctxt.get, sorted(ctxt.iterkeys())))
+        return sep.join(map(ctxt.get, sorted(ctxt.keys())))
 
     return ({}, step, finalize)
 
@@ -229,7 +229,7 @@ def IdentifiersConcat():
     '''String concatenation aggregator for the identifiers map'''
 
     def step(ctxt, key, val):
-        ctxt.append(u'%s:%s'%(key, val))
+        ctxt.append('%s:%s'%(key, val))
 
     def finalize(ctxt):
         return ','.join(ctxt)
@@ -245,7 +245,7 @@ def AumSortedConcatenate():
             ctxt[ndx] = ':::'.join((author, sort, link))
 
     def finalize(ctxt):
-        keys = list(ctxt.iterkeys())
+        keys = list(ctxt.keys())
         l = len(keys)
         if l == 0:
             return None
@@ -437,7 +437,7 @@ class DB(object):
                     self.prefs[key] = default_prefs[key]
                     progress_callback(_('restored preference ') + key, i+1)
             if 'field_metadata' in default_prefs:
-                fmvals = [f for f in default_prefs['field_metadata'].values()
+                fmvals = [f for f in list(default_prefs['field_metadata'].values())
                                 if f['is_custom']]
                 progress_callback(None, len(fmvals))
                 for i, f in enumerate(fmvals):
@@ -558,10 +558,10 @@ class DB(object):
                 prints('found user category case overlap', catmap[uc])
                 cat = catmap[uc][0]
                 suffix = 1
-                while icu_lower((cat + unicode(suffix))) in catmap:
+                while icu_lower((cat + str(suffix))) in catmap:
                     suffix += 1
-                prints('Renaming user category %s to %s'%(cat, cat+unicode(suffix)))
-                user_cats[cat + unicode(suffix)] = user_cats[cat]
+                prints('Renaming user category %s to %s'%(cat, cat+str(suffix)))
+                user_cats[cat + str(suffix)] = user_cats[cat]
                 del user_cats[cat]
                 cats_changed = True
         if cats_changed:
@@ -667,23 +667,23 @@ class DB(object):
             if d['is_multiple']:
                 if x is None:
                     return []
-                if isinstance(x, (str, unicode, bytes)):
+                if isinstance(x, (str, bytes)):
                     x = x.split(d['multiple_seps']['ui_to_list'])
                 x = [y.strip() for y in x if y.strip()]
                 x = [y.decode(preferred_encoding, 'replace') if not isinstance(y,
-                    unicode) else y for y in x]
-                return [u' '.join(y.split()) for y in x]
+                    str) else y for y in x]
+                return [' '.join(y.split()) for y in x]
             else:
-                return x if x is None or isinstance(x, unicode) else \
+                return x if x is None or isinstance(x, str) else \
                         x.decode(preferred_encoding, 'replace')
 
         def adapt_datetime(x, d):
-            if isinstance(x, (str, unicode, bytes)):
+            if isinstance(x, (str, bytes)):
                 x = parse_date(x, assume_utc=False, as_utc=False)
             return x
 
         def adapt_bool(x, d):
-            if isinstance(x, (str, unicode, bytes)):
+            if isinstance(x, (str, bytes)):
                 x = x.lower()
                 if x == 'true':
                     x = True
@@ -704,7 +704,7 @@ class DB(object):
         def adapt_number(x, d):
             if x is None:
                 return None
-            if isinstance(x, (str, unicode, bytes)):
+            if isinstance(x, (str, bytes)):
                 if x.lower() == 'none':
                     return None
             if d['datatype'] == 'int':
@@ -724,7 +724,7 @@ class DB(object):
         }
 
         # Create Tag Browser categories for custom columns
-        for k in sorted(self.custom_column_label_map.iterkeys()):
+        for k in sorted(self.custom_column_label_map.keys()):
             v = self.custom_column_label_map[k]
             if v['normalized']:
                 is_category = True
@@ -777,10 +777,10 @@ class DB(object):
             'last_modified':19, 'identifiers':20, 'languages':21,
         }
 
-        for k,v in self.FIELD_MAP.iteritems():
+        for k,v in self.FIELD_MAP.items():
             self.field_metadata.set_field_record_index(k, v, prefer_custom=False)
 
-        base = max(self.FIELD_MAP.itervalues())
+        base = max(self.FIELD_MAP.values())
 
         for label_ in sorted(self.custom_column_label_map):
             data = self.custom_column_label_map[label_]
@@ -1236,7 +1236,7 @@ class DB(object):
             return self._library_id_
 
         def fset(self, val):
-            self._library_id_ = unicode(val)
+            self._library_id_ = str(val)
             self.execute('''
                     DELETE FROM library_id;
                     INSERT INTO library_id (uuid) VALUES (?);
@@ -1254,7 +1254,7 @@ class DB(object):
         '''
 
         with self.conn:  # Use a single transaction, to ensure nothing modifies the db while we are reading
-            for table in self.tables.itervalues():
+            for table in self.tables.values():
                 try:
                     table.read(self)
                 except:
@@ -1318,7 +1318,7 @@ class DB(object):
 
     def remove_formats(self, remove_map):
         paths = []
-        for book_id, removals in remove_map.iteritems():
+        for book_id, removals in remove_map.items():
             for fmt, fname, path in removals:
                 path = self.format_abspath(book_id, fmt, fname, path)
                 if path is not None:
@@ -1339,7 +1339,7 @@ class DB(object):
     def copy_cover_to(self, path, dest, windows_atomic_move=None, use_hardlink=False, report_file_size=None):
         path = os.path.abspath(os.path.join(self.library_path, path, 'cover.jpg'))
         if windows_atomic_move is not None:
-            if not isinstance(dest, basestring):
+            if not isinstance(dest, str):
                 raise Exception("Error, you must pass the dest as a path when"
                         " using windows_atomic_move")
             if os.access(path, os.R_OK) and dest and not samefile(dest, path):
@@ -1429,7 +1429,7 @@ class DB(object):
         if path is None:
             return False
         if windows_atomic_move is not None:
-            if not isinstance(dest, basestring):
+            if not isinstance(dest, str):
                 raise Exception("Error, you must pass the dest as a path when"
                         " using windows_atomic_move")
             if dest:
@@ -1576,7 +1576,7 @@ class DB(object):
                     if samefile(spath, tpath):
                         # The format filenames may have changed while the folder
                         # name remains the same
-                        for fmt, opath in original_format_map.iteritems():
+                        for fmt, opath in original_format_map.items():
                             npath = format_map.get(fmt, None)
                             if npath and os.path.abspath(npath.lower()) != os.path.abspath(opath.lower()) and samefile(opath, npath):
                                 # opath and npath are different hard links to the same file
@@ -1624,7 +1624,7 @@ class DB(object):
             except EnvironmentError as err:
                 if err.errno == errno.EEXIST:
                     # Parent directory already exists, re-raise original exception
-                    raise exc_info[0], exc_info[1], exc_info[2]
+                    raise exc_info[0](exc_info[1]).with_traceback(exc_info[2])
                 raise
             finally:
                 del exc_info
@@ -1639,7 +1639,7 @@ class DB(object):
     def remove_books(self, path_map, permanent=False):
         self.executemany(
             'DELETE FROM books WHERE id=?', [(x,) for x in path_map])
-        paths = {os.path.join(self.library_path, x) for x in path_map.itervalues() if x}
+        paths = {os.path.join(self.library_path, x) for x in path_map.values() if x}
         paths = {x for x in paths if os.path.exists(x) and self.is_deletable(x)}
         if permanent:
             for path in paths:
@@ -1654,7 +1654,7 @@ class DB(object):
         self.executemany(
             'INSERT OR REPLACE INTO books_plugin_data (book, name, val) VALUES (?, ?, ?)',
             [(book_id, name, json.dumps(val, default=to_json))
-                    for book_id, val in val_map.iteritems()])
+                    for book_id, val in val_map.items()])
 
     def get_custom_book_data(self, name, book_ids, default=None):
         book_ids = frozenset(book_ids)
@@ -1692,7 +1692,7 @@ class DB(object):
     def conversion_options(self, book_id, fmt):
         for (data,) in self.conn.get('SELECT data FROM conversion_options WHERE book=? AND format=?', (book_id, fmt.upper())):
             if data:
-                return cPickle.loads(bytes(data))
+                return pickle.loads(bytes(data))
 
     def has_conversion_options(self, ids, fmt='PIPE'):
         ids = frozenset(ids)
@@ -1709,7 +1709,7 @@ class DB(object):
             [(book_id, fmt.upper()) for book_id in book_ids])
 
     def set_conversion_options(self, options, fmt):
-        options = [(book_id, fmt.upper(), buffer(cPickle.dumps(data, -1))) for book_id, data in options.iteritems()]
+        options = [(book_id, fmt.upper(), buffer(pickle.dumps(data, -1))) for book_id, data in options.items()]
         self.executemany('INSERT OR REPLACE INTO conversion_options(book,format,data) VALUES (?,?,?)', options)
 
     def get_top_level_move_items(self, all_paths):
@@ -1747,7 +1747,7 @@ class DB(object):
                 copyfile_using_links(src, dest, dest_is_dir=False)
                 old_files.add(src)
             x = path_map[x]
-            if not isinstance(x, unicode):
+            if not isinstance(x, str):
                 x = x.decode(filesystem_encoding, 'replace')
             progress(x, i+1, total)
 

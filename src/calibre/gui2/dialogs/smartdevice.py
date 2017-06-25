@@ -29,7 +29,7 @@ def _cmp_ipaddr(l, r):
 
 def get_all_ip_addresses():
     ipaddrs = list()
-    for iface in get_all_ips().itervalues():
+    for iface in get_all_ips().values():
         for addrs in iface:
             if 'broadcast' in addrs and addrs['addr'] != '127.0.0.1':
                 ipaddrs.append(addrs['addr'])
@@ -115,7 +115,7 @@ class SmartdeviceDialog(QDialog, Ui_Dialog):
                 Qt.Unchecked else QLineEdit.Normal)
 
     def accept(self):
-        port = unicode(self.fixed_port.text())
+        port = str(self.fixed_port.text())
         if not port:
             error_dialog(self, _('Invalid port number'),
                 _('You must provide a port number.'), show=True)
@@ -133,13 +133,13 @@ class SmartdeviceDialog(QDialog, Ui_Dialog):
             return
 
         self.device_manager.set_option('smartdevice', 'password',
-                                       unicode(self.password_box.text()))
+                                       str(self.password_box.text()))
         self.device_manager.set_option('smartdevice', 'autostart',
                                        self.autostart_box.isChecked())
         self.device_manager.set_option('smartdevice', 'use_fixed_port',
                                        self.use_fixed_port.isChecked())
         self.device_manager.set_option('smartdevice', 'port_number',
-                                       unicode(self.fixed_port.text()))
+                                       str(self.fixed_port.text()))
 
         message = self.device_manager.start_plugin('smartdevice')
 

@@ -8,7 +8,7 @@ __copyright__ = '2011-2015, Tomasz Długosz <tomek3d@gmail.com>'
 __docformat__ = 'restructuredtext en'
 
 import re
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from base64 import b64encode
 from contextlib import closing
 
@@ -47,7 +47,7 @@ class EmpikStore(BasicStoreConfig, StorePlugin):
 
     def search(self, query, max_results=10, timeout=60):
         url = 'http://www.empik.com/szukaj/produkt?c=ebooki-ebooki&q=' + \
-            urllib.quote(query) + '&qtype=basicForm&start=1&catalogType=pl&searchCategory=3501&format=epub&format=mobi&format=pdf&resultsPP=' + str(max_results)
+            urllib.parse.quote(query) + '&qtype=basicForm&start=1&catalogType=pl&searchCategory=3501&format=epub&format=mobi&format=pdf&resultsPP=' + str(max_results)
 
         br = browser()
 

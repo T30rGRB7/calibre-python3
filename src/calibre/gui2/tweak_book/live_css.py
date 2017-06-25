@@ -474,7 +474,7 @@ class LiveCSS(QWidget):
     def read_data(self, sourceline, tags):
         mf = self.preview.view.page().mainFrame()
         tags = [x.lower() for x in tags]
-        result = unicode(mf.evaluateJavaScript(
+        result = str(mf.evaluateJavaScript(
             'window.calibre_preview_integration.live_css(%s, %s)' % (
                 json.dumps(sourceline), json.dumps(tags))) or '')
         try:

@@ -336,8 +336,8 @@ def iana2mobi(icode):
 
 def mobi2iana(langcode, sublangcode):
     prefix = suffix = None
-    for code, d in IANA_MOBI.items():
-        for subcode, t in d.items():
+    for code, d in list(IANA_MOBI.items()):
+        for subcode, t in list(d.items()):
             cc, cl = t
             if cc == langcode:
                 prefix = code

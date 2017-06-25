@@ -82,7 +82,7 @@ class Tool(object):
         :param description: An optional longer description of this action, it
             will be used in the preferences entry for this shortcut.
         '''
-        short_text = short_text or unicode(qaction.text()).replace('&&', '\0').replace('&', '').replace('\0', '&')
+        short_text = short_text or str(qaction.text()).replace('&&', '\0').replace('&', '').replace('\0', '&')
         self.gui.keyboard.register_shortcut(
             self.name + '_' + unique_name, short_text, default_keys=default_keys,
             description=description or '', group=_('Plugins'))
@@ -119,7 +119,7 @@ def load_plugin_tools(plugin):
         import traceback
         traceback.print_exc()
     else:
-        for x in vars(main).itervalues():
+        for x in vars(main).values():
             if isinstance(x, type) and x is not Tool and issubclass(x, Tool):
                 ans = x()
                 ans.plugin = plugin

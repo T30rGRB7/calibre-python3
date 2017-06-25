@@ -128,7 +128,7 @@ class LocationManager(QObject):  # {{{
         had_device = self.has_device
         if cp is None:
             cp = (None, None)
-        if isinstance(cp, (str, unicode)):
+        if isinstance(cp, str):
             cp = (cp, None)
         if len(fs) < 3:
             fs = list(fs) + [0]
@@ -149,7 +149,7 @@ class LocationManager(QObject):  # {{{
         for i, loc in enumerate(('main', 'carda', 'cardb')):
             t = self.tooltips[loc]
             if self.free[i] > -1:
-                t += u'\n\n%s '%human_readable(self.free[i]) + _('available')
+                t += '\n\n%s '%human_readable(self.free[i]) + _('available')
             ac = getattr(self, 'location_'+loc)
             ac.setToolTip(t)
             ac.setWhatsThis(t)

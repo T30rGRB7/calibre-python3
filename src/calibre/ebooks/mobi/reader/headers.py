@@ -239,7 +239,7 @@ class BookHeader(object):
 
             self.exth_flag, = struct.unpack('>L', raw[0x80:0x84])
             self.exth = None
-            if not isinstance(self.title, unicode):
+            if not isinstance(self.title, str):
                 self.title = self.title.decode(self.codec, 'replace')
             if self.exth_flag & 0x40:
                 try:
@@ -293,14 +293,14 @@ class MetadataHeader(BookHeader):
     def kf8_type(self):
         if (self.mobi_version == 8 and getattr(self, 'skelidx', NULL_INDEX) !=
                 NULL_INDEX):
-            return u'standalone'
+            return 'standalone'
 
         kf8_header_index = getattr(self.exth, 'kf8_header', None)
         if kf8_header_index is None:
             return None
         try:
             if self.section_data(kf8_header_index-1) == b'BOUNDARY':
-                return u'joint'
+                return 'joint'
         except:
             pass
         return None

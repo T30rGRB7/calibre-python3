@@ -67,9 +67,8 @@ class AdvSearchBuilderDialog(QDialog, Ui_Dialog):
             self.mc = '='
         else:
             self.mc = '~'
-        all, any, phrase, none = map(lambda x: unicode(x.text()),
-                (self.all, self.any, self.phrase, self.none))
-        all, any, none = map(self.tokens, (all, any, none))
+        all, any, phrase, none = [str(x.text()) for x in (self.all, self.any, self.phrase, self.none)]
+        all, any, none = list(map(self.tokens, (all, any, none)))
         phrase = phrase.strip()
         all = ' and '.join(all)
         any = ' or '.join(any)
@@ -86,11 +85,11 @@ class AdvSearchBuilderDialog(QDialog, Ui_Dialog):
         return ans
 
     def token(self):
-        txt = unicode(self.text.text()).strip()
+        txt = str(self.text.text()).strip()
         if txt:
             if self.negate.isChecked():
                 txt = '!'+txt
-            tok = self.FIELDS[unicode(self.field.currentText())]+txt
+            tok = self.FIELDS[str(self.field.currentText())]+txt
             if re.search(r'\s', tok):
                 tok = '"%s"'%tok
             return tok
@@ -106,13 +105,13 @@ class AdvSearchBuilderDialog(QDialog, Ui_Dialog):
 
         ans = []
         self.box_last_values = {}
-        title = unicode(self.title_box.text()).strip()
+        title = str(self.title_box.text()).strip()
         if title:
             ans.append('title:"' + self.mc + title + '"')
-        author = unicode(self.author_box.text()).strip()
+        author = str(self.author_box.text()).strip()
         if author:
             ans.append('author:"' + self.mc + author + '"')
-        format = unicode(self.format_box.text()).strip()
+        format = str(self.format_box.text()).strip()
         if format:
             ans.append('format:"' + self.mc + format + '"')
         if ans:

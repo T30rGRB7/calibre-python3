@@ -29,8 +29,8 @@ class HeuristicsWidget(Widget, Ui_Form):
                  'dehyphenate', 'renumber_headings']
                 )
         self.db, self.book_id = db, book_id
-        self.rssb_defaults = [u'', u'<hr />', u'∗ ∗ ∗', u'• • •', u'♦ ♦ ♦',
-                u'† †', u'‡ ‡ ‡', u'∞ ∞ ∞', u'¤ ¤ ¤', u'§']
+        self.rssb_defaults = ['', '<hr />', '∗ ∗ ∗', '• • •', '♦ ♦ ♦',
+                '† †', '‡ ‡ ‡', '∞ ∞ ∞', '¤ ¤ ¤', '§']
         self.initialize_options(get_option, get_help, db, book_id)
 
         self.load_histories()
@@ -79,7 +79,7 @@ class HeuristicsWidget(Widget, Ui_Form):
             return True
 
     def load_histories(self):
-        val = unicode(self.opt_replace_scene_breaks.currentText())
+        val = str(self.opt_replace_scene_breaks.currentText())
 
         self.opt_replace_scene_breaks.clear()
         self.opt_replace_scene_breaks.lineEdit().setText('')
@@ -96,8 +96,8 @@ class HeuristicsWidget(Widget, Ui_Form):
 
     def save_histories(self):
         rssb_history = []
-        history_pats = [unicode(self.opt_replace_scene_breaks.lineEdit().text())] + [unicode(self.opt_replace_scene_breaks.itemText(i))
-                                for i in xrange(self.opt_replace_scene_breaks.count())]
+        history_pats = [str(self.opt_replace_scene_breaks.lineEdit().text())] + [str(self.opt_replace_scene_breaks.itemText(i))
+                                for i in range(self.opt_replace_scene_breaks.count())]
         for p in history_pats[:10]:
             # Ensure we don't have duplicate items.
             if p not in rssb_history:

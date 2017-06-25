@@ -107,7 +107,7 @@ class Text(QLineEdit):
         return self.text().strip() or None
 
     def set(self, val):
-        self.setText(type(u'')(val or ''))
+        self.setText(type('')(val or ''))
 
 
 class Choices(QComboBox):
@@ -151,7 +151,7 @@ class AdvancedTab(QWidget):
                 w = Choices
             elif isinstance(opt.default, bool):
                 w = Bool
-            elif isinstance(opt.default, (int, long)):
+            elif isinstance(opt.default, int):
                 w = Int
             elif isinstance(opt.default, float):
                 w = Float

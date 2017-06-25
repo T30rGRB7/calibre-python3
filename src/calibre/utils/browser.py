@@ -5,8 +5,8 @@ __license__   = 'GPL v3'
 __copyright__ = '2010, Kovid Goyal <kovid@kovidgoyal.net>'
 __docformat__ = 'restructuredtext en'
 
-import copy, httplib, ssl
-from cookielib import CookieJar, Cookie
+import copy, http.client, ssl
+from http.cookiejar import CookieJar, Cookie
 
 from mechanize import Browser as B, HTTPSHandler
 
@@ -24,7 +24,7 @@ class ModernHTTPSHandler(HTTPSHandler):
 
         def conn_factory(hostport, **kw):
             kw['context'] = self.ssl_context
-            return httplib.HTTPSConnection(hostport, **kw)
+            return http.client.HTTPSConnection(hostport, **kw)
         return self.do_open(conn_factory, req)
 
 
@@ -152,7 +152,7 @@ class Browser(B):
         clone = Browser()
         clone.https_handler.ssl_context = self.https_handler.ssl_context
         clone.addheaders = copy.deepcopy(self.addheaders)
-        for func, args, kwargs in self._clone_actions.values():
+        for func, args, kwargs in list(self._clone_actions.values()):
             func = getattr(clone, func)
             func(*args, **kwargs)
         return clone
@@ -165,7 +165,7 @@ if __name__ == '__main__':
     clone = orig.clone_browser()
     pprint(orig._ua_handlers)
     pprint(clone._ua_handlers)
-    assert orig._ua_handlers.keys() == clone._ua_handlers.keys()
+    assert list(orig._ua_handlers.keys()) == list(clone._ua_handlers.keys())
     assert orig._ua_handlers['_cookies'].cookiejar is \
             clone._ua_handlers['_cookies'].cookiejar
     assert orig.addheaders == clone.addheaders

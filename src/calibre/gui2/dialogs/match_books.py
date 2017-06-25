@@ -125,7 +125,7 @@ class MatchBooks(QDialog, Ui_MatchBooks):
             QDialog.keyPressEvent(self, e)
 
     def do_search(self):
-        query = unicode(self.search_text.text())
+        query = str(self.search_text.text())
         if not query:
             d = error_dialog(self.gui, _('Match books'),
                      _('You must enter a search expression into the search box'))

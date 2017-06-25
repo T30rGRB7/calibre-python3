@@ -146,7 +146,7 @@ class Index(object):  # {{{
         for i, (index_num, tags) in enumerate(self.entries):
             control_bytes = self.control_bytes[i]
             buf.seek(0), buf.truncate(0)
-            index_num = (index_num.encode('utf-8') if isinstance(index_num, unicode) else index_num)
+            index_num = (index_num.encode('utf-8') if isinstance(index_num, str) else index_num)
             raw = bytearray(index_num)
             raw.insert(0, len(index_num))
             buf.write(bytes(raw))
@@ -379,7 +379,7 @@ if __name__ == '__main__':
     # calibre and kindlegen and compare the output
     import os, subprocess
     os.chdir('/t')
-    paras = ['<p>%d</p>' % i for i in xrange(4000)]
+    paras = ['<p>%d</p>' % i for i in range(4000)]
     raw = '<html><body>' + '\n\n'.join(paras) + '</body></html>'
 
     src = 'index.html'

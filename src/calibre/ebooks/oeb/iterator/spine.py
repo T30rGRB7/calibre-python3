@@ -45,7 +45,7 @@ def all_links(html):
     return ans
 
 
-class SpineItem(unicode):
+class SpineItem(str):
 
     def __new__(cls, path, mime_type=None, read_anchor_map=True,
             run_char_count=True, from_epub=False, read_links=True):

@@ -22,7 +22,7 @@ from __future__ import (unicode_literals, division, absolute_import,
 import os, stat
 import os.path as op
 from datetime import datetime
-from urllib import quote
+from urllib.parse import quote
 
 FILES_DIR = 'files'
 INFO_DIR = 'info'
@@ -38,7 +38,7 @@ TOPDIR_FALLBACK = '.Trash-%s'%uid
 
 
 def uniquote(raw):
-    if isinstance(raw, unicode):
+    if isinstance(raw, str):
         raw = raw.encode('utf-8')
     return quote(raw).decode('utf-8')
 

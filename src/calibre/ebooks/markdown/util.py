@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 import re
 import sys
 
@@ -15,9 +15,9 @@ if PY3:  # pragma: no cover
     text_type = str
     int2str = chr
 else:  # pragma: no cover
-    string_type = basestring   # noqa
-    text_type = unicode        # noqa
-    int2str = unichr           # noqa
+    string_type = str   # noqa
+    text_type = str        # noqa
+    int2str = chr           # noqa
 
 
 """

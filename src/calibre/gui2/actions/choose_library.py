@@ -38,7 +38,7 @@ class LibraryUsageStats(object):  # {{{
                 # Rename the current library. Renaming of other libraries is
                 # handled by the switch function
                 q = os.path.basename(lp)
-                for loc in list(self.stats.iterkeys()):
+                for loc in list(self.stats.keys()):
                     bn = posixpath.basename(loc)
                     if bn.lower() == q.lower():
                         self.rename(loc, lp)
@@ -143,7 +143,7 @@ class MovedDialog(QDialog):  # {{{
         self.stats.remove(self.location)
 
     def accept(self):
-        newloc = unicode(self.loc.text())
+        newloc = str(self.loc.text())
         if not db_class().exists_at(newloc):
             error_dialog(self, _('No library found'),
                     _('No existing calibre library found at %s')%newloc,
@@ -321,7 +321,7 @@ class ChooseLibraryAction(InterfaceAction):
         lname = self.stats.library_used(db)
         self.last_lname = lname
         if len(lname) > 16:
-            lname = lname[:16] + u'…'
+            lname = lname[:16] + '…'
         a = self.qaction
         a.setText(lname.replace('&', '&&&'))  # I have no idea why this requires a triple ampersand
         self.update_tooltip(db.count())
@@ -401,7 +401,7 @@ class ChooseLibraryAction(InterfaceAction):
                 '<p>'+_('Choose a new name for the library <b>%s</b>. ')%name +
                 '<p>'+_('Note that the actual library folder will be renamed.'),
                 text=old_name)
-        newname = sanitize_file_name_unicode(unicode(newname))
+        newname = sanitize_file_name_unicode(str(newname))
         if not ok or not newname or newname == old_name:
             return
         newloc = os.path.join(base, newname)
@@ -579,16 +579,16 @@ class ChooseLibraryAction(InterfaceAction):
         import gc
         from calibre.utils.mem import memory
         ref = self.dbref
-        for i in xrange(3):
+        for i in range(3):
             gc.collect()
         if ref() is not None:
-            print 'DB object alive:', ref()
+            print('DB object alive:', ref())
             for r in gc.get_referrers(ref())[:10]:
-                print r
-                print
-        print 'before:', self.before_mem
-        print 'after:', memory()
-        print
+                print(r)
+                print()
+        print('before:', self.before_mem)
+        print('after:', memory())
+        print()
         self.dbref = self.before_mem = None
 
     def qs_requested(self, idx, *args):

@@ -175,7 +175,7 @@ class ToolBar(QToolBar):  # {{{
     def check_iactions_for_drag(self, event, md, func):
         if self.added_actions:
             pos = event.pos()
-            for iac in self.gui.iactions.itervalues():
+            for iac in self.gui.iactions.values():
                 if iac.accepts_drops:
                     aa = iac.qaction
                     w = self.widgetForAction(aa)
@@ -240,7 +240,7 @@ class ToolBar(QToolBar):  # {{{
 
         mime = 'application/calibre+from_device'
         if data.hasFormat(mime):
-            paths = [unicode(u.toLocalFile()) for u in data.urls()]
+            paths = [str(u.toLocalFile()) for u in data.urls()]
             if paths:
                 self.gui.iactions['Add Books'].add_books_from_device(
                         self.gui.current_view(), paths=paths)

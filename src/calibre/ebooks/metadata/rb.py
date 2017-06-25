@@ -16,7 +16,7 @@ def get_metadata(stream):
     stream.seek(0)
     try:
         if not stream.read(14) == MAGIC:
-            print >>sys.stderr, u'Couldn\'t read RB header from file'
+            print('Couldn\'t read RB header from file', file=sys.stderr)
             return mi
         stream.read(10)
 
@@ -31,7 +31,7 @@ def get_metadata(stream):
             if flag == 2:
                 break
         else:
-            print >>sys.stderr, u'Couldn\'t find INFO from RB file'
+            print('Couldn\'t find INFO from RB file', file=sys.stderr)
             return mi
 
         stream.seek(offset)
@@ -46,8 +46,8 @@ def get_metadata(stream):
                 mi.author = value
                 mi.authors = string_to_authors(value)
     except Exception as err:
-        msg = u'Couldn\'t read metadata from rb: %s with error %s'%(mi.title, unicode(err))
-        print >>sys.stderr, msg.encode('utf8')
+        msg = 'Couldn\'t read metadata from rb: %s with error %s'%(mi.title, str(err))
+        print(msg.encode('utf8'), file=sys.stderr)
         raise
     return mi
 

@@ -301,7 +301,7 @@ class Editor(QMainWindow):
     def toolbar_floated(self, floating):
         if not floating:
             self.save_state()
-            for ed in editors.itervalues():
+            for ed in editors.values():
                 if ed is not self:
                     ed.restore_state()
 

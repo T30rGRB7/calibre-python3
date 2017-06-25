@@ -29,7 +29,7 @@ def run_checks(container):
 
     # Check parsing
     xml_items, html_items, raster_images, stylesheets = [], [], [], []
-    for name, mt in container.mime_map.iteritems():
+    for name, mt in container.mime_map.items():
         items = None
         if mt in XML_TYPES:
             items = xml_items

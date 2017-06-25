@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
@@ -28,7 +28,7 @@ class EPUBHelpBuilder(EpubBuilder):
 
     def fix_epub(self, container):
         ' Fix all the brokenness that sphinx\'s epub builder creates '
-        for name, mt in container.mime_map.iteritems():
+        for name, mt in container.mime_map.items():
             if mt in OEB_DOCS:
                 self.workaround_ade_quirks(container, name)
                 pretty_html_tree(container, container.parsed(name))
@@ -49,9 +49,9 @@ class EPUBHelpBuilder(EpubBuilder):
     def fix_opf(self, container):
         spine_names = {n for n, l in container.spine_names}
         spine = container.opf_xpath('//opf:spine')[0]
-        rmap = {v:k for k, v in container.manifest_id_map.iteritems()}
+        rmap = {v:k for k, v in container.manifest_id_map.items()}
         # Add unreferenced text files to the spine
-        for name, mt in container.mime_map.iteritems():
+        for name, mt in container.mime_map.items():
             if mt in OEB_DOCS and name not in spine_names:
                 spine_names.add(name)
                 container.insert_into_xml(spine, spine.makeelement(OPF('itemref'), idref=rmap[name]))

@@ -9,12 +9,12 @@ import atexit, os, sys
 from math import ceil
 from unicodedata import normalize
 from threading import Thread, Lock
-from Queue import Queue
+from queue import Queue
 from operator import itemgetter
 from collections import OrderedDict
 from itertools import islice
 
-from itertools import izip
+
 from future_builtins import map
 
 from calibre import detect_ncpus as cpu_count, as_unicode
@@ -97,7 +97,7 @@ class Matcher(object):
                 w = [Worker(requests, results) for i in range(max(1, cpu_count()))]
                 [x.start() for x in w]
                 workers.extend(w)
-        items = map(lambda x: normalize('NFC', unicode(x)), filter(None, items))
+        items = map(lambda x: normalize('NFC', str(x)), [_f for _f in items if _f])
         self.items = items = tuple(items)
         tasks = split(items, len(workers))
         self.task_maps = [{j: i for j, (i, _) in enumerate(task)} for task in tasks]
@@ -108,7 +108,7 @@ class Matcher(object):
         self.sort_keys = None
 
     def __call__(self, query, limit=None):
-        query = normalize('NFC', unicode(query))
+        query = normalize('NFC', str(query))
         with wlock:
             for i, scorer in enumerate(self.scorers):
                 workers[0].requests.put((i, scorer, query))
@@ -194,7 +194,7 @@ def process_item(ctx, haystack, needle):
         key = (hidx, nidx, last_idx)
         mem = ctx.memory.get(key, None)
         if mem is None:
-            for i in xrange(nidx, len(needle)):
+            for i in range(nidx, len(needle)):
                 n = needle[i]
                 if (len(haystack) - hidx < len(needle) - i):
                     score = 0
@@ -265,12 +265,12 @@ class CScorer(object):
         self.m = speedup.Matcher(
             items,
             primary_collator().capsule,
-            unicode(level1), unicode(level2), unicode(level3)
+            str(level1), str(level2), str(level3)
         )
 
     def __call__(self, query):
         scores, positions = self.m.calculate_scores(query)
-        for score, pos in izip(scores, positions):
+        for score, pos in zip(scores, positions):
             yield score, pos
 
 
@@ -295,12 +295,12 @@ def test(return_tests=False):
                 m('one')
 
             start = memory()
-            for i in xrange(10):
+            for i in range(10):
                 doit(str(i))
             gc.collect()
             used10 = memory() - start
             start = memory()
-            for i in xrange(100):
+            for i in range(100):
                 doit(str(i))
             gc.collect()
             used100 = memory() - start
@@ -310,7 +310,7 @@ def test(return_tests=False):
         def test_non_bmp(self):
             raw = '_\U0001f431-'
             m = Matcher([raw], scorer=CScorer)
-            positions = next(m(raw).itervalues())
+            positions = next(iter(m(raw).values()))
             self.assertEqual(
                 positions, (0, 1, (2 if sys.maxunicode >= 0x10ffff else 3))
             )
@@ -342,8 +342,8 @@ def main(basedir=None, query=None):
     from calibre.utils.terminal import ColoredStream
     if basedir is None:
         try:
-            basedir = raw_input('Enter directory to scan [%s]: ' % os.getcwdu()
-                                ).decode(sys.stdin.encoding).strip() or os.getcwdu()
+            basedir = input('Enter directory to scan [%s]: ' % os.getcwd()
+                                ).decode(sys.stdin.encoding).strip() or os.getcwd()
         except (EOFError, KeyboardInterrupt):
             return
     m = FilesystemMatcher(basedir)
@@ -351,12 +351,12 @@ def main(basedir=None, query=None):
     while True:
         if query is None:
             try:
-                query = raw_input('Enter query: ').decode(sys.stdin.encoding)
+                query = input('Enter query: ').decode(sys.stdin.encoding)
             except (EOFError, KeyboardInterrupt):
                 break
             if not query:
                 break
-        for path, positions in islice(m(query).iteritems(), 0, 10):
+        for path, positions in islice(iter(m(query).items()), 0, 10):
             positions = list(positions)
             p = 0
             while positions:

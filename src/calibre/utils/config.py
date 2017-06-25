@@ -1,4 +1,4 @@
-from __future__ import with_statement
+
 __license__   = 'GPL v3'
 __copyright__ = '2008, Kovid Goyal kovid@kovidgoyal.net'
 __docformat__ = 'restructuredtext en'
@@ -6,7 +6,7 @@ __docformat__ = 'restructuredtext en'
 '''
 Manage application-wide preferences.
 '''
-import os, cPickle, base64, datetime, json, plistlib
+import os, pickle, base64, datetime, json, plistlib
 from copy import deepcopy
 import optparse
 
@@ -178,7 +178,7 @@ class OptionParser(optparse.OptionParser):
         Default values in upper are overridden by
         non default values in lower.
         '''
-        for dest in lower.__dict__.keys():
+        for dest in list(lower.__dict__.keys()):
             if dest not in upper.__dict__:
                 continue
             opt = self.option_by_dest(dest)
@@ -187,7 +187,7 @@ class OptionParser(optparse.OptionParser):
                 upper.__dict__[dest] = lower.__dict__[dest]
 
     def add_option_group(self, *args, **kwargs):
-        if isinstance(args[0], type(u'')):
+        if isinstance(args[0], type('')):
             args = [optparse.OptionGroup(self, *args, **kwargs)] + list(args[1:])
         return optparse.OptionParser.add_option_group(self, *args, **kwargs)
 
@@ -217,11 +217,11 @@ class DynamicConfig(dict):
             with ExclusiveFile(self.file_path) as f:
                 raw = f.read()
                 try:
-                    d = cPickle.loads(raw) if raw.strip() else {}
+                    d = pickle.loads(raw) if raw.strip() else {}
                 except SystemError:
                     pass
                 except:
-                    print 'WARNING: Failed to unpickle stored config object, ignoring'
+                    print('WARNING: Failed to unpickle stored config object, ignoring')
                     if DEBUG:
                         import traceback
                         traceback.print_exc()
@@ -254,7 +254,7 @@ class DynamicConfig(dict):
             if not os.path.exists(self.file_path):
                 make_config_dir()
             with ExclusiveFile(self.file_path) as f:
-                raw = cPickle.dumps(self, -1)
+                raw = pickle.dumps(self, -1)
                 f.seek(0)
                 f.truncate()
                 f.write(raw)

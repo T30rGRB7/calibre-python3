@@ -2,15 +2,15 @@
 # vim:fileencoding=utf-8
 # License: GPLv3 Copyright: 2017, Kovid Goyal <kovid at kovidgoyal.net>
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 
 import json
 import re
 import time
 from collections import defaultdict, namedtuple
 from future_builtins import map
-from urllib import quote_plus, urlencode
-from urlparse import parse_qs
+from urllib.parse import quote_plus, urlencode
+from urllib.parse import parse_qs
 
 from lxml import etree
 
@@ -28,7 +28,7 @@ Result = namedtuple('Result', 'url title cached_url')
 
 
 def tostring(elem):
-    return etree.tostring(elem, encoding=unicode, method='text', with_tail=False)
+    return etree.tostring(elem, encoding=str, method='text', with_tail=False)
 
 
 def browser():
@@ -43,7 +43,7 @@ def browser():
 
 
 def encode_query(**query):
-    q = {k.encode('utf-8'): v.encode('utf-8') for k, v in query.iteritems()}
+    q = {k.encode('utf-8'): v.encode('utf-8') for k, v in query.items()}
     return urlencode(q).decode('utf-8')
 
 

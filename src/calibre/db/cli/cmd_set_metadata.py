@@ -2,7 +2,7 @@
 # vim:fileencoding=utf-8
 # License: GPLv3 Copyright: 2017, Kovid Goyal <kovid at kovidgoyal.net>
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 
 import os
 
@@ -147,7 +147,7 @@ def main(opts, args, dbctx):
         with lopen(opf, 'rb') as stream:
             mi = get_metadata(stream)[0]
         if mi.cover:
-            mi.cover = os.path.join(os.path.dirname(opf), os.path.relpath(mi.cover, os.getcwdu()))
+            mi.cover = os.path.join(os.path.dirname(opf), os.path.relpath(mi.cover, os.getcwd()))
         final_mi = dbctx.run('set_metadata', 'opf', book_id, read_cover(mi))
         if not final_mi:
             raise SystemExit(_('No book with id: %s in the database') % book_id)
@@ -169,7 +169,7 @@ def main(opts, args, dbctx):
             vals[field] = val
         fvals = []
         for field, val in sorted(  # ensure series_index fields are set last
-                vals.iteritems(), key=lambda k: 1 if k[0].endswith('_index') else 0):
+                iter(vals.items()), key=lambda k: 1 if k[0].endswith('_index') else 0):
             if field.endswith('_index'):
                 try:
                     val = float(val)
@@ -181,5 +181,5 @@ def main(opts, args, dbctx):
         if not final_mi:
             raise SystemExit(_('No book with id: %s in the database') % book_id)
 
-    prints(unicode(final_mi))
+    prints(str(final_mi))
     return 0

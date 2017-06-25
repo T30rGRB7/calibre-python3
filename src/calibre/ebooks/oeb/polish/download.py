@@ -7,11 +7,11 @@ from __future__ import (unicode_literals, division, absolute_import,
 import shutil, os, posixpath, cgi, mimetypes
 from collections import defaultdict
 from contextlib import closing
-from urlparse import urlparse
+from urllib.parse import urlparse
 from multiprocessing.dummy import Pool
 from functools import partial
 from tempfile import NamedTemporaryFile
-from urllib2 import urlopen
+from urllib.request import urlopen
 
 from calibre import as_unicode, sanitize_file_name2
 from calibre.ebooks.oeb.polish.utils import guess_type
@@ -37,7 +37,7 @@ def iterhtmllinks(container, name):
 
 def get_external_resources(container):
     ans = defaultdict(list)
-    for name, media_type in container.mime_map.iteritems():
+    for name, media_type in container.mime_map.items():
         if container.has_name(name) and container.exists(name):
             if media_type in OEB_DOCS:
                 for el, attr, link in iterhtmllinks(container, name):
@@ -153,12 +153,12 @@ def replacer(url_map):
 def replace_resources(container, urls, replacements):
     url_maps = defaultdict(dict)
     changed = False
-    for url, names in urls.iteritems():
+    for url, names in urls.items():
         replacement = replacements.get(url)
         if replacement is not None:
             for name in names:
                 url_maps[name][url] = container.name_to_href(replacement, name)
-    for name, url_map in url_maps.iteritems():
+    for name, url_map in url_maps.items():
         r = replacer(url_map)
         container.replace_links(name, r)
         changed |= r.replaced

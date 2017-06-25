@@ -151,7 +151,7 @@ class RemoveFakeMargins(object):
                 self.levels[level].append(p)
 
         remove = set()
-        for k, v in self.levels.iteritems():
+        for k, v in self.levels.items():
             num = len(v)
             self.log.debug('Found %d items of level:'%num, k)
             level = int(k.split('_')[-1])

@@ -72,7 +72,7 @@ class Resources(object):
             self.image_indices.add(0)
         elif self.is_periodical:
             # Generate a default masthead
-            data = generate_masthead(unicode(self.oeb.metadata['title'][0]))
+            data = generate_masthead(str(self.oeb.metadata['title'][0]))
             self.records.append(data)
             self.used_image_indices.add(0)
             self.image_indices.add(0)
@@ -80,12 +80,12 @@ class Resources(object):
 
         cover_href = self.cover_offset = self.thumbnail_offset = None
         if (oeb.metadata.cover and
-                unicode(oeb.metadata.cover[0]) in oeb.manifest.ids):
-            cover_id = unicode(oeb.metadata.cover[0])
+                str(oeb.metadata.cover[0]) in oeb.manifest.ids):
+            cover_id = str(oeb.metadata.cover[0])
             item = oeb.manifest.ids[cover_id]
             cover_href = item.href
 
-        for item in self.oeb.manifest.values():
+        for item in list(self.oeb.manifest.values()):
             if item.media_type not in OEB_RASTER_IMAGES:
                 continue
             try:
@@ -122,7 +122,7 @@ class Resources(object):
                 item.unload_data_from_memory()
 
         if add_fonts:
-            for item in self.oeb.manifest.values():
+            for item in list(self.oeb.manifest.values()):
                 if item.href and item.href.rpartition('.')[-1].lower() in {
                         'ttf', 'otf'} and isinstance(item.data, bytes):
                     self.records.append(write_font_record(item.data))
@@ -133,7 +133,7 @@ class Resources(object):
         '''
         Add any images that were created after the call to add_resources()
         '''
-        for item in self.oeb.manifest.values():
+        for item in list(self.oeb.manifest.values()):
             if (item.media_type not in OEB_RASTER_IMAGES or item.href in self.item_map):
                 continue
             try:
@@ -148,7 +148,7 @@ class Resources(object):
 
     def serialize(self, records, used_images):
         used_image_indices = self.used_image_indices | {
-                v-1 for k, v in self.item_map.iteritems() if k in used_images}
+                v-1 for k, v in self.item_map.items() if k in used_images}
         for i in self.image_indices-used_image_indices:
             self.records[i] = PLACEHOLDER_GIF
         records.extend(self.records)

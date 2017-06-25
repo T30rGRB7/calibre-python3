@@ -47,7 +47,7 @@ class FontMetadata(object):
         elif wt == 700:
             wt = 'bold'
         else:
-            wt = type(u'')(wt)
+            wt = type('')(wt)
         self.font_weight = wt
 
         self.font_stretch = ('ultra-condensed', 'extra-condensed',
@@ -70,7 +70,7 @@ class FontMetadata(object):
         sz = calcsize(table_record)
         self.tables = {}
         block = f.read(sz * num_tables)
-        for i in xrange(num_tables):
+        for i in range(num_tables):
             table_tag, table_checksum, table_offset, table_length = \
                     unpack_from(table_record, block, i*sz)
             self.tables[table_tag.lower()] = (table_offset, table_length,

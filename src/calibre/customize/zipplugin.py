@@ -34,7 +34,7 @@ def get_resources(zfp, name_or_list_of_names):
                 be just the bytes of the resource or None if it wasn't found.
     '''
     names = name_or_list_of_names
-    if isinstance(names, basestring):
+    if isinstance(names, str):
         names = [names]
     ans = {}
     with zipfile.ZipFile(zfp) as zf:
@@ -65,11 +65,11 @@ def get_icons(zfp, name_or_list_of_names):
     from PyQt5.Qt import QIcon, QPixmap
     names = name_or_list_of_names
     ans = get_resources(zfp, names)
-    if isinstance(names, basestring):
+    if isinstance(names, str):
         names = [names]
     if ans is None:
         ans = {}
-    if isinstance(ans, basestring):
+    if isinstance(ans, str):
         ans = dict([(names[0], ans)])
 
     ians = {}
@@ -180,7 +180,7 @@ class PluginLoader(object):
             mod.__dict__['get_resources'] = partial(get_resources, zfp)
             mod.__dict__['get_icons'] = partial(get_icons, zfp)
             mod.__dict__['load_translations'] = partial(load_translations, mod.__dict__, zfp)
-            exec compiled in mod.__dict__
+            exec(compiled, mod.__dict__)
 
         return mod
 
@@ -200,7 +200,7 @@ class PluginLoader(object):
             else:
                 m = importlib.import_module(plugin_module)
             plugin_classes = []
-            for obj in m.__dict__.itervalues():
+            for obj in m.__dict__.values():
                 if isinstance(obj, type) and issubclass(obj, Plugin) and \
                         obj.name != 'Trivial Plugin':
                     plugin_classes.append(obj)
@@ -215,7 +215,7 @@ class PluginLoader(object):
             if ans.minimum_calibre_version > numeric_version:
                 raise InvalidPlugin(
                     'The plugin at %s needs a version of calibre >= %s' %
-                    (as_unicode(path_to_zip_file), '.'.join(map(unicode,
+                    (as_unicode(path_to_zip_file), '.'.join(map(str,
                         ans.minimum_calibre_version))))
 
             if platform not in ans.supported_platforms:
@@ -230,7 +230,7 @@ class PluginLoader(object):
             raise
 
     def _locate_code(self, zf, path_to_zip_file):
-        names = [x if isinstance(x, unicode) else x.decode('utf-8') for x in
+        names = [x if isinstance(x, str) else x.decode('utf-8') for x in
                 zf.namelist()]
         names = [x[1:] if x[0] == '/' else x for x in names]
 
@@ -279,7 +279,7 @@ class PluginLoader(object):
 
         # Legacy plugins
         if '__init__' not in names:
-            for name in list(names.iterkeys()):
+            for name in list(names.keys()):
                 if '.' not in name and name.endswith('plugin'):
                     names['__init__'] = names[name]
                     break
@@ -309,11 +309,11 @@ if __name__ == '__main__':
             with CurrentDir(path):
                 for x in os.listdir('.'):
                     if x[0] != '.':
-                        print ('Adding', x)
+                        print(('Adding', x))
                     zf.write(x)
                     if os.path.isdir(x):
                         for y in os.listdir(x):
                             zf.write(os.path.join(x, y))
         add_plugin(f.name)
-        print ('Added plugin from', sys.argv[-1])
+        print(('Added plugin from', sys.argv[-1]))
 

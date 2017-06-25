@@ -179,7 +179,7 @@ class Browser(QScrollArea):  # {{{
         for plugin in preferences_plugins():
             self.category_map[plugin.category].append(plugin)
 
-        for plugins in self.category_map.values():
+        for plugins in list(self.category_map.values()):
             plugins.sort(cmp=lambda x, y: cmp(x.name_order, y.name_order))
 
         self.widgets = []
@@ -188,7 +188,7 @@ class Browser(QScrollArea):  # {{{
         self.container.setLayout(self._layout)
         self.setWidget(self.container)
 
-        for name, plugins in self.category_map.items():
+        for name, plugins in list(self.category_map.items()):
             w = Category(name, plugins, self.category_names[name], parent=self)
             self.widgets.append(w)
             self._layout.addWidget(w)
@@ -293,8 +293,8 @@ class Preferences(QDialog):
                 if isinstance(g, QLabel):
                     buddy = g.buddy()
                     if buddy is not None and hasattr(buddy, 'toolTip'):
-                        htext = unicode(buddy.toolTip()).strip()
-                        etext = unicode(g.toolTip()).strip()
+                        htext = str(buddy.toolTip()).strip()
+                        etext = str(g.toolTip()).strip()
                         if htext and not etext:
                             g.setToolTip(htext)
                             g.setWhatsThis(htext)

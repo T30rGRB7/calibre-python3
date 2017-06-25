@@ -2,9 +2,9 @@
 # vim:fileencoding=utf-8
 # License: GPLv3 Copyright: 2017, Kovid Goyal <kovid at kovidgoyal.net>
 
-from __future__ import absolute_import, division, print_function, unicode_literals
 
-from urllib import quote_plus
+
+from urllib.parse import quote_plus
 
 AUTHOR_SEARCHES = {
     'goodreads':
@@ -52,7 +52,7 @@ def qquote(val):
 
 
 def url_for(template, data):
-    return template.format(**{k: qquote(v) for k, v in data.iteritems()})
+    return template.format(**{k: qquote(v) for k, v in data.items()})
 
 
 def url_for_author_search(key, **kw):

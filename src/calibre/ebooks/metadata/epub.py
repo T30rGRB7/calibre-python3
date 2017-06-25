@@ -1,12 +1,12 @@
 #!/usr/bin/env python2
-from __future__ import with_statement
+
 __license__   = 'GPL v3'
 __copyright__ = '2008, Kovid Goyal <kovid at kovidgoyal.net>'
 
 '''Read meta information from epub files'''
 
 import os, re, posixpath
-from cStringIO import StringIO
+from io import StringIO
 from contextlib import closing
 
 from calibre.utils.zipfile import ZipFile, BadZipfile, safe_replace
@@ -90,9 +90,9 @@ class OCFReader(OCF):
         try:
             mimetype = self.open('mimetype').read().rstrip()
             if mimetype != OCF.MIMETYPE:
-                print 'WARNING: Invalid mimetype declaration', mimetype
+                print('WARNING: Invalid mimetype declaration', mimetype)
         except:
-            print 'WARNING: Epub doesn\'t contain a mimetype declaration'
+            print('WARNING: Epub doesn\'t contain a mimetype declaration')
 
         try:
             with closing(self.open(OCF.CONTAINER_PATH)) as f:
@@ -144,7 +144,7 @@ class OCFZipReader(OCFReader):
             if name:
                 self.root = os.path.abspath(os.path.dirname(name))
             else:
-                self.root = os.getcwdu()
+                self.root = os.getcwd()
         super(OCFZipReader, self).__init__()
 
     def open(self, name, mode='r'):
@@ -280,7 +280,7 @@ def serialize_cover_data(new_cdata, cpath):
 
 def set_metadata(stream, mi, apply_null=False, update_timestamp=False, force_identifiers=False, add_missing_cover=True):
     stream.seek(0)
-    reader = get_zip_reader(stream, root=os.getcwdu())
+    reader = get_zip_reader(stream, root=os.getcwd())
     new_cdata = None
     try:
         new_cdata = mi.cover_data[1]

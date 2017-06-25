@@ -99,8 +99,8 @@ class Check(QSplitter):
 
     def copy_to_clipboard(self):
         items = []
-        for item in (self.items.item(i) for i in xrange(self.items.count())):
-            msg = unicode(item.text())
+        for item in (self.items.item(i) for i in range(self.items.count())):
+            msg = str(item.text())
             msg = prefix_for_level(item.data(Qt.UserRole).level) + msg
             items.append(msg)
         if items:
@@ -116,13 +116,13 @@ class Check(QSplitter):
             msg, _('Click to run a check on the book'), _('Run check')))
 
     def link_clicked(self, url):
-        url = unicode(url.toString(NO_URL_FORMATTING))
+        url = str(url.toString(NO_URL_FORMATTING))
         if url == 'activate:item':
             self.current_item_activated()
         elif url == 'run:check':
             self.check_requested.emit()
         elif url == 'fix:errors':
-            errors = [self.items.item(i).data(Qt.UserRole) for i in xrange(self.items.count())]
+            errors = [self.items.item(i).data(Qt.UserRole) for i in range(self.items.count())]
             self.fix_requested.emit(errors)
         elif url.startswith('fix:error,'):
             num = int(url.rpartition(',')[-1])

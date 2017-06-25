@@ -79,7 +79,7 @@ class BookInfo(QDialog):
         self.previous_button.clicked.connect(self.previous)
         l2.addWidget(self.previous_button, l2.rowCount(), 0)
         self.next_button = QPushButton(QIcon(I('next.png')), _('&Next'), self)
-        self.next_button.clicked.connect(self.next)
+        self.next_button.clicked.connect(self.__next__)
         l2.addWidget(self.next_button, l2.rowCount() - 1, 1)
 
         self.view = view
@@ -88,13 +88,13 @@ class BookInfo(QDialog):
         self.view.model().new_bookdisplay_data.connect(self.slave)
         self.fit_cover.stateChanged.connect(self.toggle_cover_fit)
         self.ns = QShortcut(QKeySequence('Alt+Right'), self)
-        self.ns.activated.connect(self.next)
+        self.ns.activated.connect(self.__next__)
         self.ps = QShortcut(QKeySequence('Alt+Left'), self)
         self.ps.activated.connect(self.previous)
         self.next_button.setToolTip(_('Next [%s]')%
-                unicode(self.ns.key().toString(QKeySequence.NativeText)))
+                str(self.ns.key().toString(QKeySequence.NativeText)))
         self.previous_button.setToolTip(_('Previous [%s]')%
-                unicode(self.ps.key().toString(QKeySequence.NativeText)))
+                str(self.ps.key().toString(QKeySequence.NativeText)))
 
         geom = QCoreApplication.instance().desktop().availableGeometry(self)
         screen_height = geom.height() - 100
@@ -109,7 +109,7 @@ class BookInfo(QDialog):
                 pass
 
     def link_clicked(self, qurl):
-        link = unicode(qurl.toString(NO_URL_FORMATTING))
+        link = str(qurl.toString(NO_URL_FORMATTING))
         self.link_delegate(link)
 
     def done(self, r):
@@ -153,7 +153,7 @@ class BookInfo(QDialog):
                     self.view.scrollTo(ni)
                 self.view.setCurrentIndex(ni)
 
-    def next(self):
+    def __next__(self):
         self.move()
 
     def previous(self):

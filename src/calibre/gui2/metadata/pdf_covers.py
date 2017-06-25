@@ -76,9 +76,9 @@ class PDFCovers(QDialog):
     @property
     def cover_path(self):
         for item in self.covers.selectedItems():
-            return unicode(item.data(Qt.UserRole) or '')
+            return str(item.data(Qt.UserRole) or '')
         if self.covers.count() > 0:
-            return unicode(self.covers.item(0).data(Qt.UserRole) or '')
+            return str(self.covers.item(0).data(Qt.UserRole) or '')
 
     def cleanup(self):
         try:
@@ -128,4 +128,4 @@ if __name__ == '__main__':
     app
     d = PDFCovers(sys.argv[-1])
     d.exec_()
-    print (d.cover_path)
+    print((d.cover_path))

@@ -25,7 +25,7 @@ def full(p, xmax, ymax):
     pp.addRect(0, 0, xmax, ymax)
     p.drawPath(pp)
     p.save()
-    for i in xrange(3):
+    for i in range(3):
         col = [0, 0, 0, 200]
         col[i] = 255
         p.setOpacity(0.3)
@@ -131,8 +131,8 @@ def main():
     run(img, func)
     path = os.path.join(tdir, 'painter.png')
     img.save(path)
-    print ('PDF written to:', pdf)
-    print ('Image written to:', path)
+    print(('PDF written to:', pdf))
+    print(('Image written to:', path))
 
 if __name__ == '__main__':
     main()

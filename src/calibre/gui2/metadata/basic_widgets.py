@@ -223,7 +223,7 @@ class TitleEdit(EnLineEdit, ToMetadataMixin):
     def current_val(self):
 
         def fget(self):
-            title = clean_text(unicode(self.text()))
+            title = clean_text(str(self.text()))
             if not title:
                 title = self.get_default()
             return title.strip()
@@ -412,7 +412,7 @@ class AuthorsEdit(EditWithComplete, ToMetadataMixin):
     def current_val(self):
 
         def fget(self):
-            au = clean_text(unicode(self.text()))
+            au = clean_text(str(self.text()))
             if not au:
                 au = self.get_default()
             return string_to_authors(au)
@@ -479,7 +479,7 @@ class AuthorSortEdit(EnLineEdit, ToMetadataMixin):
     def current_val(self):
 
         def fget(self):
-            return clean_text(unicode(self.text()))
+            return clean_text(str(self.text()))
 
         def fset(self, val):
             if not val:
@@ -501,7 +501,7 @@ class AuthorSortEdit(EnLineEdit, ToMetadataMixin):
         return self.db.new_api.author_sort_from_authors(authors, key_func=lambda x: x)
 
     def update_state(self, *args):
-        au = unicode(self.authors_edit.text())
+        au = str(self.authors_edit.text())
         au = re.sub(r'\s+et al\.$', '', au)
         au = self.author_sort_from_authors(string_to_authors(au))
 
@@ -528,13 +528,13 @@ class AuthorSortEdit(EnLineEdit, ToMetadataMixin):
             self.authors_edit.current_val = ans
 
     def auto_generate(self, *args):
-        au = unicode(self.authors_edit.text())
+        au = str(self.authors_edit.text())
         au = re.sub(r'\s+et al\.$', '', au).strip()
         authors = string_to_authors(au)
         self.current_val = self.author_sort_from_authors(authors)
 
     def author_to_sort(self, *args):
-        au = unicode(self.authors_edit.text())
+        au = str(self.authors_edit.text())
         au = re.sub(r'\s+et al\.$', '', au).strip()
         if au:
             self.current_val = au
@@ -605,7 +605,7 @@ class SeriesEdit(EditWithComplete, ToMetadataMixin):
     def current_val(self):
 
         def fget(self):
-            return clean_text(unicode(self.currentText()))
+            return clean_text(str(self.currentText()))
 
         def fset(self, val):
             if not val:
@@ -974,7 +974,7 @@ class FormatsManager(QWidget):
         return fmt.ext.lower()
 
     def get_format_path(self, db, id_, fmt):
-        for i in xrange(self.formats.count()):
+        for i in range(self.formats.count()):
             f = self.formats.item(i)
             ext = f.ext.lower()
             if ext == fmt:
@@ -1308,7 +1308,7 @@ class TagsEdit(EditWithComplete, ToMetadataMixin):  # {{{
     @dynamic_property
     def current_val(self):
         def fget(self):
-            return [clean_text(x) for x in unicode(self.text()).split(',')]
+            return [clean_text(x) for x in str(self.text()).split(',')]
 
         def fset(self, val):
             if not val:
@@ -1476,7 +1476,7 @@ class IdentifiersEdit(QLineEdit, ToMetadataMixin):
     @dynamic_property
     def current_val(self):
         def fget(self):
-            raw = unicode(self.text()).strip()
+            raw = str(self.text()).strip()
             parts = [clean_text(x) for x in raw.split(',')]
             ans = {}
             for x in parts:
@@ -1505,7 +1505,7 @@ class IdentifiersEdit(QLineEdit, ToMetadataMixin):
                     v = check_isbn(k)
                     if v is not None:
                         val[k] = v
-            ids = sorted(val.iteritems(), key=keygen)
+            ids = sorted(iter(val.items()), key=keygen)
             txt = ', '.join(['%s:%s'%(k.lower(), vl) for k, vl in ids])
             # Use selectAll + insert instead of setText so that undo works
             self.selectAll(), self.insert(txt.strip())
@@ -1547,14 +1547,14 @@ class IdentifiersEdit(QLineEdit, ToMetadataMixin):
         if prefix == 'isbn':
             self.paste_isbn()
         else:
-            text = unicode(QApplication.clipboard().text()).strip()
+            text = str(QApplication.clipboard().text()).strip()
             if text:
                 vals = self.current_val
                 vals[prefix] = text
                 self.current_val = vals
 
     def paste_isbn(self):
-        text = unicode(QApplication.clipboard().text()).strip()
+        text = str(QApplication.clipboard().text()).strip()
         if not text or not check_isbn(text):
             d = ISBNDialog(self, text)
             if not d.exec_():
@@ -1597,7 +1597,7 @@ class ISBNDialog(QDialog):  # {{{
         self.resize(sz)
 
     def accept(self):
-        isbn = unicode(self.line_edit.text())
+        isbn = str(self.line_edit.text())
         if not check_isbn(isbn):
             return error_dialog(self, _('Invalid ISBN'),
                     _('The ISBN you entered is not valid. Try again.'),
@@ -1605,7 +1605,7 @@ class ISBNDialog(QDialog):  # {{{
         QDialog.accept(self)
 
     def checkText(self, txt):
-        isbn = unicode(txt)
+        isbn = str(txt)
         if not isbn:
             col = 'none'
             extra = ''
@@ -1619,7 +1619,7 @@ class ISBNDialog(QDialog):  # {{{
         self.line_edit.setStyleSheet(INDICATOR_SHEET % col)
 
     def text(self):
-        return check_isbn(unicode(self.line_edit.text()))
+        return check_isbn(str(self.line_edit.text()))
 
 # }}}
 
@@ -1643,7 +1643,7 @@ class PublisherEdit(EditWithComplete, ToMetadataMixin):  # {{{
     def current_val(self):
 
         def fget(self):
-            return clean_text(unicode(self.currentText()))
+            return clean_text(str(self.currentText()))
 
         def fset(self, val):
             if not val:

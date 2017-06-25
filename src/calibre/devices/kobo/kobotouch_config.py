@@ -117,7 +117,7 @@ class KOBOTOUCHConfig(TabbedDeviceConfig):
 
         p['support_newer_firmware'] = self.support_newer_firmware
         p['debugging_title'] = self.debugging_title
-        p['driver_version'] = '.'.join([unicode(i) for i in self.device.version])
+        p['driver_version'] = '.'.join([str(i) for i in self.device.version])
 
         return p
 
@@ -373,7 +373,7 @@ class AdvancedGroupBox(DeviceOptionsGroupBox):
                               'to perform full read-write functionality - Here be Dragons!! '
                               'Enable only if you are comfortable with restoring your kobo '
                               'to factory defaults and testing software. '
-                              'This driver supports firmware V2.x.x and DBVersion up to ') + unicode(
+                              'This driver supports firmware V2.x.x and DBVersion up to ') + str(
                                   device.supported_dbversion), device.get_pref('support_newer_firmware')
                              )
 

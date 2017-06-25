@@ -1,4 +1,4 @@
-from __future__ import with_statement
+
 ''' CHM File decoding support '''
 __license__ = 'GPL v3'
 __copyright__  = '2008, Kovid Goyal <kovid at kovidgoyal.net>,' \
@@ -46,7 +46,7 @@ class CHMReader(CHMFile):
 
     def __init__(self, input, log, input_encoding=None):
         CHMFile.__init__(self)
-        if isinstance(input, unicode):
+        if isinstance(input, str):
             input = input.encode(filesystem_encoding)
         if not self.LoadCHM(input):
             raise CHMError("Unable to open CHM file '%s'"%(input,))
@@ -67,7 +67,7 @@ class CHMReader(CHMFile):
             self.root, ext = os.path.splitext(self.topics.lstrip('/'))
             self.hhc_path = self.root + ".hhc"
 
-    def _parse_toc(self, ul, basedir=os.getcwdu()):
+    def _parse_toc(self, ul, basedir=os.getcwd()):
         toc = TOC(play_order=self._playorder, base_path=basedir, text='')
         self._playorder += 1
         for li in ul('li', recursive=False):
@@ -101,7 +101,7 @@ class CHMReader(CHMFile):
             raise CHMError("'%s' is zero bytes in length!"%(path,))
         return data
 
-    def ExtractFiles(self, output_dir=os.getcwdu(), debug_dump=False):
+    def ExtractFiles(self, output_dir=os.getcwd(), debug_dump=False):
         html_files = set([])
         try:
             x = self.get_encoding()
@@ -111,7 +111,7 @@ class CHMReader(CHMFile):
             enc = 'cp1252'
         for path in self.Contents():
             fpath = path
-            if not isinstance(path, unicode):
+            if not isinstance(path, str):
                 fpath = path.decode(enc)
             lpath = os.path.join(output_dir, fpath)
             self._ensure_dir(lpath)
@@ -144,7 +144,7 @@ class CHMReader(CHMFile):
             with open(lpath, 'r+b') as f:
                 data = f.read()
                 data = self._reformat(data, lpath)
-                if isinstance(data, unicode):
+                if isinstance(data, str):
                     data = data.encode('utf-8')
                 f.seek(0)
                 f.truncate()
@@ -285,5 +285,5 @@ class CHMReader(CHMFile):
         if not os.path.isdir(dir):
             os.makedirs(dir)
 
-    def extract_content(self, output_dir=os.getcwdu(), debug_dump=False):
+    def extract_content(self, output_dir=os.getcwd(), debug_dump=False):
         self.ExtractFiles(output_dir=output_dir, debug_dump=debug_dump)

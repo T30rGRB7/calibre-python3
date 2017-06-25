@@ -102,7 +102,7 @@ class AllFonts(QAbstractTableModel):
 
     def do_sort(self):
         reverse = not self.sorted_on[1]
-        self.items = sorted(self.font_data.iterkeys(), key=sort_key, reverse=reverse)
+        self.items = sorted(iter(self.font_data.keys()), key=sort_key, reverse=reverse)
         if self.sorted_on[0] != 'name':
             self.items.sort(key=self.font_data.get, reverse=reverse)
 
@@ -179,7 +179,7 @@ class ChangeFontFamily(Dialog):
 
     @property
     def family(self):
-        return unicode(self._family.text())
+        return str(self._family.text())
 
     @property
     def normalized_family(self):
@@ -314,7 +314,7 @@ class ManageFonts(Dialog):
         fonts = self.get_selected_data()
         if not fonts:
             return
-        d = ChangeFontFamily(', '.join(fonts), {f for f, embedded in self.model.font_data.iteritems() if embedded}, self)
+        d = ChangeFontFamily(', '.join(fonts), {f for f, embedded in self.model.font_data.items() if embedded}, self)
         if d.exec_() != d.Accepted:
             return
         changed = False

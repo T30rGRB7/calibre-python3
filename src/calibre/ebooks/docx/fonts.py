@@ -82,7 +82,7 @@ class Family(object):
         for x in XPath('./w:panose1[@w:val]')(elem):
             try:
                 v = get(x, 'w:val')
-                v = tuple(int(v[i:i+2], 16) for i in xrange(0, len(v), 2))
+                v = tuple(int(v[i:i+2], 16) for i in range(0, len(v), 2))
             except (TypeError, ValueError, IndexError):
                 pass
             else:
@@ -129,7 +129,7 @@ class Fonts(object):
                         d['font-weight'] = 'bold'
                     if 'Italic' in variant:
                         d['font-style'] = 'italic'
-                    d = ['%s: %s' % (k, v) for k, v in d.iteritems()]
+                    d = ['%s: %s' % (k, v) for k, v in d.items()]
                     d = ';\n\t'.join(d)
                     defs.append('@font-face {\n\t%s\n}\n' % d)
         return '\n'.join(defs)
@@ -141,9 +141,9 @@ class Fonts(object):
         prefix = raw[:32]
         if ef.key:
             key = re.sub(r'[^A-Fa-f0-9]', '', ef.key)
-            key = bytearray(reversed(tuple(int(key[i:i+2], 16) for i in xrange(0, len(key), 2))))
+            key = bytearray(reversed(tuple(int(key[i:i+2], 16) for i in range(0, len(key), 2))))
             prefix = bytearray(prefix)
-            prefix = bytes(bytearray(prefix[i]^key[i % len(key)] for i in xrange(len(prefix))))
+            prefix = bytes(bytearray(prefix[i]^key[i % len(key)] for i in range(len(prefix))))
         if not is_truetype_font(prefix):
             return None
         ext = 'otf' if prefix.startswith(b'OTTO') else 'ttf'

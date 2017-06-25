@@ -8,7 +8,7 @@ __copyright__ = '2015, Kovid Goyal <kovid at kovidgoyal.net>'
 
 import ssl, socket, select, os, traceback
 from io import BytesIO
-from Queue import Empty, Full
+from queue import Empty, Full
 from functools import partial
 
 from calibre import as_unicode
@@ -27,7 +27,7 @@ from calibre.utils.monotonic import monotonic
 from calibre.utils.mdns import get_external_ip
 
 READ, WRITE, RDWR, WAIT = 'READ', 'WRITE', 'RDWR', 'WAIT'
-WAKEUP, JOB_DONE = bytes(bytearray(xrange(2)))
+WAKEUP, JOB_DONE = bytes(bytearray(range(2)))
 
 
 class ReadBuffer(object):  # {{{
@@ -483,7 +483,7 @@ class ServerLoop(object):
     def tick(self):
         now = monotonic()
         read_needed, write_needed, readable, remove = [], [], [], []
-        for s, conn in self.connection_map.iteritems():
+        for s, conn in self.connection_map.items():
             if now - conn.last_activity > self.opts.timeout:
                 if conn.handle_timeout():
                     conn.last_activity = now
@@ -517,7 +517,7 @@ class ServerLoop(object):
                 # e.args[0]
                 if getattr(e, 'errno', e.args[0]) in socket_errors_eintr:
                     return
-                for s, conn in tuple(self.connection_map.iteritems()):
+                for s, conn in tuple(self.connection_map.items()):
                     try:
                         select.select([s], [], [], 0)
                     except (select.error, socket.error) as e:
@@ -647,7 +647,7 @@ class ServerLoop(object):
                 self.socket = None
         except socket.error:
             pass
-        for s, conn in tuple(self.connection_map.iteritems()):
+        for s, conn in tuple(self.connection_map.items()):
             self.close(s, conn)
         wait_till = monotonic() + self.opts.shutdown_timeout
         for pool in (self.plugin_pool, self.pool):

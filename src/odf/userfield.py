@@ -33,13 +33,13 @@ OUTENCODING = "utf-8"
 
 # OpenDocument v.1.0 section 6.7.1
 VALUE_TYPES = {
-    'float': (OFFICENS, u'value'),
-    'percentage': (OFFICENS, u'value'),
-    'currency': (OFFICENS, u'value'),
-    'date': (OFFICENS, u'date-value'),
-    'time': (OFFICENS, u'time-value'),
-    'boolean': (OFFICENS, u'boolean-value'),
-    'string': (OFFICENS, u'string-value'),
+    'float': (OFFICENS, 'value'),
+    'percentage': (OFFICENS, 'value'),
+    'currency': (OFFICENS, 'value'),
+    'date': (OFFICENS, 'date-value'),
+    'time': (OFFICENS, 'time-value'),
+    'boolean': (OFFICENS, 'boolean-value'),
+    'string': (OFFICENS, 'string-value'),
     }
 
 
@@ -62,7 +62,7 @@ class UserFields(object):
         self.document = None
 
     def loaddoc(self):
-        if isinstance(self.src_file, basestring):
+        if isinstance(self.src_file, str):
             # src_file is a filename, check if it is a zip-file
             if not zipfile.is_zipfile(self.src_file):
                 raise TypeError("%s is no odt file." % self.src_file)
@@ -158,7 +158,7 @@ class UserFields(object):
         all_fields = self.document.getElementsByType(UserFieldDecl)
         for f in all_fields:
             field_name = f.getAttribute('name')
-            if data.has_key(field_name):
+            if field_name in data:
                 value_type = f.getAttribute('valuetype')
                 value = data.get(field_name)
                 if value_type == 'string':

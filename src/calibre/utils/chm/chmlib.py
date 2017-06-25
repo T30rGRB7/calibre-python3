@@ -32,7 +32,7 @@ def _swig_getattr(self,class_type,name):
 
 import types
 try:
-    _object = types.ObjectType
+    _object = object
     _newclass = 1
 except AttributeError:
     class _object :
@@ -68,7 +68,7 @@ class chmUnitInfo(_object):
         path = property(_chmlib.chmUnitInfo_path_get,_chmlib.chmUnitInfo_path_set)
 
     def __init__(self,*args):
-        _swig_setattr(self, chmUnitInfo, 'this', apply(_chmlib.new_chmUnitInfo,args))
+        _swig_setattr(self, chmUnitInfo, 'this', _chmlib.new_chmUnitInfo(*args))
         _swig_setattr(self, chmUnitInfo, 'thisown', 1)
 
     def __del__(self, destroy=_chmlib.delete_chmUnitInfo):

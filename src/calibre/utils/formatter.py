@@ -213,7 +213,7 @@ class TemplateFormatter(string.Formatter):
             except:
                 raise ValueError(
                     _('format: type {0} requires a decimal (float) value, got {1}').format(typ, val))
-        return unicode(('{0:'+fmt+'}').format(val))
+        return str(('{0:'+fmt+'}').format(val))
 
     def _explode_format_string(self, fmt):
         try:
@@ -272,7 +272,7 @@ class TemplateFormatter(string.Formatter):
         # ensure we are dealing with a string.
         if isinstance(val, (int, float)):
             if val:
-                val = unicode(val)
+                val = str(val)
             else:
                 val = ''
         # Handle conditional text

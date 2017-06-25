@@ -36,10 +36,10 @@ class Page(QWebPage):  # {{{
         self.setLinkDelegationPolicy(self.DelegateAllLinks)
 
     def javaScriptConsoleMessage(self, msg, lineno, msgid):
-        self.log(u'JS:', unicode(msg))
+        self.log('JS:', str(msg))
 
     def javaScriptAlert(self, frame, msg):
-        self.log(unicode(msg))
+        self.log(str(msg))
 
     @pyqtSlot(result=bool)
     def shouldInterruptJavaScript(self):
@@ -47,8 +47,8 @@ class Page(QWebPage):  # {{{
 
     @pyqtSlot(QWebElement, str, str, float)
     def onclick(self, elem, loc, totals, frac):
-        elem_id = unicode(elem.attribute('id')) or None
-        tag = unicode(elem.tagName()).lower()
+        elem_id = str(elem.attribute('id')) or None
+        tag = str(elem.tagName()).lower()
         self.elem_clicked.emit(tag, frac, elem_id, json.loads(str(loc)), json.loads(str(totals)))
 
     def load_js(self):
@@ -184,7 +184,7 @@ class ItemEdit(QWidget):
         return super(ItemEdit, self).keyPressEvent(ev)
 
     def find(self, forwards=True):
-        text = unicode(self.search_text.text()).strip()
+        text = str(self.search_text.text()).strip()
         flags = QWebPage.FindFlags(0) if forwards else QWebPage.FindBackward
         d = self.dest_list
         if d.count() == 1:
@@ -195,9 +195,9 @@ class ItemEdit(QWidget):
                     _('No match found for: %s')%text, show=True)
 
             delta = 1 if forwards else -1
-            current = unicode(d.currentItem().data(Qt.DisplayRole) or '')
+            current = str(d.currentItem().data(Qt.DisplayRole) or '')
             next_index = (d.currentRow() + delta)%d.count()
-            next = unicode(d.item(next_index).data(Qt.DisplayRole) or '')
+            next = str(d.item(next_index).data(Qt.DisplayRole) or '')
             msg = '<p>'+_('No matches for %(text)s found in the current file [%(current)s].'
                           ' Do you want to search in the %(which)s file [%(next)s]?')
             msg = msg%dict(text=text, current=current, next=next,
@@ -220,7 +220,7 @@ class ItemEdit(QWidget):
         self.dest_list.addItems(spine_names)
 
     def current_changed(self, item):
-        name = self.current_name = unicode(item.data(Qt.DisplayRole) or '')
+        name = self.current_name = str(item.data(Qt.DisplayRole) or '')
         self.current_frag = None
         path = self.container.name_to_abspath(name)
         # Ensure encoding map is populated
@@ -258,9 +258,9 @@ class ItemEdit(QWidget):
                 self.name.setCursorPosition(0)
             toc = item.data(0, Qt.UserRole)
             if toc.dest:
-                for i in xrange(self.dest_list.count()):
+                for i in range(self.dest_list.count()):
                     litem = self.dest_list.item(i)
-                    if unicode(litem.data(Qt.DisplayRole) or '') == toc.dest:
+                    if str(litem.data(Qt.DisplayRole) or '') == toc.dest:
                         dest_index = i
                         frag = toc.frag
                         break
@@ -308,4 +308,4 @@ class ItemEdit(QWidget):
     @property
     def result(self):
         return (self.current_item, self.current_where, self.current_name,
-                self.current_frag, unicode(self.name.text()))
+                self.current_frag, str(self.name.text()))

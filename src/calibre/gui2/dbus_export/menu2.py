@@ -21,8 +21,8 @@ from calibre.gui2.dbus_export.utils import set_X_window_properties
 
 
 def add_window_properties_for_menu(widget, object_path, bus):
-    op = unicode(object_path)
-    set_X_window_properties(widget.effectiveWinId(), _UNITY_OBJECT_PATH=op, _GTK_UNIQUE_BUS_NAME=unicode(bus.get_unique_name()), _GTK_MENUBAR_OBJECT_PATH=op)
+    op = str(object_path)
+    set_X_window_properties(widget.effectiveWinId(), _UNITY_OBJECT_PATH=op, _GTK_UNIQUE_BUS_NAME=str(bus.get_unique_name()), _GTK_MENUBAR_OBJECT_PATH=op)
 
 
 class DBusMenu(QObject):

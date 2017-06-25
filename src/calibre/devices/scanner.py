@@ -23,7 +23,7 @@ if iswindows:
         with drive_ok_lock:
             oldError = win32api.SetErrorMode(1)  # SEM_FAILCRITICALERRORS = 1
             try:
-                for i in xrange(max_tries):
+                for i in range(max_tries):
                     try:
                         win32file.GetDiskFreeSpaceEx(letter+':\\')
                         return True
@@ -48,7 +48,7 @@ class USBDevice(_USBDevice):
         return self
 
     def __repr__(self):
-        return (u'USBDevice(busnum=%s, devnum=%s, '
+        return ('USBDevice(busnum=%s, devnum=%s, '
                 'vendor_id=0x%04x, product_id=0x%04x, bcd=0x%04x, '
                 'manufacturer=%s, product=%s, serial=%s)')%(
                 self.busnum, self.devnum, self.vendor_id, self.product_id,
@@ -79,7 +79,7 @@ class LibUSBScanner(object):
             dev = USBDevice(*dev)
             dev.busnum, dev.devnum = fingerprint[:2]
             ans.add(dev)
-        extra = set(self.libusb.cache.iterkeys()) - seen
+        extra = set(self.libusb.cache.keys()) - seen
         for x in extra:
             self.libusb.cache.pop(x, None)
         return ans
@@ -90,12 +90,12 @@ class LibUSBScanner(object):
         memory()
         for num in (1, 10, 100):
             start = memory()
-            for i in xrange(num):
+            for i in range(num):
                 self()
-            for i in xrange(3):
+            for i in range(3):
                 gc.collect()
-            print 'Mem consumption increased by:', memory() - start, 'MB',
-            print 'after', num, 'repeats'
+            print('Mem consumption increased by:', memory() - start, 'MB', end=' ')
+            print('after', num, 'repeats')
 
 
 class LinuxScanner(object):
@@ -147,15 +147,15 @@ class LinuxScanner(object):
             try:
                 dev.append(read(man).decode('utf-8'))
             except:
-                dev.append(u'')
+                dev.append('')
             try:
                 dev.append(read(prod_string).decode('utf-8'))
             except:
-                dev.append(u'')
+                dev.append('')
             try:
                 dev.append(read(serial).decode('utf-8'))
             except:
-                dev.append(u'')
+                dev.append('')
 
             dev = USBDevice(*dev)
             try:
@@ -220,7 +220,7 @@ class FreeBSDScanner(object):
                 dev.append(path)
                 ans.add(tuple(dev))
         except dbus.exceptions.DBusException as e:
-            print >>sys.stderr, "Execution failed:", e
+            print("Execution failed:", e, file=sys.stderr)
         return ans
 
 
@@ -276,17 +276,17 @@ def test_for_mem_leak():
     scanner = DeviceScanner()
     scanner.scan()
     memory()  # load the psutil library
-    for i in xrange(3):
+    for i in range(3):
         gc.collect()
 
     for reps in (1, 10, 100, 1000):
-        for i in xrange(3):
+        for i in range(3):
             gc.collect()
         h1 = gc_histogram()
         startmem = memory()
-        for i in xrange(reps):
+        for i in range(reps):
             scanner.scan()
-        for i in xrange(3):
+        for i in range(3):
             gc.collect()
         usedmem = memory(startmem)
         prints('Memory used in %d repetitions of scan(): %.5f KB'%(reps,

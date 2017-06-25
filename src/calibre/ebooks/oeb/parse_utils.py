@@ -63,7 +63,7 @@ def merge_multiple_html_heads_and_bodies(root, log=None):
     for b in bodies:
         for x in b:
             body.append(x)
-    map(root.append, (head, body))
+    list(map(root.append, (head, body)))
     if log is not None:
         log.warn('Merging multiple <head> and <body> sections')
     return root
@@ -111,7 +111,7 @@ def html5_parse(data, max_nesting_depth=100):
     # Check that the asinine HTML 5 algorithm did not result in a tree with
     # insane nesting depths
     for x in data.iterdescendants():
-        if isinstance(x.tag, basestring) and len(x) is 0:  # Leaf node
+        if isinstance(x.tag, str) and len(x) is 0:  # Leaf node
             depth = node_depth(x)
             if depth > max_nesting_depth:
                 raise ValueError('html5lib resulted in a tree with nesting'
@@ -175,7 +175,7 @@ def html5_parse(data, max_nesting_depth=100):
                 if ns is not None:
                     elem.attrib['{%s}%s'%(ns, tag)] = elem.attrib.pop(b)
 
-        seen_namespaces |= set(elem.nsmap.itervalues())
+        seen_namespaces |= set(elem.nsmap.values())
 
     nsmap = dict(html5lib.constants.namespaces)
     nsmap[None] = nsmap.pop('html')
@@ -185,7 +185,7 @@ def html5_parse(data, max_nesting_depth=100):
     data = clone_element(data, nsmap=nsmap, in_context=False)
 
     # Remove unused namespace declarations
-    fnsmap = {k:v for k,v in nsmap.iteritems() if v in seen_namespaces and v !=
+    fnsmap = {k:v for k,v in nsmap.items() if v in seen_namespaces and v !=
             XMLNS_NS}
     return clone_element(data, nsmap=fnsmap, in_context=False)
 
@@ -200,7 +200,7 @@ def _html4_parse(data, prefer_soup=False):
     for elem in data.iter(tag=etree.Comment):
         if elem.text:
             elem.text = elem.text.strip('-')
-    data = etree.tostring(data, encoding=unicode)
+    data = etree.tostring(data, encoding=str)
 
     # Setting huge_tree=True causes crashes in windows with large files
     parser = etree.XMLParser(no_network=True)
@@ -248,7 +248,7 @@ def parse_html(data, log=None, decoder=None, preprocessor=None,
 
     filename = force_unicode(filename, enc=filesystem_encoding)
 
-    if not isinstance(data, unicode):
+    if not isinstance(data, str):
         if decoder is not None:
             data = decoder(data)
         else:
@@ -284,7 +284,7 @@ def parse_html(data, log=None, decoder=None, preprocessor=None,
                     val = val[1:-1]
                 user_entities[match.group(1)] = val
             if user_entities:
-                pat = re.compile(r'&(%s);'%('|'.join(user_entities.keys())))
+                pat = re.compile(r'&(%s);'%('|'.join(list(user_entities.keys()))))
                 data = pat.sub(lambda m:user_entities[m.group(1)], data)
 
     data = raw = clean_word_doc(data, log)
@@ -319,7 +319,7 @@ def parse_html(data, log=None, decoder=None, preprocessor=None,
         for x in data.iterdescendants():
             try:
                 x.tag = x.tag.lower()
-                for key, val in list(x.attrib.iteritems()):
+                for key, val in list(x.attrib.items()):
                     del x.attrib[key]
                     key = key.lower()
                     x.attrib[key] = val
@@ -333,7 +333,7 @@ def parse_html(data, log=None, decoder=None, preprocessor=None,
         nroot = etree.fromstring('<html></html>')
         has_body = False
         for child in list(data):
-            if isinstance(child.tag, (unicode, str)) and barename(child.tag) == 'body':
+            if isinstance(child.tag, str) and barename(child.tag) == 'body':
                 has_body = True
                 break
         parent = nroot
@@ -352,7 +352,7 @@ def parse_html(data, log=None, decoder=None, preprocessor=None,
     if not namespace(data.tag):
         log.warn('Forcing', filename, 'into XHTML namespace')
         data.attrib['xmlns'] = XHTML_NS
-        data = etree.tostring(data, encoding=unicode)
+        data = etree.tostring(data, encoding=str)
 
         try:
             data = etree.fromstring(data, parser=parser)
@@ -384,14 +384,14 @@ def parse_html(data, log=None, decoder=None, preprocessor=None,
         nroot = etree.Element(XHTML('html'),
             nsmap={None: XHTML_NS}, attrib=attrib)
         for elem in data.iterdescendants():
-            if isinstance(elem.tag, basestring) and \
+            if isinstance(elem.tag, str) and \
                 namespace(elem.tag) == ns:
                 elem.tag = XHTML(barename(elem.tag))
         for elem in data:
             nroot.append(elem)
         data = nroot
 
-    fnsmap = {k:v for k, v in data.nsmap.iteritems() if v != XHTML_NS}
+    fnsmap = {k:v for k, v in data.nsmap.items() if v != XHTML_NS}
     fnsmap[None] = XHTML_NS
     if fnsmap != dict(data.nsmap):
         # Remove non default prefixes referring to the XHTML namespace

@@ -1,6 +1,6 @@
-from __future__ import absolute_import, division, unicode_literals
+
 try:
-    text_type = unicode
+    text_type = str
 except NameError:
     text_type = str
 

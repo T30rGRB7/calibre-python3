@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # vim:fileencoding=utf-8
 # License: GPLv3 Copyright: 2013, Kovid Goyal <kovid at kovidgoyal.net>
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 
 import copy
 import json
@@ -158,7 +158,7 @@ class WhereBox(QComboBox):
             return wm[self.currentIndex()]
 
         def fset(self, val):
-            self.setCurrentIndex({v:k for k, v in wm.iteritems()}[val])
+            self.setCurrentIndex({v:k for k, v in wm.items()}[val])
         return property(fget=fget, fset=fset)
 
     def showPopup(self):
@@ -334,7 +334,7 @@ class SearchWidget(QWidget):
     def edit_function(self):
         d = FunctionEditor(func_name=self.functions.text().strip(), parent=self)
         if d.exec_() == d.Accepted:
-            self.functions.setText(d.func_name)
+            self.functions.setText(d.__name__)
 
     def remove_function(self):
         fname = self.functions.text().strip()
@@ -363,7 +363,7 @@ class SearchWidget(QWidget):
     @dynamic_property
     def find(self):
         def fget(self):
-            return unicode(self.find_text.text())
+            return str(self.find_text.text())
 
         def fset(self, val):
             self.find_text.setText(val)
@@ -374,7 +374,7 @@ class SearchWidget(QWidget):
         def fget(self):
             if self.mode == 'function':
                 return self.functions.text()
-            return unicode(self.replace_text.text())
+            return str(self.replace_text.text())
 
         def fset(self, val):
             self.replace_text.setText(val)
@@ -533,7 +533,7 @@ class SearchesModel(QAbstractListModel):
     def __init__(self, parent):
         QAbstractListModel.__init__(self, parent)
         self.searches = tprefs['saved_searches']
-        self.filtered_searches = list(xrange(len(self.searches)))
+        self.filtered_searches = list(range(len(self.searches)))
 
     def rowCount(self, parent=QModelIndex()):
         return len(self.filtered_searches)
@@ -566,7 +566,7 @@ class SearchesModel(QAbstractListModel):
     def dropMimeData(self, data, action, row, column, parent):
         if parent.isValid() or action != Qt.MoveAction or not data.hasFormat('x-calibre/searches-rows') or not self.filtered_searches:
             return False
-        rows = map(int, bytes(bytearray(data.data('x-calibre/searches-rows'))).decode('ascii').split(','))
+        rows = list(map(int, bytes(bytearray(data.data('x-calibre/searches-rows'))).decode('ascii').split(',')))
         rows.sort()
         moved_searches = [self.searches[self.filtered_searches[r]] for r in rows]
         moved_searches_q = {id(s) for s in moved_searches}
@@ -579,7 +579,7 @@ class SearchesModel(QAbstractListModel):
                 break
         insert_before = id(self.searches[self.filtered_searches[insert_at]]) if insert_at < len(self.filtered_searches) else None
         visible_searches = {id(self.searches[self.filtered_searches[r]]) for r in self.filtered_searches}
-        unmoved_searches = list(filter(lambda s:id(s) not in moved_searches_q, self.searches))
+        unmoved_searches = list([s for s in self.searches if id(s) not in moved_searches_q])
         if insert_before is None:
             searches = unmoved_searches + moved_searches
         else:
@@ -612,7 +612,7 @@ class SearchesModel(QAbstractListModel):
         return None
 
     def do_filter(self, text):
-        text = unicode(text)
+        text = str(text)
         self.beginResetModel()
         self.filtered_searches = []
         for i, search in enumerate(self.searches):
@@ -644,7 +644,7 @@ class SearchesModel(QAbstractListModel):
     def add_searches(self, count=1):
         self.beginResetModel()
         self.searches = tprefs['saved_searches']
-        self.filtered_searches.extend(xrange(len(self.searches) - 1, len(self.searches) - 1 - count, -1))
+        self.filtered_searches.extend(range(len(self.searches) - 1, len(self.searches) - 1 - count, -1))
         self.endResetModel()
 
     def remove_searches(self, rows):
@@ -739,7 +739,7 @@ class EditSearch(QFrame):  # {{{
     def edit_function(self):
         d = FunctionEditor(func_name=self.function.text().strip(), parent=self)
         if d.exec_() == d.Accepted:
-            self.function.setText(d.func_name)
+            self.function.setText(d.__name__)
 
     def remove_function(self):
         fname = self.function.text().strip()
@@ -795,7 +795,7 @@ class EditSearch(QFrame):  # {{{
     @property
     def current_search(self):
         search = self.search.copy()
-        f = unicode(self.find.toPlainText())
+        f = str(self.find.toPlainText())
         search['find'] = f
         search['dot_all'] = bool(self.dot_all.isChecked())
         search['case_sensitive'] = bool(self.case_sensitive.isChecked())
@@ -803,7 +803,7 @@ class EditSearch(QFrame):  # {{{
         if search['mode'] == 'function':
             r = self.function.text()
         else:
-            r = unicode(self.replace.toPlainText())
+            r = str(self.replace.toPlainText())
         search['replace'] = r
         return search
 
@@ -822,7 +822,7 @@ class EditSearch(QFrame):  # {{{
         search = self.search
         search['name'] = n
 
-        f = unicode(self.find.toPlainText())
+        f = str(self.find.toPlainText())
         if not f:
             error_dialog(self, _('Must specify find'), _(
                 'You must specify a find expression'), show=True)
@@ -837,7 +837,7 @@ class EditSearch(QFrame):  # {{{
                     'You must specify a function name in Function-Regex mode'), show=True)
                 return False
         else:
-            r = unicode(self.replace.toPlainText())
+            r = str(self.replace.toPlainText())
         search['replace'] = r
 
         search['dot_all'] = bool(self.dot_all.isChecked())
@@ -1216,7 +1216,7 @@ class SavedSearches(QWidget):
                 return err()
             searches = []
             for item in obj['searches']:
-                if not isinstance(item, dict) or not set(item.iterkeys()).issuperset(needed_keys):
+                if not isinstance(item, dict) or not set(item.keys()).issuperset(needed_keys):
                     return err
                 searches.append({k:item[k] for k in needed_keys})
 
@@ -1411,7 +1411,7 @@ def run_search(
                     return True
                 if wrap and not files and editor.find(p, wrap=True, marked=marked, save_match='gui'):
                     return True
-            for fname, syntax in files.iteritems():
+            for fname, syntax in files.items():
                 ed = editors.get(fname, None)
                 if ed is not None:
                     if not wrap and ed is editor:

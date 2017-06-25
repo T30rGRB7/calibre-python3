@@ -121,7 +121,7 @@ class TagBrowserMixin(object):  # {{{
             if new_cat not in user_cats:
                 break
             i += 1
-            n = new_name + unicode(i)
+            n = new_name + str(i)
         # Add the new category
         user_cats[new_cat] = []
         db.new_api.set_pref('user_categories', user_cats)
@@ -157,7 +157,7 @@ class TagBrowserMixin(object):  # {{{
             category_name = category_name[1:]
         db = self.library_view.model().db
         user_cats = db.prefs.get('user_categories', {})
-        cat_keys = sorted(user_cats.keys(), key=sort_key)
+        cat_keys = sorted(list(user_cats.keys()), key=sort_key)
         has_children = False
         found = False
         for k in cat_keys:
@@ -265,7 +265,7 @@ class TagBrowserMixin(object):  # {{{
                     m.delete_item_from_all_user_categories(orig_name[item], category)
                 for old_id in to_rename:
                     m.rename_item_in_all_user_categories(orig_name[old_id],
-                                            category, unicode(to_rename[old_id]))
+                                            category, str(to_rename[old_id]))
 
                 db.new_api.remove_items(category, to_delete)
                 db.new_api.rename_items(category, to_rename, change_index=False)
@@ -586,7 +586,7 @@ class TagBrowserWidget(QFrame):  # {{{
     def find(self):
         model = self.tags_view.model()
         model.clear_boxed()
-        txt = unicode(self.item_search.currentText()).strip()
+        txt = str(self.item_search.currentText()).strip()
 
         if txt.startswith('*'):
             model.set_categories_filter(txt[1:])

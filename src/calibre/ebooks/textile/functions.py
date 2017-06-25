@@ -62,7 +62,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 import re
 import uuid
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from calibre.utils.smartypants import smartyPants
 
@@ -96,13 +96,13 @@ def getimagesize(url):
             return None
 
     try:
-        import urllib2
+        import urllib.request, urllib.error, urllib.parse
     except ImportError:
         return None
 
     try:
         p = ImageFile.Parser()
-        f = urllib2.urlopen(url)
+        f = urllib.request.urlopen(url)
         while True:
             s = f.read(1024)
             if not s:
@@ -817,7 +817,7 @@ class Textile(object):
         """
         while True:
             old = text
-            for k, v in self.shelf.items():
+            for k, v in list(self.shelf.items()):
                 text = text.replace(k, v)
             if text == old:
                 break

@@ -7,7 +7,7 @@ __license__ = 'GPL 3'
 __copyright__ = '2011-2013, Roman Mukhin <ramses_ru at hotmail.com>'
 __docformat__ = 'restructuredtext en'
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from contextlib import closing
 
 from PyQt5.Qt import QUrl
@@ -24,7 +24,7 @@ shop_url = 'http://www.ozon.ru'
 
 
 def search(query, max_results=15, timeout=60):
-    url = 'http://www.ozon.ru/?context=search&text=%s&store=1,0&group=div_book' % urllib.quote_plus(query)
+    url = 'http://www.ozon.ru/?context=search&text=%s&store=1,0&group=div_book' % urllib.parse.quote_plus(query)
 
     counter = max_results
     br = browser()

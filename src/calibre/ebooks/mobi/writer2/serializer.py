@@ -15,8 +15,8 @@ from calibre.ebooks.mobi.mobiml import MBP_NS
 from calibre.ebooks.mobi.utils import is_guide_ref_start
 
 from collections import defaultdict
-from urlparse import urldefrag
-from cStringIO import StringIO
+from urllib.parse import urldefrag
+from io import StringIO
 
 
 class Serializer(object):
@@ -150,7 +150,7 @@ class Serializer(object):
         buf = self.buf
         hrefs = self.oeb.manifest.hrefs
         buf.write(b'<guide>')
-        for ref in self.oeb.guide.values():
+        for ref in list(self.oeb.guide.values()):
             path = urldefrag(ref.href)[0]
             if path not in hrefs or hrefs[path].media_type not in OEB_DOCS:
                 continue
@@ -220,7 +220,7 @@ class Serializer(object):
                 buf.write('<div> <div height="1em"></div>')
             else:
                 t = tocref.title
-                if isinstance(t, unicode):
+                if isinstance(t, str):
                     t = t.encode('utf-8')
                 buf.write('<div></div> <div> <h2 height="1em"><font size="+2"><b>' + t +
                           '</b></font></h2> <div height="1em"></div>')
@@ -240,7 +240,7 @@ class Serializer(object):
                 buf.write('0000000000')
                 buf.write(' ><font size="+1"><b><u>')
                 t = tocitem.title
-                if isinstance(t, unicode):
+                if isinstance(t, str):
                     t = t.encode('utf-8')
                 buf.write(t)
                 buf.write('</u></b></font></a></li>')
@@ -300,7 +300,7 @@ class Serializer(object):
 
     def serialize_elem(self, elem, item, nsrmap=NSRMAP):
         buf = self.buf
-        if not isinstance(elem.tag, basestring) \
+        if not isinstance(elem.tag, str) \
             or namespace(elem.tag) not in nsrmap:
             return
         tag = prefixname(elem.tag, nsrmap)
@@ -320,7 +320,7 @@ class Serializer(object):
         buf.write(b'<')
         buf.write(tag.encode('utf-8'))
         if elem.attrib:
-            for attr, val in elem.attrib.items():
+            for attr, val in list(elem.attrib.items()):
                 if namespace(attr) not in nsrmap:
                     continue
                 attr = prefixname(attr, nsrmap)
@@ -355,10 +355,10 @@ class Serializer(object):
         text = text.replace('&', '&amp;')
         text = text.replace('<', '&lt;')
         text = text.replace('>', '&gt;')
-        text = text.replace(u'\u00AD', '')  # Soft-hyphen
+        text = text.replace('\u00AD', '')  # Soft-hyphen
         if quot:
             text = text.replace('"', '&quot;')
-        if isinstance(text, unicode):
+        if isinstance(text, str):
             text = unicodedata.normalize('NFC', text)
         self.buf.write(text.encode('utf-8'))
 
@@ -370,7 +370,7 @@ class Serializer(object):
         buf = self.buf
         id_offsets = self.id_offsets
         start_href = getattr(self, '_start_href', None)
-        for href, hoffs in self.href_offsets.items():
+        for href, hoffs in list(self.href_offsets.items()):
             is_start = (href and href == start_href)
             # Iterate over all filepos items
             if href not in id_offsets:

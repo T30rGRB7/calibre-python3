@@ -55,7 +55,7 @@ if pictureflow is not None:
             return self.subtitles[index]
 
         def currentChanged(self, index):
-            print 'current changed:', index
+            print('current changed:', index)
 
     class DummyImageList(pictureflow.FlowImages):
 

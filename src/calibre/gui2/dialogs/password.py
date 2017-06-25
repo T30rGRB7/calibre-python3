@@ -34,13 +34,13 @@ class PasswordDialog(QDialog, Ui_Dialog):
             self.gui_password.setEchoMode(QLineEdit.Normal)
 
     def username(self):
-        return unicode(self.gui_username.text())
+        return str(self.gui_username.text())
 
     def password(self):
-        return unicode(self.gui_password.text())
+        return str(self.gui_password.text())
 
     def accept(self):
-        dynamic.set(self.cfg_key+'__un', unicode(self.gui_username.text()))
-        dynamic.set(self.cfg_key+'__pw', unicode(self.gui_password.text()))
+        dynamic.set(self.cfg_key+'__un', str(self.gui_username.text()))
+        dynamic.set(self.cfg_key+'__pw', str(self.gui_password.text()))
         QDialog.accept(self)
 

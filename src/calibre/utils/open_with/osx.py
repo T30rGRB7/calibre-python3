@@ -19,8 +19,8 @@ application_locations = ('/Applications', '~/Applications', '~/Desktop')
 
 def generate_public_uti_map():
     from lxml import etree
-    import html5lib, urllib
-    raw = urllib.urlopen(
+    import html5lib, urllib.request, urllib.parse, urllib.error
+    raw = urllib.request.urlopen(
         'https://developer.apple.com/library/ios/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html').read()
     root = html5lib.parse(raw, treebuilder='lxml', namespaceHTMLElements=False)
     tables = root.xpath('//table')[0::2]
@@ -28,8 +28,8 @@ def generate_public_uti_map():
     for table in tables:
         for tr in table.xpath('descendant::tr')[1:]:
             td = tr.xpath('descendant::td')
-            identifier = etree.tostring(td[0], method='text', encoding=unicode).strip()
-            tags = etree.tostring(td[2], method='text', encoding=unicode).strip()
+            identifier = etree.tostring(td[0], method='text', encoding=str).strip()
+            tags = etree.tostring(td[2], method='text', encoding=str).strip()
             identifier = identifier.split()[0].replace('\u200b', '')
             exts = [x.strip()[1:].lower() for x in tags.split(',') if x.strip().startswith('.')]
             for ext in exts:
@@ -201,7 +201,7 @@ PUBLIC_UTI_MAP = {
     'zip':          'com.pkware.zip-archive',
 }
 PUBLIC_UTI_RMAP = defaultdict(set)
-for ext, uti in PUBLIC_UTI_MAP.iteritems():
+for ext, uti in PUBLIC_UTI_MAP.items():
     PUBLIC_UTI_RMAP[uti].add(ext)
 PUBLIC_UTI_RMAP = dict(PUBLIC_UTI_RMAP)
 
@@ -236,7 +236,7 @@ def get_extensions_from_utis(utis, plist):
         for decl in plist.get(key, ()):
             if isinstance(decl, dict):
                 uti = decl.get('UTTypeIdentifier')
-                if isinstance(uti, basestring):
+                if isinstance(uti, str):
                     spec = decl.get('UTTypeTagSpecification')
                     if isinstance(spec, dict):
                         ext = spec.get('public.filename-extension')
@@ -283,10 +283,10 @@ def get_bundle_data(path):
             extensions |= get_extensions_from_utis(utis, plist)
         else:
             for ext in dtype.get('CFBundleTypeExtensions', ()):
-                if isinstance(ext, basestring):
+                if isinstance(ext, str):
                     extensions.add(ext.lower())
             for mt in dtype.get('CFBundleTypeMIMETypes', ()):
-                if isinstance(mt, basestring):
+                if isinstance(mt, str):
                     for ext in mimetypes.guess_all_extensions(mt, strict=False):
                         extensions.add(ext.lower())
     return ans

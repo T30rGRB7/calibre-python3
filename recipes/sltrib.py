@@ -1,7 +1,7 @@
 from calibre.web.feeds.news import BasicNewsRecipe
 
 class AdvancedUserRecipe1278347258(BasicNewsRecipe):
-    title      = u'Salt Lake City Tribune'
+    title      = 'Salt Lake City Tribune'
     __author__ = 'Charles Holbert'
     oldest_article = 7
     max_articles_per_feed = 100
@@ -25,12 +25,12 @@ class AdvancedUserRecipe1278347258(BasicNewsRecipe):
                       ,dict(name='div',attrs={'class':'byline'})
                       ,dict(name='p',attrs={'class':'TEXT_w_Indent'})]
 
-    feeds = [(u'SL Tribune Today', u'http://www.sltrib.com/csp/cms/sites/sltrib/RSS/rss.csp?cat=All'),
-           (u'Utah News', u'http://www.sltrib.com/csp/cms/sites/sltrib/RSS/rss.csp?cat=UtahNews'),
-           (u'Business News', u'http://www.sltrib.com/csp/cms/sites/sltrib/RSS/rss.csp?cat=Money'),
-           (u'Technology', u'http://www.sltrib.com/csp/cms/sites/sltrib/RSS/rss.csp?cat=Technology'),
-           (u'Most Popular', u'http://www.sltrib.com/csp/cms/sites/sltrib/RSS/rsspopular.csp'),
-           (u'Sports', u'http://www.sltrib.com/csp/cms/sites/sltrib/RSS/rss.csp?cat=Sports')]
+    feeds = [('SL Tribune Today', 'http://www.sltrib.com/csp/cms/sites/sltrib/RSS/rss.csp?cat=All'),
+           ('Utah News', 'http://www.sltrib.com/csp/cms/sites/sltrib/RSS/rss.csp?cat=UtahNews'),
+           ('Business News', 'http://www.sltrib.com/csp/cms/sites/sltrib/RSS/rss.csp?cat=Money'),
+           ('Technology', 'http://www.sltrib.com/csp/cms/sites/sltrib/RSS/rss.csp?cat=Technology'),
+           ('Most Popular', 'http://www.sltrib.com/csp/cms/sites/sltrib/RSS/rsspopular.csp'),
+           ('Sports', 'http://www.sltrib.com/csp/cms/sites/sltrib/RSS/rss.csp?cat=Sports')]
 
     extra_css = '''
                 .headline{font-family:Arial,Helvetica,sans-serif; font-size:xx-large; font-weight: bold; color:#0E5398;}

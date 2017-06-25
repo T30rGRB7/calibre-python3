@@ -37,7 +37,7 @@ def pixmap_to_data(pixmap):
 def run_program(entry, path, parent):
     import subprocess
     cmdline = entry_to_cmdline(entry, path)
-    print('Running Open With commandline:', repr(cmdline))
+    print(('Running Open With commandline:', repr(cmdline)))
     try:
         with sanitize_env_vars():
             process = subprocess.Popen(cmdline)
@@ -124,7 +124,7 @@ if iswindows:
 
     def run_program(entry, path, parent):  # noqa
         cmdline = entry_to_cmdline(entry, path)
-        print('Running Open With commandline:', repr(entry['cmdline']), ' |==> ', repr(cmdline))
+        print(('Running Open With commandline:', repr(entry['cmdline']), ' |==> ', repr(cmdline)))
         try:
             with sanitize_env_vars():
                 process_handle, thread_handle, process_id, thread_id = CreateProcess(
@@ -189,7 +189,7 @@ else:
 
     def entry_to_item(entry, parent):
         icon_path = entry.get('Icon') or I('blank.png')
-        if not isinstance(icon_path, basestring):
+        if not isinstance(icon_path, str):
             icon_path = I('blank.png')
         ans = QListWidgetItem(QIcon(icon_path), entry.get('Name') or _('Unknown'), parent)
         ans.setData(ENTRY_ROLE, entry)
@@ -400,7 +400,7 @@ class EditPrograms(Dialog):  # {{{
         register_keyboard_shortcuts(finalize=True)
 
     def update_stored_config(self):
-        entries = [self.plist.item(i).data(ENTRY_ROLE) for i in xrange(self.plist.count())]
+        entries = [self.plist.item(i).data(ENTRY_ROLE) for i in range(self.plist.count())]
         oprefs['entries'][self.file_type] = entries
         oprefs['entries'] = oprefs['entries']
 
@@ -420,12 +420,12 @@ def register_keyboard_shortcuts(gui=None, finalize=False):
         gui = get_gui()
     if gui is None:
         return
-    for unique_name, action in registered_shortcuts.iteritems():
+    for unique_name, action in registered_shortcuts.items():
         gui.keyboard.unregister_shortcut(unique_name)
         gui.removeAction(action)
     registered_shortcuts.clear()
 
-    for filetype, applications in oprefs['entries'].iteritems():
+    for filetype, applications in oprefs['entries'].items():
         for application in applications:
             text = entry_to_icon_text(application, only_text=True)
             t = _('cover image') if filetype.upper() == 'COVER_IMAGE' else filetype.upper()

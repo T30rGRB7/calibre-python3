@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
@@ -50,7 +50,7 @@ def meta_info_to_oeb_metadata(mi, m, log, override_input_metadata=False):
         m.clear('series')
     identifiers = mi.get_identifiers()
     set_isbn = False
-    for typ, val in identifiers.iteritems():
+    for typ, val in identifiers.items():
         has = False
         if typ.lower() == 'isbn':
             set_isbn = True
@@ -204,7 +204,7 @@ class MergeMetadata(object):
         for item in affected_items:
             body = XPath('//h:body')(item.data)
             if body:
-                text = etree.tostring(body[0], method='text', encoding=unicode)
+                text = etree.tostring(body[0], method='text', encoding=str)
             else:
                 text = ''
             text = re.sub(r'\s+', '', text)

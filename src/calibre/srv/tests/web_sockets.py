@@ -230,7 +230,7 @@ class WebSocketTest(BaseTest):
                 # connection before the client has finished sending all
                 # messages, so ignore failures to send packets.
                 isf_test = partial(simple_test, ignore_send_failures=True)
-                for rsv in xrange(1, 7):
+                for rsv in range(1, 7):
                     isf_test([{'rsv':rsv, 'opcode':BINARY}], [], close_code=PROTOCOL_ERROR, send_close=False)
                 for opcode in (3, 4, 5, 6, 7, 11, 12, 13, 14, 15):
                     isf_test([{'opcode':opcode}], [], close_code=PROTOCOL_ERROR, send_close=False)

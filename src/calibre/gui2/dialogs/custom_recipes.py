@@ -69,7 +69,7 @@ class CustomRecipeModel(QAbstractListModel):  # {{{
 
     def replace_many_by_title(self, scriptmap):
         script_urn_map = {}
-        for title, script in scriptmap.iteritems():
+        for title, script in scriptmap.items():
             urn = None
             for x in self.recipe_model.custom_recipe_collection:
                 if x.get('title', False) == title:
@@ -118,14 +118,14 @@ def py3_repr(x):
     ans = repr(x)
     if isinstance(x, bytes) and not ans.startswith('b'):
         ans = 'b' + ans
-    if isinstance(x, unicode) and ans.startswith('u'):
+    if isinstance(x, str) and ans.startswith('u'):
         ans = ans[1:]
     return ans
 
 
 def options_to_recipe_source(title, oldest_article, max_articles_per_feed, feeds):
     classname = 'BasicUserRecipe%d' % int(time.time())
-    title = unicode(title).strip() or classname
+    title = str(title).strip() or classname
     indent = ' ' * 8
     if feeds:
         if len(feeds[0]) == 1:
@@ -382,7 +382,7 @@ class BasicRecipe(QWidget):  # {{{
 
         def fget(self):
             title = self.title.text().strip()
-            feeds = [self.feeds.item(i).data(Qt.UserRole) for i in xrange(self.feeds.count())]
+            feeds = [self.feeds.item(i).data(Qt.UserRole) for i in range(self.feeds.count())]
             return options_to_recipe_source(title, self.oldest_article.value(), self.max_articles.value(), feeds)
 
         def fset(self, src):
@@ -593,8 +593,8 @@ class CustomRecipes(Dialog):
         if not items:
             return
         item = items[-1]
-        id_ = unicode(item.data(Qt.UserRole) or '')
-        title = unicode(item.data(Qt.DisplayRole) or '').rpartition(' [')[0]
+        id_ = str(item.data(Qt.UserRole) or '')
+        title = str(item.data(Qt.DisplayRole) or '').rpartition(' [')[0]
         src = get_builtin_recipe_by_id(id_, download_recipe=True)
         if src is None:
             raise Exception('Something weird happened')
@@ -649,7 +649,7 @@ class CustomRecipes(Dialog):
         if replace_recipes:
             self.recipe_list.replace_many_by_title(replace_recipes)
         if failed_recipes:
-            det_msg = '\n'.join('%s\n%s\n' % (title, tb) for title, tb in failed_recipes.iteritems())
+            det_msg = '\n'.join('%s\n%s\n' % (title, tb) for title, tb in failed_recipes.items())
             error_dialog(self, _('Failed to create recipes'), _(
                 'Failed to create some recipes, click "Show details" for details'), show=True,
                          det_msg=det_msg)

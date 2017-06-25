@@ -140,7 +140,7 @@ class CheckExternalLinks(Dialog):
             for name, href in {(l[0], l[1]) for l in err[0]}:
                 nmap[name].add(href)
 
-            for name, hrefs in nmap.iteritems():
+            for name, hrefs in nmap.items():
                 raw = oraw = get_data(name)
                 for href in hrefs:
                     raw = raw.replace(href, newurl)

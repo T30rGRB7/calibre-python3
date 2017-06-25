@@ -33,8 +33,8 @@ class GenerateCatalogAction(InterfaceAction):
     def generate_catalog(self):
         rows = self.gui.library_view.selectionModel().selectedRows()
         if not rows or len(rows) < 2:
-            rows = xrange(self.gui.library_view.model().rowCount(QModelIndex()))
-        ids = map(self.gui.library_view.model().id, rows)
+            rows = range(self.gui.library_view.model().rowCount(QModelIndex()))
+        ids = list(map(self.gui.library_view.model().id, rows))
 
         if not ids:
             return error_dialog(self.gui, _('No books selected'),

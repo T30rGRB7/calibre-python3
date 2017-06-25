@@ -46,7 +46,7 @@ class MutableBase(object):
 
     @resolved
     def __unicode__(self):
-        return unicode(self._values)
+        return str(self._values)
 
     @resolved
     def __len__(self):
@@ -389,7 +389,7 @@ class ProxyMetadata(Metadata):
 
     def all_field_keys(self):
         um = ga(self, '_user_metadata')
-        return frozenset(ALL_METADATA_FIELDS.union(um.iterkeys()))
+        return frozenset(ALL_METADATA_FIELDS.union(iter(um.keys())))
 
     @property
     def _proxy_metadata(self):

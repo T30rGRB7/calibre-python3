@@ -59,14 +59,14 @@ class SearchDialog(QDialog, Ui_Dialog):
         self.hang_check = 0
 
         # Update store caches silently.
-        for p in self.gui.istores.values():
+        for p in list(self.gui.istores.values()):
             self.cache_pool.add_task(p, self.timeout)
 
         self.store_checks = {}
         self.setup_store_checks()
 
         # Set the search query
-        if isinstance(query, (str, unicode)):
+        if isinstance(query, str):
             self.search_edit.setText(query)
         elif isinstance(query, dict):
             if 'author' in query:
@@ -120,7 +120,7 @@ class SearchDialog(QDialog, Ui_Dialog):
         stores_check_widget.setLayout(store_list_layout)
 
         icon = QIcon(I('donate.png'))
-        for i, x in enumerate(sorted(self.gui.istores.keys(), key=lambda x: x.lower())):
+        for i, x in enumerate(sorted(list(self.gui.istores.keys()), key=lambda x: x.lower())):
             cbox = QCheckBox(x)
             cbox.setChecked(existing.get(x, first_run))
             store_list_layout.addWidget(cbox, i, 0, 1, 1)
@@ -184,11 +184,11 @@ class SearchDialog(QDialog, Ui_Dialog):
         # Don't start a search if there is nothing to search for.
         query = []
         if self.search_title.text():
-            query.append(u'title2:"~%s"' % unicode(self.search_title.text()).replace('"', ' '))
+            query.append('title2:"~%s"' % str(self.search_title.text()).replace('"', ' '))
         if self.search_author.text():
-            query.append(u'author2:"%s"' % unicode(self.search_author.text()).replace('"', ' '))
+            query.append('author2:"%s"' % str(self.search_author.text()).replace('"', ' '))
         if self.search_edit.text():
-            query.append(unicode(self.search_edit.text()))
+            query.append(str(self.search_edit.text()))
         query = " ".join(query)
         if not query.strip():
             error_dialog(self, _('No query'),
@@ -206,7 +206,7 @@ class SearchDialog(QDialog, Ui_Dialog):
         # there is a search. This way plugins closer
         # to a don't have an unfair advantage over
         # plugins further from a.
-        store_names = self.store_checks.keys()
+        store_names = list(self.store_checks.keys())
         if not store_names:
             return
         # Remove all of our internal filtering logic from the query.
@@ -256,7 +256,7 @@ class SearchDialog(QDialog, Ui_Dialog):
         self.config['open_external'] = self.open_external.isChecked()
 
         store_check = {}
-        for k, v in self.store_checks.items():
+        for k, v in list(self.store_checks.items()):
             store_check[k] = v.isChecked()
         self.config['store_checked'] = store_check
 
@@ -391,7 +391,7 @@ class SearchDialog(QDialog, Ui_Dialog):
             self.open_store(result)
 
     def download_book(self, result):
-        d = ChooseFormatDialog(self, _('Choose format to download to your library.'), result.downloads.keys())
+        d = ChooseFormatDialog(self, _('Choose format to download to your library.'), list(result.downloads.keys()))
         if d.exec_() == d.Accepted:
             ext = d.format()
             fname = result.title[:60] + '.' + ext.lower()
@@ -410,21 +410,21 @@ class SearchDialog(QDialog, Ui_Dialog):
             self.searching = False
         else:
             self.searching = True
-            if unicode(self.search.text()) != self.STOP_TEXT:
+            if str(self.search.text()) != self.STOP_TEXT:
                 self.search.setText(self.STOP_TEXT)
             if not self.pi.isAnimated():
                 self.pi.startAnimation()
 
     def stores_select_all(self):
-        for check in self.store_checks.values():
+        for check in list(self.store_checks.values()):
             check.setChecked(True)
 
     def stores_select_invert(self):
-        for check in self.store_checks.values():
+        for check in list(self.store_checks.values()):
             check.setChecked(not check.isChecked())
 
     def stores_select_none(self):
-        for check in self.store_checks.values():
+        for check in list(self.store_checks.values()):
             check.setChecked(False)
 
     def dialog_closed(self, result):
@@ -434,7 +434,7 @@ class SearchDialog(QDialog, Ui_Dialog):
         self.save_state()
 
     def exec_(self):
-        if unicode(self.search_edit.text()).strip() or unicode(self.search_title.text()).strip() or unicode(self.search_author.text()).strip():
+        if str(self.search_edit.text()).strip() or str(self.search_title.text()).strip() or str(self.search_author.text()).strip():
             self.do_search()
         return QDialog.exec_(self)
 

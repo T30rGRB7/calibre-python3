@@ -11,9 +11,9 @@ from bisect import bisect_right
 from base64 import b64encode
 from future_builtins import map
 from threading import Thread
-from Queue import Queue, Empty
+from queue import Queue, Empty
 from functools import partial
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from PyQt5.Qt import (
     QWidget, QVBoxLayout, QApplication, QSize, QNetworkAccessManager, QMenu, QIcon,
@@ -278,7 +278,7 @@ class WebPage(QWebPage):
         self.init_javascript()
 
     def javaScriptConsoleMessage(self, msg, lineno, source_id):
-        prints('preview js:%s:%s:'%(unicode(source_id), lineno), unicode(msg))
+        prints('preview js:%s:%s:'%(str(source_id), lineno), str(msg))
 
     def init_javascript(self):
         if not hasattr(self, 'js'):
@@ -294,7 +294,7 @@ class WebPage(QWebPage):
     @pyqtSlot(str, str, str)
     def request_sync(self, tag_name, href, sourceline_address):
         try:
-            self.sync_requested.emit(unicode(tag_name), unicode(href), json.loads(unicode(sourceline_address)))
+            self.sync_requested.emit(str(tag_name), str(href), json.loads(str(sourceline_address)))
         except (TypeError, ValueError, OverflowError, AttributeError):
             pass
 
@@ -305,7 +305,7 @@ class WebPage(QWebPage):
     @pyqtSlot(str, str)
     def request_split(self, loc, totals):
         actions['split-in-preview'].setChecked(False)
-        loc, totals = json.loads(unicode(loc)), json.loads(unicode(totals))
+        loc, totals = json.loads(str(loc)), json.loads(str(totals))
         if not loc or not totals:
             return error_dialog(self.view(), _('Invalid location'),
                                 _('Cannot split on the body tag'), show=True)
@@ -321,7 +321,7 @@ class WebPage(QWebPage):
                     ans = None
                 return ans
             val = self.mainFrame().evaluateJavaScript('window.calibre_preview_integration.line_numbers()')
-            self._line_numbers = sorted(uniq(filter(lambda x:x is not None, map(atoi, val))))
+            self._line_numbers = sorted(uniq([x for x in map(atoi, val) if x is not None]))
         return self._line_numbers
 
     def go_to_line(self, lnum):
@@ -400,7 +400,7 @@ class WebView(QWebView):
         p = self.page()
         mf = p.mainFrame()
         r = mf.hitTestContent(ev.pos())
-        url = unicode(r.linkUrl().toString(NO_URL_FORMATTING)).strip()
+        url = str(r.linkUrl().toString(NO_URL_FORMATTING)).strip()
         ca = self.pageAction(QWebPage.Copy)
         if ca.isEnabled():
             menu.addAction(ca)
@@ -483,7 +483,7 @@ class Preview(QWidget):
             self.bar.addAction(ac)
 
     def find(self, direction):
-        text = unicode(self.search.text())
+        text = str(self.search.text())
         self.view.findText(text, QWebPage.FindWrapsAroundDocument | (
             QWebPage.FindBackward if direction == 'prev' else QWebPage.FindFlags(0)))
 

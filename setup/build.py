@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
@@ -70,7 +70,7 @@ def expand_file_list(items, is_paths=True):
     for item in items:
         if item.startswith('!'):
             item = lazy_load(item)
-            if isinstance(item, basestring):
+            if isinstance(item, str):
                 item = [item]
             ans.extend(expand_file_list(item, is_paths=is_paths))
         else:
@@ -243,7 +243,7 @@ class Build(Command):
             self.info('--no-compile specified, skipping compilation')
             return
         self.env = init_env()
-        extensions = map(parse_extension, filter(is_ext_allowed, read_extensions()))
+        extensions = list(map(parse_extension, list(filter(is_ext_allowed, read_extensions()))))
         self.build_dir = os.path.abspath(opts.build_dir or self.DEFAULT_BUILDDIR)
         self.output_dir = os.path.abspath(opts.output_dir or self.DEFAULT_OUTPUTDIR)
         self.obj_dir = os.path.join(self.build_dir, 'objects')
@@ -340,7 +340,7 @@ class Build(Command):
             subprocess.check_call(*args, **kwargs)
         except:
             cmdline = ' '.join(['"%s"' % (arg) if ' ' in arg else arg for arg in args[0]])
-            print "Error while executing: %s\n" % (cmdline)
+            print("Error while executing: %s\n" % (cmdline))
             raise
 
     def build_headless(self):
@@ -479,7 +479,7 @@ class Build(Command):
         proname = '%s.pro' % sip['target']
         with open(os.path.join(src_dir, proname), 'wb') as f:
             f.write(pro.encode('utf-8'))
-        cwd = os.getcwdu()
+        cwd = os.getcwd()
         qmc = []
         if iswindows:
             qmc += ['-spec', qmakespec]
@@ -499,7 +499,7 @@ class Build(Command):
 
     def clean(self):
         self.output_dir = self.DEFAULT_OUTPUTDIR
-        extensions = map(parse_extension, filter(is_ext_allowed, read_extensions()))
+        extensions = list(map(parse_extension, list(filter(is_ext_allowed, read_extensions()))))
         for ext in extensions:
             dest = self.dest(ext)
             for x in (dest, dest+'.manifest'):

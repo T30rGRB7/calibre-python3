@@ -221,9 +221,9 @@ class PALADIN(USBMS):
                     '\n'+tb)
 
     def get_database_min_id(self, source_id):
-        sequence_min = 0L
+        sequence_min = 0
         if source_id == 1:
-            sequence_min = 4294967296L
+            sequence_min = 4294967296
 
         return sequence_min
 
@@ -284,7 +284,7 @@ class PALADIN(USBMS):
         if sequence_dirty == 1:
             debug_print("Book Sequence Dirty for Source Id: %d"%source_id)
             sequence_max = sequence_max + 1
-            for book, bookId in db_books.items():
+            for book, bookId in list(db_books.items()):
                 if bookId < sequence_min:
                     # Record the new Id and write it to the DB
                     db_books[book] = sequence_max
@@ -350,7 +350,7 @@ class PALADIN(USBMS):
                 values (?,?,?,?,?,?,?,?)
                 '''
                 t = (title, author, book.get('comments', None), int(time.time() * 1000),
-                        book.get('series', None), book.get('series_index', sys.maxint), lpath,
+                        book.get('series', None), book.get('series_index', sys.maxsize), lpath,
                         book.mime or mime_type_ext(path_to_ext(lpath)))
                 cursor.execute(query, t)
                 book.bookId = connection.last_insert_rowid()
@@ -366,7 +366,7 @@ class PALADIN(USBMS):
                 book.bookId = db_books[lpath]
                 db_books[lpath] = None
 
-        for book, bookId in db_books.items():
+        for book, bookId in list(db_books.items()):
             if bookId is not None:
                 # Remove From Collections
                 query = 'DELETE FROM tags WHERE _id in (select tag_id from booktags where book_id = ?)'
@@ -416,7 +416,7 @@ class PALADIN(USBMS):
         if sequence_dirty == 1:
             debug_print("Collection Sequence Dirty for Source Id: %d"%source_id)
             sequence_max = sequence_max + 1
-            for collection, collectionId in db_collections.items():
+            for collection, collectionId in list(db_collections.items()):
                 if collectionId < sequence_min:
                     # Record the new Id and write it to the DB
                     db_collections[collection] = sequence_max
@@ -476,7 +476,7 @@ class PALADIN(USBMS):
             db_collections = self.read_device_collections(connection, source_id, dbpath)
             cursor = connection.cursor()
 
-            for collection, books in collections.items():
+            for collection, books in list(collections.items()):
                 if collection not in db_collections:
                     query = 'INSERT INTO tags (tagname) VALUES (?)'
                     t = (collection,)
@@ -512,7 +512,7 @@ class PALADIN(USBMS):
 
                     db_books[book.lpath] = None
 
-                for bookPath, bookId in db_books.items():
+                for bookPath, bookId in list(db_books.items()):
                     if bookId is not None:
                         query = ('DELETE FROM booktags '
                                 'WHERE book_id = ? AND tag_id = ? ')
@@ -522,7 +522,7 @@ class PALADIN(USBMS):
 
                 db_collections[collection] = None
 
-            for collection, collectionId in db_collections.items():
+            for collection, collectionId in list(db_collections.items()):
                 if collectionId is not None:
                     # Remove Books from Collection
                     query = ('DELETE FROM booktags '

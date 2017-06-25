@@ -6,7 +6,7 @@ __copyright__ = '2010, Kovid Goyal <kovid@kovidgoyal.net>'
 __docformat__ = 'restructuredtext en'
 
 import textwrap
-from urllib import unquote
+from urllib.parse import unquote
 
 from lxml import etree
 from calibre import guess_type
@@ -90,19 +90,19 @@ class CoverManager(object):
             return None
         self.log('Generating default cover')
         m = self.oeb.metadata
-        title = unicode(m.title[0])
-        authors = [unicode(x) for x in m.creator if x.role == 'aut']
+        title = str(m.title[0])
+        authors = [str(x) for x in m.creator if x.role == 'aut']
         try:
             from calibre.ebooks.covers import create_cover
             series = series_index = None
             if m.series:
                 try:
-                    series, series_index = unicode(m.series[0]), m.series_index[0]
+                    series, series_index = str(m.series[0]), m.series_index[0]
                 except IndexError:
                     pass
             img_data = create_cover(title, authors, series, series_index)
             id, href = self.oeb.manifest.generate('cover',
-                    u'cover_image.jpg')
+                    'cover_image.jpg')
             item = self.oeb.manifest.add(id, href, guess_type('t.jpg')[0],
                         data=img_data)
             m.clear('cover')
@@ -152,7 +152,7 @@ class CoverManager(object):
                 templ = self.non_svg_template if self.no_svg_cover \
                         else self.svg_template
                 tp = templ%unquote(href)
-                id, href = m.generate('titlepage', u'titlepage.xhtml')
+                id, href = m.generate('titlepage', 'titlepage.xhtml')
                 item = m.add(id, href, guess_type('t.xhtml')[0],
                         data=etree.fromstring(tp))
         else:

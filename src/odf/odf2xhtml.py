@@ -25,9 +25,9 @@ from xml.sax import handler
 from xml.sax.saxutils import escape, quoteattr
 from xml.dom import Node
 
-from opendocument import load
+from .opendocument import load
 
-from namespaces import ANIMNS, CHARTNS, CONFIGNS, DCNS, DR3DNS, DRAWNS, FONS, \
+from .namespaces import ANIMNS, CHARTNS, CONFIGNS, DCNS, DR3DNS, DRAWNS, FONS, \
   FORMNS, MATHNS, METANS, NUMBERNS, OFFICENS, PRESENTATIONNS, SCRIPTNS, \
   SMILNS, STYLENS, SVGNS, TABLENS, TEXTNS, XLINKNS
 
@@ -70,45 +70,45 @@ class StyleToCSS:
         self.fillimages = {}
 
         self.ruleconversions = {
-            (DRAWNS,u'fill-image-name'): self.c_drawfillimage,
-            (FONS,u"background-color"): self.c_fo,
-            (FONS,u"border"): self.c_fo,
-            (FONS,u"border-bottom"): self.c_fo,
-            (FONS,u"border-left"): self.c_fo,
-            (FONS,u"border-right"): self.c_fo,
-            (FONS,u"border-top"): self.c_fo,
-            (FONS,u"break-after"): self.c_break,  # Added by Kovid
-            (FONS,u"break-before"): self.c_break,  # Added by Kovid
-            (FONS,u"color"): self.c_fo,
-            (FONS,u"font-family"): self.c_fo,
-            (FONS,u"font-size"): self.c_fo,
-            (FONS,u"font-style"): self.c_fo,
-            (FONS,u"font-variant"): self.c_fo,
-            (FONS,u"font-weight"): self.c_fo,
-            (FONS,u"line-height"): self.c_fo,
-            (FONS,u"margin"): self.c_fo,
-            (FONS,u"margin-bottom"): self.c_fo,
-            (FONS,u"margin-left"): self.c_fo,
-            (FONS,u"margin-right"): self.c_fo,
-            (FONS,u"margin-top"): self.c_fo,
-            (FONS,u"min-height"): self.c_fo,
-            (FONS,u"padding"): self.c_fo,
-            (FONS,u"padding-bottom"): self.c_fo,
-            (FONS,u"padding-left"): self.c_fo,
-            (FONS,u"padding-right"): self.c_fo,
-            (FONS,u"padding-top"): self.c_fo,
-            (FONS,u"page-width"): self.c_page_width,
-            (FONS,u"page-height"): self.c_page_height,
-            (FONS,u"text-align"): self.c_text_align,
-            (FONS,u"text-indent") :self.c_fo,
-            (TABLENS,u'border-model') :self.c_border_model,
-            (STYLENS,u'column-width') : self.c_width,
-            (STYLENS,u"font-name"): self.c_fn,
-            (STYLENS,u'horizontal-pos'): self.c_hp,
-            (STYLENS,u'text-position'): self.c_text_position,
-            (STYLENS,u'text-line-through-style'): self.c_text_line_through_style,
-            (STYLENS,u'text-underline-style'): self.c_text_underline_style,
-            (STYLENS,u'width') : self.c_width,
+            (DRAWNS,'fill-image-name'): self.c_drawfillimage,
+            (FONS,"background-color"): self.c_fo,
+            (FONS,"border"): self.c_fo,
+            (FONS,"border-bottom"): self.c_fo,
+            (FONS,"border-left"): self.c_fo,
+            (FONS,"border-right"): self.c_fo,
+            (FONS,"border-top"): self.c_fo,
+            (FONS,"break-after"): self.c_break,  # Added by Kovid
+            (FONS,"break-before"): self.c_break,  # Added by Kovid
+            (FONS,"color"): self.c_fo,
+            (FONS,"font-family"): self.c_fo,
+            (FONS,"font-size"): self.c_fo,
+            (FONS,"font-style"): self.c_fo,
+            (FONS,"font-variant"): self.c_fo,
+            (FONS,"font-weight"): self.c_fo,
+            (FONS,"line-height"): self.c_fo,
+            (FONS,"margin"): self.c_fo,
+            (FONS,"margin-bottom"): self.c_fo,
+            (FONS,"margin-left"): self.c_fo,
+            (FONS,"margin-right"): self.c_fo,
+            (FONS,"margin-top"): self.c_fo,
+            (FONS,"min-height"): self.c_fo,
+            (FONS,"padding"): self.c_fo,
+            (FONS,"padding-bottom"): self.c_fo,
+            (FONS,"padding-left"): self.c_fo,
+            (FONS,"padding-right"): self.c_fo,
+            (FONS,"padding-top"): self.c_fo,
+            (FONS,"page-width"): self.c_page_width,
+            (FONS,"page-height"): self.c_page_height,
+            (FONS,"text-align"): self.c_text_align,
+            (FONS,"text-indent") :self.c_fo,
+            (TABLENS,'border-model') :self.c_border_model,
+            (STYLENS,'column-width') : self.c_width,
+            (STYLENS,"font-name"): self.c_fn,
+            (STYLENS,'horizontal-pos'): self.c_hp,
+            (STYLENS,'text-position'): self.c_text_position,
+            (STYLENS,'text-line-through-style'): self.c_text_line_through_style,
+            (STYLENS,'text-underline-style'): self.c_text_underline_style,
+            (STYLENS,'width') : self.c_width,
             # FIXME Should do style:vertical-pos here
         }
 
@@ -285,7 +285,7 @@ class StyleToCSS:
             it is already CSS2
         """
         sdict = {}
-        for rule,val in ruleset.items():
+        for rule,val in list(ruleset.items()):
             if rule[0] == '':
                 sdict[rule[1]] = val
                 continue
@@ -471,10 +471,10 @@ class ODF2XHTML(handler.ContentHandler):
 
     def set_embedable(self):
         """ Tells the converter to only output the parts inside the <body>"""
-        self.elements[(OFFICENS, u"text")] = (None,None)
-        self.elements[(OFFICENS, u"spreadsheet")] = (None,None)
-        self.elements[(OFFICENS, u"presentation")] = (None,None)
-        self.elements[(OFFICENS, u"document-content")] = (None,None)
+        self.elements[(OFFICENS, "text")] = (None,None)
+        self.elements[(OFFICENS, "spreadsheet")] = (None,None)
+        self.elements[(OFFICENS, "presentation")] = (None,None)
+        self.elements[(OFFICENS, "document-content")] = (None,None)
 
     def add_style_file(self, stylefilename, media=None):
         """ Add a link to an external style file.
@@ -536,7 +536,7 @@ class ODF2XHTML(handler.ContentHandler):
         """ Create an open HTML tag """
         self.htmlstack.append((tag,attrs,block))
         a = []
-        for key,val in attrs.items():
+        for key,val in list(attrs.items()):
             a.append('''%s=%s''' % (key, quoteattr(val)))
         if len(a) == 0:
             self.writeout("<%s>" % tag)
@@ -554,7 +554,7 @@ class ODF2XHTML(handler.ContentHandler):
 
     def emptytag(self, tag, attrs={}):
         a = []
-        for key,val in attrs.items():
+        for key,val in list(attrs.items()):
             a.append('''%s=%s''' % (key, quoteattr(val)))
         self.writeout("<%s %s/>\n" % (tag, " ".join(a)))
 
@@ -862,14 +862,14 @@ dl.notes dd:last-of-type { page-break-after: avoid }
             if '__style-family' in styles and styles['__style-family'] in self.styledict:
                 familystyle = self.styledict[styles['__style-family']].copy()
                 del styles['__style-family']
-                for style, val in styles.items():
+                for style, val in list(styles.items()):
                     familystyle[style] = val
                 styles = familystyle
             # Resolve the remaining parent styles
             while '__parent-style-name' in styles and styles['__parent-style-name'] in self.styledict:
                 parentstyle = self.styledict[styles['__parent-style-name']].copy()
                 del styles['__parent-style-name']
-                for style, val in styles.items():
+                for style, val in list(styles.items()):
                     parentstyle[style] = val
                 styles = parentstyle
             self.styledict[name] = styles
@@ -879,7 +879,7 @@ dl.notes dd:last-of-type { page-break-after: avoid }
         css_styles = {}
         for name in self.stylestack:
             styles = self.styledict.get(name)
-            css2 = tuple(self.cs.convert_styles(styles).iteritems())
+            css2 = tuple(self.cs.convert_styles(styles).items())
             if css2 in css_styles:
                 css_styles[css2].append(name)
             else:
@@ -900,7 +900,7 @@ dl.notes dd:last-of-type { page-break-after: avoid }
                 if k not in ignore:
                     yield k, v
 
-        for css2, names in css_styles.iteritems():
+        for css2, names in css_styles.items():
             self.writeout("%s {\n" % ', '.join(names))
             for style, val in filter_margins(css2):
                 self.writeout("\t%s: %s;\n" % (style, val))
@@ -923,9 +923,9 @@ dl.notes dd:last-of-type { page-break-after: avoid }
 #           self.closetag('sup', False)
             self.writeout('[')
             self.opentag('a', {'href': "#citation-%d" % key})
-            self.writeout(u"\u2190%d".encode('utf-8') % key)
+            self.writeout("\u2190%d".encode('utf-8') % key)
             self.closetag('a')
-            self.writeout(u']\xa0'.encode('utf-8'))
+            self.writeout(']\xa0'.encode('utf-8'))
             self.closetag('dt')
             self.opentag('dd')
             self.writeout(note['body'])
@@ -961,8 +961,8 @@ dl.notes dd:last-of-type { page-break-after: avoid }
             for the 'paragraph'. We therefore force a standard when we see
             it is a presentation
         """
-        self.styledict['p'] = {(FONS,u'font-size'): u"24pt"}
-        self.styledict['presentation'] = {(FONS,u'font-size'): u"24pt"}
+        self.styledict['p'] = {(FONS,'font-size'): "24pt"}
+        self.styledict['presentation'] = {(FONS,'font-size'): "24pt"}
         self.html_body(tag, attrs)
 
     def e_office_presentation(self, tag, attrs):
@@ -981,7 +981,7 @@ dl.notes dd:last-of-type { page-break-after: avoid }
 
     def s_office_text(self, tag, attrs):
         """ OpenDocument text """
-        self.styledict['frame'] = {(STYLENS,'wrap'): u'parallel'}
+        self.styledict['frame'] = {(STYLENS,'wrap'): 'parallel'}
         self.html_body(tag, attrs)
 
     def e_office_text(self, tag, attrs):
@@ -995,7 +995,7 @@ dl.notes dd:last-of-type { page-break-after: avoid }
         if self.currentstyle is None:  # Added by Kovid
             return
 
-        for key,attr in attrs.items():
+        for key,attr in list(attrs.items()):
             self.styledict[self.currentstyle][key] = attr
 
     familymap = {'frame':'frame', 'paragraph':'p', 'presentation':'presentation',
@@ -1093,7 +1093,7 @@ dl.notes dd:last-of-type { page-break-after: avoid }
             pagelayout = ".PL-" + pagelayout
             if pagelayout in self.styledict:
                 styles = self.styledict[pagelayout]
-                for style, val in styles.items():
+                for style, val in list(styles.items()):
                     self.styledict[self.currentstyle][style] = val
             else:
                 self.styledict[self.currentstyle]['__parent-style-name'] = pagelayout
@@ -1133,7 +1133,7 @@ dl.notes dd:last-of-type { page-break-after: avoid }
             parent = special_styles.get(parent, "."+parent)
             if parent in self.styledict:
                 styles = self.styledict[parent]
-                for style, val in styles.items():
+                for style, val in list(styles.items()):
                     self.styledict[self.currentstyle][style] = val
             else:
                 self.styledict[self.currentstyle]['__parent-style-name'] = parent
@@ -1192,7 +1192,7 @@ dl.notes dd:last-of-type { page-break-after: avoid }
         htmlattrs = {}
         if c:
             htmlattrs['class'] = "TC-%s" % c.replace(".","_")
-        for x in xrange(repeated):
+        for x in range(repeated):
             self.emptytag('col', htmlattrs)
         self.purgedata()
 
@@ -1457,7 +1457,7 @@ dl.notes dd:last-of-type { page-break-after: avoid }
 #        self.writeout( escape(mark) )
         # Since HTML only knows about endnotes, there is too much risk that the
         # marker is reused in the source. Therefore we force numeric markers
-        self.writeout(unicode(self.currentnote))
+        self.writeout(str(self.currentnote))
         self.closetag('a')
         self.closetag('sup')
 
@@ -1507,7 +1507,7 @@ dl.notes dd:last-of-type { page-break-after: avoid }
         except:
             c = 0
         if c > 0:
-            self.data.append(u'\u00a0'*c)
+            self.data.append('\u00a0'*c)
 
     def s_text_span(self, tag, attrs):
         """ The <text:span> element matches the <span> element in HTML. It is
@@ -1579,7 +1579,7 @@ dl.notes dd:last-of-type { page-break-after: avoid }
         """
         self.lines = []
         self._wfunc = self._wlines
-        if isinstance(odffile, basestring) \
+        if isinstance(odffile, str) \
                 or hasattr(odffile, 'read'):  # Added by Kovid
             self.document = load(odffile)
         else:
@@ -1593,7 +1593,7 @@ dl.notes dd:last-of-type { page-break-after: avoid }
                 self._walknode(c)
             self.endElementNS(node.qname, node.tagName)
         if node.nodeType == Node.TEXT_NODE or node.nodeType == Node.CDATA_SECTION_NODE:
-            self.characters(unicode(node))
+            self.characters(str(node))
 
     def odf2xhtml(self, odffile):
         """ Load a file and return the XHTML

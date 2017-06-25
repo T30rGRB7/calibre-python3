@@ -7,10 +7,10 @@ __license__   = 'GPL v3'
 __copyright__ = '2011, Kovid Goyal <kovid@kovidgoyal.net>'
 __docformat__ = 'restructuredtext en'
 
-import posixpath, os, urllib, re
-from urlparse import urlparse
+import posixpath, os, urllib.request, urllib.parse, urllib.error, re
+from urllib.parse import urlparse
 from threading import Thread
-from Queue import Queue, Empty
+from queue import Queue, Empty
 
 from PyQt5.Qt import QPixmap, Qt, QDialog, QLabel, QVBoxLayout, \
         QDialogButtonBox, QProgressBar, QTimer, QUrl, QImageReader
@@ -160,7 +160,7 @@ def path_from_qurl(qurl):
     raw = bytes(qurl.toEncoded(
         QUrl.PreferLocalFile | QUrl.RemoveScheme | QUrl.RemovePassword | QUrl.RemoveUserInfo |
         QUrl.RemovePort | QUrl.RemoveAuthority | QUrl.RemoveQuery | QUrl.RemoveFragment))
-    ans = urllib.unquote(raw).decode('utf-8', 'replace')
+    ans = urllib.parse.unquote(raw).decode('utf-8', 'replace')
     if iswindows and ans.startswith('/'):
         ans = ans[1:]
     return ans
@@ -177,7 +177,7 @@ def dnd_has_extension(md, extensions, allow_all_extensions=False):
     if DEBUG:
         prints('\nDebugging DND event')
         for f in md.formats():
-            f = unicode(f)
+            f = str(f)
             raw = data_as_string(f, md)
             prints(f, len(raw), repr(raw[:300]), '\n')
         print ()
@@ -207,7 +207,7 @@ def dnd_get_image(md, image_exts=None):
     '''
     if md.hasImage():
         for x in md.formats():
-            x = unicode(x)
+            x = str(x)
             if x.startswith('image/'):
                 cdata = bytes(md.data(x))
                 pmap = QPixmap()
@@ -230,7 +230,7 @@ def dnd_get_image(md, image_exts=None):
     paths = [path_from_qurl(u) for u in urls]
     # First look for a local file
     images = [xi for xi in paths if
-            posixpath.splitext(urllib.unquote(xi))[1][1:].lower() in
+            posixpath.splitext(urllib.parse.unquote(xi))[1][1:].lower() in
             image_exts]
     images = [xi for xi in images if os.path.exists(xi)]
     p = QPixmap()
@@ -276,7 +276,7 @@ def dnd_get_files(md, exts, allow_all_extensions=False, filter_exts=()):
         if allow_all_extensions and ext and ext not in filter_exts:
             return True
         return ext in exts and ext not in filter_exts
-    local_files = [p for p in local_files if is_ok(urllib.unquote(p))]
+    local_files = [p for p in local_files if is_ok(urllib.parse.unquote(p))]
     local_files = [x for x in local_files if os.path.exists(x)]
     if local_files:
         return local_files, None
@@ -319,7 +319,7 @@ def _get_firefox_pair(md, exts, url, fname):
 
 
 def get_firefox_rurl(md, exts):
-    formats = frozenset([unicode(x) for x in md.formats()])
+    formats = frozenset([str(x) for x in md.formats()])
     url = fname = None
     if 'application/x-moz-file-promise-url' in formats and \
             'application/x-moz-file-promise-dest-filename' in formats:

@@ -1,12 +1,12 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import absolute_import
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
 __docformat__ = 'restructuredtext en'
 
-import os, locale, re, cStringIO, cPickle
+import os, locale, re, io, pickle
 from gettext import GNUTranslations, NullTranslations
 
 _available_translations = None
@@ -17,7 +17,7 @@ def available_translations():
     if _available_translations is None:
         stats = P('localization/stats.pickle', allow_user_override=False)
         if os.path.exists(stats):
-            stats = cPickle.load(open(stats, 'rb'))
+            stats = pickle.load(open(stats, 'rb'))
         else:
             stats = {}
         _available_translations = [x for x in stats if stats[x] > 0.1]
@@ -114,14 +114,14 @@ def get_all_translators():
         for lang in available_translations():
             mpath = get_lc_messages_path(lang)
             if mpath is not None:
-                buf = cStringIO.StringIO(zf.read(mpath + '/messages.mo'))
+                buf = io.StringIO(zf.read(mpath + '/messages.mo'))
                 yield lang, GNUTranslations(buf)
 
 
 def get_single_translator(mpath):
     from zipfile import ZipFile
     with ZipFile(P('localization/locales.zip', allow_user_override=False), 'r') as zf:
-        buf = cStringIO.StringIO(zf.read(mpath + '/messages.mo'))
+        buf = io.StringIO(zf.read(mpath + '/messages.mo'))
         return GNUTranslations(buf)
 
 
@@ -147,31 +147,31 @@ def get_translator(bcp_47_code):
 
 
 lcdata = {
-    u'abday': (u'Sun', u'Mon', u'Tue', u'Wed', u'Thu', u'Fri', u'Sat'),
-    u'abmon': (u'Jan', u'Feb', u'Mar', u'Apr', u'May', u'Jun', u'Jul', u'Aug', u'Sep', u'Oct', u'Nov', u'Dec'),
-    u'd_fmt': u'%m/%d/%Y',
-    u'd_t_fmt': u'%a %d %b %Y %r %Z',
-    u'day': (u'Sunday', u'Monday', u'Tuesday', u'Wednesday', u'Thursday', u'Friday', u'Saturday'),
-    u'mon': (u'January', u'February', u'March', u'April', u'May', u'June', u'July', u'August', u'September', u'October', u'November', u'December'),
-    u'noexpr': u'^[nN].*',
-    u'radixchar': u'.',
-    u't_fmt': u'%r',
-    u't_fmt_ampm': u'%I:%M:%S %p',
-    u'thousep': u',',
-    u'yesexpr': u'^[yY].*'
+    'abday': ('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'),
+    'abmon': ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'),
+    'd_fmt': '%m/%d/%Y',
+    'd_t_fmt': '%a %d %b %Y %r %Z',
+    'day': ('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
+    'mon': ('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'),
+    'noexpr': '^[nN].*',
+    'radixchar': '.',
+    't_fmt': '%r',
+    't_fmt_ampm': '%I:%M:%S %p',
+    'thousep': ',',
+    'yesexpr': '^[yY].*'
 }
 
 
 def load_po(path):
     from calibre.translations.msgfmt import make
-    buf = cStringIO.StringIO()
+    buf = io.StringIO()
     try:
         make(path, buf)
     except Exception:
-        print (('Failed to compile translations file: %s, ignoring') % path)
+        print((('Failed to compile translations file: %s, ignoring') % path))
         buf = None
     else:
-        buf = cStringIO.StringIO(buf.getvalue())
+        buf = io.StringIO(buf.getvalue())
     return buf
 
 
@@ -195,17 +195,17 @@ def set_translators():
             with ZipFile(P('localization/locales.zip',
                 allow_user_override=False), 'r') as zf:
                 if buf is None:
-                    buf = cStringIO.StringIO(zf.read(mpath + '/messages.mo'))
+                    buf = io.StringIO(zf.read(mpath + '/messages.mo'))
                 if mpath == 'nds':
                     mpath = 'de'
                 isof = mpath + '/iso639.mo'
                 try:
-                    iso639 = cStringIO.StringIO(zf.read(isof))
+                    iso639 = io.StringIO(zf.read(isof))
                 except:
                     pass  # No iso639 translations for this lang
                 if buf is not None:
                     try:
-                        lcdata = cPickle.loads(zf.read(mpath + '/lcdata.pickle'))
+                        lcdata = pickle.loads(zf.read(mpath + '/lcdata.pickle'))
                     except:
                         pass  # No lcdata
 
@@ -222,7 +222,7 @@ def set_translators():
         set_translators.lang = t.info().get('language')
     except Exception:
         pass
-    t.install(unicode=True, names=('ngettext',))
+    t.install(str=True, names=('ngettext',))
     # Now that we have installed a translator, we have to retranslate the help
     # for the global prefs object as it was instantiated in get_lang(), before
     # the translator was installed.
@@ -328,7 +328,7 @@ def _load_iso639():
     if _iso639 is None:
         ip = P('localization/iso639.pickle', allow_user_override=False)
         with open(ip, 'rb') as f:
-            _iso639 = cPickle.load(f)
+            _iso639 = pickle.load(f)
     return _iso639
 
 
@@ -368,7 +368,7 @@ def calibre_langcode_to_name(lc, localize=True):
 def canonicalize_lang(raw):
     if not raw:
         return None
-    if not isinstance(raw, unicode):
+    if not isinstance(raw, str):
         raw = raw.decode('utf-8', 'ignore')
     raw = raw.lower().strip()
     if not raw:
@@ -401,7 +401,7 @@ def lang_map():
     translate = _
     global _lang_map
     if _lang_map is None:
-        _lang_map = {k:translate(v) for k, v in iso639['by_3t'].iteritems()}
+        _lang_map = {k:translate(v) for k, v in iso639['by_3t'].items()}
     return _lang_map
 
 
@@ -415,7 +415,7 @@ def langnames_to_langcodes(names):
     translate = _
     ans = {}
     names = set(names)
-    for k, v in iso639['by_3t'].iteritems():
+    for k, v in iso639['by_3t'].items():
         tv = translate(v)
         if tv in names:
             names.remove(tv)
@@ -457,7 +457,7 @@ def localize_user_manual_link(url):
         return url
     if stats.get(lc, 0) < 0.3:
         return url
-    from urlparse import urlparse, urlunparse
+    from urllib.parse import urlparse, urlunparse
     parts = urlparse(url)
     path = re.sub(r'/generated/[a-z]+/', '/generated/%s/' % lc, parts.path or '')
     path = '/%s%s' % (lc, path)

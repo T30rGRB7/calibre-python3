@@ -132,7 +132,7 @@ class KF8Writer(object):
             if item.media_type in XML_DOCS:
                 root = self.data(item)
                 for tag in XPath('//h:img|//svg:image')(root):
-                    for attr, ref in tag.attrib.iteritems():
+                    for attr, ref in tag.attrib.items():
                         if attr.split('}')[-1].lower() in {'src', 'href'}:
                             tag.attrib[attr] = pointer(item, ref)
 
@@ -205,7 +205,7 @@ class KF8Writer(object):
                 extract(tag)
                 inlines[raw].append(repl)
 
-        for raw, elems in inlines.iteritems():
+        for raw, elems in inlines.items():
             idx = to_ref(len(self.flows))
             self.flows.append(raw)
             for link in elems:
@@ -235,7 +235,7 @@ class KF8Writer(object):
             root = self.data(item)
 
             for svg in XPath('//svg:svg')(root):
-                raw = etree.tostring(svg, encoding=unicode, with_tail=False)
+                raw = etree.tostring(svg, encoding=str, with_tail=False)
                 idx = len(self.flows)
                 self.flows.append(raw)
                 p = svg.getparent()
@@ -319,7 +319,7 @@ class KF8Writer(object):
 
     def chunk_it_up(self):
         placeholder_map = {}
-        for placeholder, x in self.link_map.iteritems():
+        for placeholder, x in self.link_map.items():
             href, frag = x
             aid = self.id_map.get(x, None)
             if aid is None:
@@ -333,7 +333,7 @@ class KF8Writer(object):
         self.flows[0] = chunker.text
 
     def create_text_records(self):
-        self.flows = [x.encode('utf-8') if isinstance(x, unicode) else x for x
+        self.flows = [x.encode('utf-8') if isinstance(x, str) else x for x
                 in self.flows]
         text = b''.join(self.flows)
         self.text_length = len(text)
@@ -475,7 +475,7 @@ class KF8Writer(object):
         self.guide_table = []
         self.guide_records = []
         GuideRef = namedtuple('GuideRef', 'title type pos_fid')
-        for ref in self.oeb.guide.values():
+        for ref in list(self.oeb.guide.values()):
             href, frag = ref.href.partition('#')[0::2]
             aid = self.id_map.get((href, frag), None)
             if aid is None:

@@ -5,7 +5,7 @@
 from __future__ import (unicode_literals, division, absolute_import,
                         print_function)
 
-import os, string, _winreg as winreg, re, sys
+import os, string, winreg as winreg, re, sys
 from collections import namedtuple, defaultdict
 from operator import itemgetter
 from ctypes import (
@@ -220,8 +220,8 @@ PUSB_DESCRIPTOR_REQUEST = POINTER(USB_DESCRIPTOR_REQUEST)
 PSP_DEVICE_INTERFACE_DETAIL_DATA = POINTER(SP_DEVICE_INTERFACE_DETAIL_DATA)
 PSP_DEVICE_INTERFACE_DATA = POINTER(SP_DEVICE_INTERFACE_DATA)
 INVALID_HANDLE_VALUE = c_void_p(-1).value
-GENERIC_READ = 0x80000000L
-GENERIC_WRITE = 0x40000000L
+GENERIC_READ = 0x80000000
+GENERIC_WRITE = 0x40000000
 FILE_SHARE_READ = 0x1
 FILE_SHARE_WRITE = 0x2
 OPEN_EXISTING = 0x3
@@ -650,7 +650,7 @@ def get_volume_information(drive_letter):
               'FILE_SUPPORTS_HARD_LINKS':0x00400000, 'FILE_SUPPORTS_OBJECT_IDS':0x00010000, 'FILE_SUPPORTS_OPEN_BY_FILE_ID':0x01000000,
               'FILE_SUPPORTS_REPARSE_POINTS':0x00000080, 'FILE_SUPPORTS_SPARSE_FILES':0x00000040, 'FILE_SUPPORTS_TRANSACTIONS':0x00200000,
               'FILE_SUPPORTS_USN_JOURNAL':0x02000000, 'FILE_UNICODE_ON_DISK':0x00000004, 'FILE_VOLUME_IS_COMPRESSED':0x00008000,
-              'FILE_VOLUME_QUOTAS':0x00000020}.iteritems():
+              'FILE_VOLUME_QUOTAS':0x00000020}.items():
         ans[name] = bool(num & flags)
     return ans
 
@@ -669,7 +669,7 @@ def get_volume_pathnames(volume_id, buf=None):
                 continue
             raise
     ans = wstring_at(buf, bufsize.value)
-    return buf, filter(None, ans.split('\0'))
+    return buf, [_f for _f in ans.split('\0') if _f]
 
 # }}}
 
@@ -800,7 +800,7 @@ def get_storage_number_map(drive_types=(DRIVE_REMOVABLE, DRIVE_FIXED), debug=Fal
     ' Get a mapping of drive letters to storage numbers for all drives on system (of the specified types) '
     mask = GetLogicalDrives()
     type_map = {letter:GetDriveType(letter + ':' + os.sep) for i, letter in enumerate(string.ascii_uppercase) if mask & (1 << i)}
-    drives = (letter for letter, dt in type_map.iteritems() if dt in drive_types)
+    drives = (letter for letter, dt in type_map.items() if dt in drive_types)
     ans = defaultdict(list)
     for letter in drives:
         try:
@@ -810,7 +810,7 @@ def get_storage_number_map(drive_types=(DRIVE_REMOVABLE, DRIVE_FIXED), debug=Fal
             if debug:
                 prints('Failed to get storage number for drive: %s with error: %s' % (letter, as_unicode(err)))
             continue
-    for val in ans.itervalues():
+    for val in ans.values():
         val.sort(key=itemgetter(0))
     return dict(ans)
 
@@ -850,7 +850,7 @@ def get_storage_number_map_alt(debug=False):
             if debug:
                 prints('Failed to get storage number for drive: %s with error: %s' % (name[0], as_unicode(err)))
             continue
-    for val in ans.itervalues():
+    for val in ans.values():
         val.sort(key=itemgetter(0))
     return dict(ans)
 
@@ -970,7 +970,7 @@ def get_device_languages(hub_handle, device_port, buf=None):
     if dtype != 0x03:
         raise WindowsError('Invalid datatype for string descriptor: 0x%x' % dtype)
     data = cast(data.String, POINTER(USHORT*(sz//2)))
-    return buf, filter(None, data.contents)
+    return buf, [_f for _f in data.contents if _f]
 
 # }}}
 
@@ -996,16 +996,16 @@ def develop():  # {{{
         connected, usbdev = dev.is_usb_connected(usb_devices, debug=True)
         if connected:
             print('\n')
-            print('Potentially connected device: %s at %s' % (dev.get_gui_name(), usbdev))
+            print(('Potentially connected device: %s at %s' % (dev.get_gui_name(), usbdev)))
             print()
             print('Drives for this device:')
             data = get_drive_letters_for_device(usbdev, debug=True)
             pprint(data)
             drive_letters |= set(data['drive_letters'])
             print()
-            print('Is device connected:', is_usb_device_connected(*usbdev[:2]))
+            print(('Is device connected:', is_usb_device_connected(*usbdev[:2])))
             print()
-            print('Device USB data:', get_usb_info(usbdev, debug=True))
+            print(('Device USB data:', get_usb_info(usbdev, debug=True)))
 
 
 def drives_for(vendor_id, product_id=None):
@@ -1013,9 +1013,9 @@ def drives_for(vendor_id, product_id=None):
     pprint(usb_devices)
     for usbdev in usb_devices:
         if usbdev.vendor_id == vendor_id and (product_id is None or usbdev.product_id == product_id):
-            print('Drives for: {}'.format(usbdev))
+            print(('Drives for: {}'.format(usbdev)))
             pprint(get_drive_letters_for_device(usbdev, debug=True))
-            print('USB info:', get_usb_info(usbdev, debug=True))
+            print(('USB info:', get_usb_info(usbdev, debug=True)))
 
 if __name__ == '__main__':
     develop()

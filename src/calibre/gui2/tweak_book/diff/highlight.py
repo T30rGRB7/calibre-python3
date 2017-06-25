@@ -50,7 +50,7 @@ class QtHighlighter(QTextDocument):
                     c.setCharFormat(af.format)
                 cursor.insertBlock()
                 cursor.setCharFormat(NULL_FMT)
-                block = block.next()
+                block = next(block)
 
 
 class NullHighlighter(object):
@@ -59,7 +59,7 @@ class NullHighlighter(object):
         self.lines = text.splitlines()
 
     def copy_lines(self, lo, hi, cursor):
-        for i in xrange(lo, hi):
+        for i in range(lo, hi):
             cursor.insertText(self.lines[i])
             cursor.insertBlock()
 
@@ -83,7 +83,7 @@ class PygmentsHighlighter(object):
 
     def __init__(self, text, lexer):
         theme, cache = get_theme(tprefs['editor_theme']), {}
-        theme = {k:highlight_to_char_format(v) for k, v in theme.iteritems()}
+        theme = {k:highlight_to_char_format(v) for k, v in theme.items()}
         theme[None] = NULL_FMT
 
         def fmt(token):
@@ -101,7 +101,7 @@ class PygmentsHighlighter(object):
                     continue
 
     def copy_lines(self, lo, hi, cursor):
-        for i in xrange(lo, hi):
+        for i in range(lo, hi):
             for fmt, text in self.lines[i]:
                 cursor.insertText(text, fmt)
             cursor.setCharFormat(NULL_FMT)

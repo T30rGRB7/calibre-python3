@@ -57,7 +57,7 @@ PAPER_SIZES = {k:globals()[k.upper()] for k in ('a0 a1 a2 a3 a4 a5 a6 b0 b1 b2'
 
 # Basic PDF datatypes {{{
 
-ic = str if ispy3 else unicode
+ic = str if ispy3 else str
 icb = (lambda x: str(x).encode('ascii')) if ispy3 else bytes
 
 
@@ -73,7 +73,7 @@ def serialize(o, stream):
     elif isinstance(o, bool):
         # Must check bool before int as bools are subclasses of int
         stream.write_raw(b'true' if o else b'false')
-    elif isinstance(o, (int, long)):
+    elif isinstance(o, int):
         stream.write_raw(icb(o))
     elif hasattr(o, 'pdf_serialize'):
         o.pdf_serialize(stream)
@@ -88,7 +88,7 @@ def serialize(o, stream):
         raise ValueError('Unknown object: %r'%o)
 
 
-class Name(unicode):
+class Name(str):
 
     def pdf_serialize(self, stream):
         raw = self.encode('ascii')
@@ -122,7 +122,7 @@ def escape_pdf_string(bytestring):
     return bytes(ba)
 
 
-class String(unicode):
+class String(str):
 
     def pdf_serialize(self, stream):
         try:
@@ -134,7 +134,7 @@ class String(unicode):
         stream.write(b'('+escape_pdf_string(raw)+b')')
 
 
-class UTF16String(unicode):
+class UTF16String(str):
 
     def pdf_serialize(self, stream):
         raw = codecs.BOM_UTF16_BE + self.encode('utf-16-be')
@@ -150,7 +150,7 @@ class Dictionary(dict):
 
     def pdf_serialize(self, stream):
         stream.write(b'<<' + EOL)
-        sorted_keys = sorted(self.iterkeys(),
+        sorted_keys = sorted(iter(self.keys()),
                              key=lambda x:({'Type':'1', 'Subtype':'2'}.get(
                                  x, x)+x))
         for k in sorted_keys:
@@ -165,7 +165,7 @@ class InlineDictionary(Dictionary):
 
     def pdf_serialize(self, stream):
         stream.write(b'<< ')
-        for k, v in self.iteritems():
+        for k, v in self.items():
             serialize(Name(k), stream)
             stream.write(b' ')
             serialize(v, stream)

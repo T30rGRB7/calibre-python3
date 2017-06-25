@@ -122,7 +122,7 @@ class ImageView(QDialog):
         if geom is not None:
             self.restoreGeometry(geom)
         try:
-            self.current_image_name = unicode(self.current_url.toString(NO_URL_FORMATTING)).rpartition('/')[-1]
+            self.current_image_name = str(self.current_url.toString(NO_URL_FORMATTING)).rpartition('/')[-1]
         except AttributeError:
             self.current_image_name = self.current_url
         title = _('View image: %s')%self.current_image_name

@@ -66,12 +66,12 @@ class RuleEdit(RuleEditBase):
     def rule(self, rule):
         def sc(name):
             c = getattr(self, name)
-            idx = c.findData(unicode(rule.get(name, '')))
+            idx = c.findData(str(rule.get(name, '')))
             if idx < 0:
                 idx = 0
             c.setCurrentIndex(idx)
         sc('action'), sc('match_type')
-        self.query.setText(unicode(rule.get('query', '')).strip())
+        self.query.setText(str(rule.get('query', '')).strip())
 
     def validate(self):
         ans = super(RuleEdit, self).validate()

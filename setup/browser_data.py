@@ -2,7 +2,7 @@
 # vim:fileencoding=utf-8
 # License: GPLv3 Copyright: 2017, Kovid Goyal <kovid at kovidgoyal.net>
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 
 import os
 import re
@@ -14,7 +14,7 @@ is_ci = os.environ.get('CI', '').lower() == 'true'
 
 
 def filter_ans(ans):
-    return filter(None, (x.strip() for x in ans))
+    return [_f for _f in (x.strip() for x in ans) if _f]
 
 
 def common_user_agents():

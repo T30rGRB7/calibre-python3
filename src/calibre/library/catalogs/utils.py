@@ -186,7 +186,7 @@ class NumberToText(object):  # {{{
                 thousandsNumber = (number - (millionsNumber * 10**6))/10**3
                 hundredsNumber  = number - (millionsNumber * 10**6) - (thousandsNumber * 10**3)
                 if self.verbose:
-                    print "Converting %s %s %s" % (millionsNumber, thousandsNumber, hundredsNumber)
+                    print("Converting %s %s %s" % (millionsNumber, thousandsNumber, hundredsNumber))
 
                 # Convert hundredsNumber
                 if hundredsNumber :
@@ -221,7 +221,7 @@ class NumberToText(object):  # {{{
                     resultString = "zero"
 
                 if self.verbose:
-                    self.log(u'resultString: %s' % resultString)
+                    self.log('resultString: %s' % resultString)
                 self.text = resultString.strip().capitalize()
 # }}}
 

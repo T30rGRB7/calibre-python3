@@ -67,11 +67,11 @@ class HTMLTableRenderer(QObject):
 def render_table(soup, table, css, base_dir, width, height, dpi, factor=1.0):
     head = ''
     for e in soup.findAll(['link', 'style']):
-        head += unicode(e)+'\n\n'
+        head += str(e)+'\n\n'
     style = ''
-    for key, val in css.items():
+    for key, val in list(css.items()):
         style += key + ':%s;'%val
-    html = u'''\
+    html = '''\
 <html>
     <head>
         %s
@@ -83,7 +83,7 @@ def render_table(soup, table, css, base_dir, width, height, dpi, factor=1.0):
         %s
     </body>
 </html>
-    '''%(head, width-10, style, unicode(table))
+    '''%(head, width-10, style, str(table))
     images, tdir = do_render(html, base_dir, width, height, dpi, factor)
     atexit.register(shutil.rmtree, tdir)
     return images

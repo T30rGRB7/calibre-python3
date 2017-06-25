@@ -555,7 +555,7 @@ def create_formats(highlighter, add_css=True):
             'bad-closing': _('A closing tag must contain only the tag name and nothing else'),
             'no-attr-value': _('Expecting an attribute value'),
             'only-prefix': _('A tag name cannot end with a colon'),
-    }.iteritems():
+    }.items():
         f = formats[name] = syntax_text_char_format(formats['error'])
         f.setToolTip(msg)
     f = formats['title'] = syntax_text_char_format()
@@ -617,10 +617,10 @@ def profile():
     h.set_document(doc)
     h.join()
     import cProfile
-    print ('Running profile on', sys.argv[-2])
+    print(('Running profile on', sys.argv[-2]))
     h.rehighlight()
     cProfile.runctx('h.join()', {}, {'h':h}, sys.argv[-1])
-    print ('Stats saved to:', sys.argv[-1])
+    print(('Stats saved to:', sys.argv[-1]))
     del h
     del doc
     del app

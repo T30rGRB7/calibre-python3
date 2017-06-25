@@ -170,9 +170,9 @@ class ProceedQuestion(QWidget):
     def copy_to_clipboard(self, *args):
         QApplication.clipboard().setText(
                 'calibre, version %s\n%s: %s\n\n%s' %
-                (__version__, unicode(self.windowTitle()),
-                    unicode(self.msg_label.text()),
-                    unicode(self.det_msg.toPlainText())))
+                (__version__, str(self.windowTitle()),
+                    str(self.msg_label.text()),
+                    str(self.det_msg.toPlainText())))
         self.copy_button.setText(_('Copied'))
 
     def action_clicked(self):
@@ -210,7 +210,7 @@ class ProceedQuestion(QWidget):
         self.show_question()
 
     def toggle_det_msg(self, *args):
-        vis = unicode(self.det_msg_toggle.text()) == self.hide_det_msg
+        vis = str(self.det_msg_toggle.text()) == self.hide_det_msg
         self.det_msg_toggle.setText(self.show_det_msg if vis else
                 self.hide_det_msg)
         self.det_msg.setVisible(not vis)

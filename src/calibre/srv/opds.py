@@ -8,7 +8,7 @@ __docformat__ = 'restructuredtext en'
 import hashlib, binascii
 from functools import partial
 from collections import OrderedDict, namedtuple
-from urllib import urlencode
+from urllib.parse import urlencode
 
 from lxml import etree, html
 from lxml.builder import ElementMaker
@@ -27,7 +27,7 @@ from calibre.srv.utils import get_library_data, http_date, Offsets
 
 
 def hexlify(x):
-    if isinstance(x, unicode):
+    if isinstance(x, str):
         x = x.encode('utf-8')
     return binascii.hexlify(x)
 
@@ -120,7 +120,7 @@ PREVIOUS_LINK  = partial(NAVLINK, rel='previous')
 
 
 def html_to_lxml(raw):
-    raw = u'<div>%s</div>'%raw
+    raw = '<div>%s</div>'%raw
     root = html.fragment_fromstring(raw)
     root.set('xmlns', "http://www.w3.org/1999/xhtml")
     raw = etree.tostring(root, encoding=None)
@@ -207,9 +207,9 @@ def ACQUISITION_ENTRY(book_id, updated, request_context):
                                     joinval=fm['is_multiple']['list_to_ui']))))
             elif datatype == 'comments' or (fm['datatype'] == 'composite' and
                             fm['display'].get('contains_html', False)):
-                extra.append('%s: %s<br />'%(xml(name), comments_to_html(unicode(val))))
+                extra.append('%s: %s<br />'%(xml(name), comments_to_html(str(val))))
             else:
-                extra.append('%s: %s<br />'%(xml(name), xml(unicode(val))))
+                extra.append('%s: %s<br />'%(xml(name), xml(str(val))))
     if mi.comments:
         comments = comments_to_html(mi.comments)
         extra.append(comments)
@@ -297,7 +297,7 @@ class TopLevel(Feed):  # {{{
             categories]
         for x in subcatalogs:
             self.root.append(x)
-        for library_id, library_name in request_context.library_map.iteritems():
+        for library_id, library_name in request_context.library_map.items():
             id_ = 'calibre-library:' + library_id
             self.root.append(E.entry(
                 TITLE(_('Library:') + ' ' + library_name),
@@ -454,7 +454,7 @@ def get_navcatalog(request_context, which, page_url, up_url, offset=0):
         for x in sorted(starts, key=sort_key):
             category_groups[x] = len([y for y in items if
                 getattr(y, 'sort', y.name).startswith(x)])
-        items = [Group(x, y) for x, y in category_groups.items()]
+        items = [Group(x, y) for x, y in list(category_groups.items())]
         max_items = request_context.opts.max_opds_items
         offsets = Offsets(offset, max_items, len(items))
         items = items[offsets.offset:offsets.offset+max_items]

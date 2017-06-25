@@ -45,5 +45,5 @@ def template_for(syntax):
         'AUTHOR': ' & '.join(mi.authors),
     }
     return raw_template_for(syntax).format(
-        **{k:prepare_string_for_xml(v, True) for k, v in data.iteritems()})
+        **{k:prepare_string_for_xml(v, True) for k, v in data.items()})
 

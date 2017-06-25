@@ -172,9 +172,9 @@ class TestDeviceInteraction(unittest.TestCase):
         gc.disable()
         try:
             start_mem = memory()
-            for i in xrange(repetitions):
+            for i in range(repetitions):
                 func(*args, **kwargs)
-            for i in xrange(3):
+            for i in range(3):
                 gc.collect()
             end_mem = memory()
         finally:

@@ -282,7 +282,7 @@ class KF8Book(object):
         # Miscellaneous header fields
         self.compression = writer.compress
         self.book_type = 0x101 if writer.opts.mobi_periodical else 2
-        self.full_title = utf8_text(unicode(metadata.title[0]))
+        self.full_title = utf8_text(str(metadata.title[0]))
         self.title_length = len(self.full_title)
         self.extra_data_flags = 0b1
         if writer.has_tbs:

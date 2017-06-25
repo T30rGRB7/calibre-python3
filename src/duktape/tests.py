@@ -119,7 +119,7 @@ class ValueTests(unittest.TestCase):
         self.ctx.eval('function f() {nonexistent()}')
         try:
             self.g.f()
-            self.assert_('No error raised for bad function')
+            self.assertTrue('No error raised for bad function')
         except JSError as e:
             e = e.args[0]
             self.assertEqual('ReferenceError', e['name'])
@@ -156,7 +156,7 @@ class EvalTests(unittest.TestCase):
     def test_eval_errors(self):
         try:
             self.ctx.eval('1+/1')
-            self.assert_('No error raised for malformed js')
+            self.assertTrue('No error raised for malformed js')
         except JSError as e:
             e = e.args[0]
             self.assertEqual('SyntaxError', e['name'])
@@ -166,7 +166,7 @@ class EvalTests(unittest.TestCase):
 
         try:
             self.ctx.eval('\na()', fname='xxx')
-            self.assert_('No error raised for malformed js')
+            self.assertTrue('No error raised for malformed js')
         except JSError as e:
             e = e.args[0]
             self.assertEqual('ReferenceError', e['name'])

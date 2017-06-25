@@ -42,7 +42,7 @@ def build_book(src, dest, args=()):
 
 
 def add_resources(raw, rmap):
-    for placeholder, path in rmap.iteritems():
+    for placeholder, path in rmap.items():
         fname = os.path.basename(path)
         shutil.copy2(path, '.')
         raw = raw.replace(placeholder, fname)

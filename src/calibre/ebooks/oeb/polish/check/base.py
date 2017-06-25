@@ -12,7 +12,7 @@ from contextlib import closing
 
 from calibre import detect_ncpus as cpu_count
 
-DEBUG, INFO, WARN, ERROR, CRITICAL = xrange(5)
+DEBUG, INFO, WARN, ERROR, CRITICAL = range(5)
 
 
 class BaseError(object):

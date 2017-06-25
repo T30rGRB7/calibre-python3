@@ -2,7 +2,7 @@
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
 # License: GPLv3 Copyright: 2010, Kovid Goyal <kovid at kovidgoyal.net>
 
-import cPickle, re
+import pickle, re
 from binascii import unhexlify
 from collections import namedtuple
 from functools import partial
@@ -43,7 +43,7 @@ def css():
         val = P('templates/book_details.css', data=True).decode('utf-8')
         col = QApplication.instance().palette().color(QPalette.Link).name()
         val = val.replace('LINK_COLOR', col)
-        _css = re.sub(ur'/\*.*?\*/', '', val, flags=re.DOTALL)
+        _css = re.sub(r'/\*.*?\*/', '', val, flags=re.DOTALL)
     return _css
 
 
@@ -78,18 +78,18 @@ def render_html(mi, css, vertical, widget, all_fields=False, render_data_func=No
         if col.isValid():
             col = col.toRgb()
             if col.isValid():
-                ans = unicode(col.name())
+                ans = str(col.name())
         return ans
 
     fi = QFontInfo(QApplication.font(widget))
     f = fi.pixelSize() + 1 + int(tweaks['change_book_details_font_size_by'])
-    fam = unicode(fi.family()).strip().replace('"', '')
+    fam = str(fi.family()).strip().replace('"', '')
     if not fam:
         fam = 'sans-serif'
 
     c = color_to_string(QApplication.palette().color(QPalette.Normal,
                     QPalette.WindowText))
-    templ = u'''\
+    templ = '''\
     <html>
         <head>
         <style type="text/css">
@@ -109,15 +109,15 @@ def render_html(mi, css, vertical, widget, all_fields=False, render_data_func=No
         </body>
     <html>
     '''%(f, fam, c, css)
-    comments = u''
+    comments = ''
     if comment_fields:
-        comments = '\n'.join(u'<div>%s</div>' % x for x in comment_fields)
-    right_pane = u'<div id="comments" class="comments">%s</div>'%comments
+        comments = '\n'.join('<div>%s</div>' % x for x in comment_fields)
+    right_pane = '<div id="comments" class="comments">%s</div>'%comments
 
     if vertical:
         ans = templ%(table+right_pane)
     else:
-        ans = templ%(u'<table><tr><td valign="top" '
+        ans = templ%('<table><tr><td valign="top" '
             'style="padding-right:2em; width:40%%">%s</td><td valign="top">%s</td></tr></table>'
                 % (table, right_pane))
     return ans
@@ -157,7 +157,7 @@ def details_context_menu_event(view, ev, book_info):  # {{{
     p = view.page()
     mf = p.mainFrame()
     r = mf.hitTestContent(ev.pos())
-    url = unicode(r.linkUrl().toString(NO_URL_FORMATTING)).strip()
+    url = str(r.linkUrl().toString(NO_URL_FORMATTING)).strip()
     menu = p.createStandardContextMenu()
     ca = view.pageAction(p.Copy)
     for action in list(menu.actions()):
@@ -219,7 +219,7 @@ def details_context_menu_event(view, ev, book_info):  # {{{
         else:
             el = r.linkElement()
             data = el.attribute('data-item')
-            author = el.toPlainText() if unicode(el.attribute('calibre-data')) == u'authors' else None
+            author = el.toPlainText() if str(el.attribute('calibre-data')) == 'authors' else None
             if url and not url.startswith('search:'):
                 for a, t in [('copy', _('&Copy link')),
                 ]:
@@ -243,7 +243,7 @@ def details_context_menu_event(view, ev, book_info):  # {{{
                                    lambda : book_info.search_requested('authors:"={}"'.format(author.replace('"', r'\"'))))
             if data:
                 try:
-                    field, value, book_id = cPickle.loads(unhexlify(data))
+                    field, value, book_id = pickle.loads(unhexlify(data))
                 except Exception:
                     field = value = book_id = None
                 if field:
@@ -354,7 +354,7 @@ class CoverView(QWidget):  # {{{
             f = p.font()
             f.setBold(True)
             p.setFont(f)
-            sz = u'\u00a0%d x %d\u00a0'%(self.pixmap.width(), self.pixmap.height())
+            sz = '\u00a0%d x %d\u00a0'%(self.pixmap.width(), self.pixmap.height())
             flags = Qt.AlignBottom|Qt.AlignRight|Qt.TextSingleLine
             szrect = p.boundingRect(sztgt, flags, sz)
             p.fillRect(szrect.adjusted(0, 0, 0, 4), QColor(0, 0, 0, 200))
@@ -550,9 +550,9 @@ class BookInfo(QWebView):
 
     def link_activated(self, link):
         self._link_clicked = True
-        if unicode(link.scheme()) in ('http', 'https'):
+        if str(link.scheme()) in ('http', 'https'):
             return open_url(link)
-        link = unicode(link.toString(NO_URL_FORMATTING))
+        link = str(link.toString(NO_URL_FORMATTING))
         self.link_clicked.emit(link)
 
     def turnoff_scrollbar(self, *args):
@@ -812,7 +812,7 @@ class BookDetails(QWidget):  # {{{
             self.last_data = {}
         self.book_info.show_data(data)
         self.cover_view.show_data(data)
-        self.current_path = getattr(data, u'path', u'')
+        self.current_path = getattr(data, 'path', '')
         self.update_layout()
 
     def update_layout(self):

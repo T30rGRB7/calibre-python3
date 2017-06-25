@@ -7,7 +7,7 @@ __license__ = 'GPL 3'
 __copyright__ = '2011, John Schember <john@nachtimwald.com>'
 __docformat__ = 'restructuredtext en'
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from contextlib import closing
 
 from lxml import html
@@ -46,7 +46,7 @@ class BeamEBooksDEStore(BasicStoreConfig, StorePlugin):
 
     def search(self, query, max_results=10, timeout=60):
         url = 'http://www.beam-ebooks.de/suchergebnis.php?Type=&limit={0}&sw={1}'.format(
-                                                    max_results, urllib2.quote(query))
+                                                    max_results, urllib.parse.quote(query))
         br = browser()
 
         counter = max_results

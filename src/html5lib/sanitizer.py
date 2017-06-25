@@ -1,10 +1,10 @@
-from __future__ import absolute_import, division, unicode_literals
+
 
 import re
 import sys
 from xml.sax.saxutils import escape, unescape
 if sys.version_info[0] == 2:
-    from urlparse import urlparse
+    from urllib.parse import urlparse
 else:
     from urllib.parse import urlparse
 

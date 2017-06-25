@@ -123,7 +123,7 @@ class SaveToDiskAction(InterfaceAction):
     def save_library_format_by_ids(self, book_ids, fmt, single_dir=True):
         if isinstance(book_ids, int):
             book_ids = [book_ids]
-        rows = list(self.gui.library_view.ids_to_rows(book_ids).itervalues())
+        rows = list(self.gui.library_view.ids_to_rows(book_ids).values())
         rows = [self.gui.library_view.model().index(r, 0) for r in rows]
         self.save_to_disk(True, single_dir=single_dir, single_format=fmt,
                 rows=rows, write_opf=False, save_cover=False)

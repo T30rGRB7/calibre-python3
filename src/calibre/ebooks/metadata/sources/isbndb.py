@@ -65,7 +65,7 @@ class ISBNDB(Source):
         return self.isbndb_key is not None
 
     def create_query(self, title=None, authors=None, identifiers={}):  # {{{
-        from urllib import quote
+        from urllib.parse import quote
         base_url = BASE_URL%self.isbndb_key
         isbn = check_isbn(identifiers.get('isbn', None))
         q = ''
@@ -78,13 +78,13 @@ class ISBNDB(Source):
             author_tokens = self.get_author_tokens(authors,
                     only_first_author=True)
             tokens += author_tokens
-            tokens = [quote(t.encode('utf-8') if isinstance(t, unicode) else t) for t in tokens]
+            tokens = [quote(t.encode('utf-8') if isinstance(t, str) else t) for t in tokens]
             q = '+'.join(tokens)
             q = 'index1=combined&value1='+q
 
         if not q:
             return None
-        if isinstance(q, unicode):
+        if isinstance(q, str):
             q = q.encode('utf-8')
         return base_url + q
     # }}}
@@ -124,7 +124,7 @@ class ISBNDB(Source):
         def tostring(x):
             if x is None:
                 return ''
-            return etree.tostring(x, method='text', encoding=unicode).strip()
+            return etree.tostring(x, method='text', encoding=str).strip()
 
         orig_isbn = identifiers.get('isbn', None)
         title_tokens = list(self.get_title_tokens(orig_title))

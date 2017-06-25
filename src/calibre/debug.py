@@ -155,7 +155,7 @@ def debug_device_driver():
     from calibre.devices import debug
     debug(ioreg_to_tmp=True, buf=sys.stdout)
     if iswindows:
-        raw_input('Press Enter to continue...')
+        input('Press Enter to continue...')
 
 
 def add_simple_plugin(path_to_plugin):
@@ -163,7 +163,7 @@ def add_simple_plugin(path_to_plugin):
     tdir = tempfile.mkdtemp()
     open(os.path.join(tdir, 'custom_plugin.py'),
             'wb').write(open(path_to_plugin, 'rb').read())
-    odir = os.getcwdu()
+    odir = os.getcwd()
     os.chdir(tdir)
     zf = zipfile.ZipFile('plugin.zip', 'w')
     zf.write('custom_plugin.py')
@@ -204,7 +204,7 @@ def print_basic_debug_info(out=None):
             out('Linux:', platform.linux_distribution())
     except:
         pass
-    out('Interface language:', type(u'')(set_translators.lang))
+    out('Interface language:', type('')(set_translators.lang))
     from calibre.customize.ui import has_external_plugins, initialized_plugins
     if has_external_plugins():
         names = ('{0} {1}'.format(p.name, p.version) for p in initialized_plugins() if getattr(p, 'plugin_path', None) is not None)
@@ -235,14 +235,14 @@ def run_script(path, args):
     g = globals()
     g['__name__'] = '__main__'
     g['__file__'] = ef
-    execfile(ef, g)
+    exec(compile(open(ef).read(), ef, 'exec'), g)
 
 
 def inspect_mobi(path):
     from calibre.ebooks.mobi.debug.main import inspect_mobi
     prints('Inspecting:', path)
     inspect_mobi(path)
-    print
+    print()
 
 
 def main(args=sys.argv):
@@ -308,7 +308,7 @@ def main(args=sys.argv):
             from calibre.utils.winreg.default_programs import register as func
         else:
             from calibre.utils.winreg.default_programs import unregister as func
-        print 'Running', func.__name__, '...'
+        print('Running', func.__name__, '...')
         func()
     elif opts.export_all_calibre_data:
         from calibre.utils.exim import run_exporter
@@ -327,7 +327,7 @@ def main(args=sys.argv):
             elif ext in {'mobi', 'azw', 'azw3'}:
                 inspect_mobi(path)
             else:
-                print ('Cannot dump unknown filetype: %s' % path)
+                print(('Cannot dump unknown filetype: %s' % path))
     elif len(args) >= 2 and os.path.exists(os.path.join(args[1], '__main__.py')):
         sys.path.insert(0, args[1])
         run_script(os.path.join(args[1], '__main__.py'), args[2:])

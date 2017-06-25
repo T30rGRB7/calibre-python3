@@ -8,7 +8,7 @@ __copyright__ = '2011-2016, Tomasz Długosz <tomek3d@gmail.com>'
 __docformat__ = 'restructuredtext en'
 
 import re
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from contextlib import closing
 
 from lxml import html
@@ -46,7 +46,7 @@ class NextoStore(BasicStoreConfig, StorePlugin):
             d.exec_()
 
     def search(self, query, max_results=10, timeout=60):
-        url = 'http://www.nexto.pl/szukaj.xml?search-clause=' + urllib.quote_plus(query) + '&scid=1015'
+        url = 'http://www.nexto.pl/szukaj.xml?search-clause=' + urllib.parse.quote_plus(query) + '&scid=1015'
 
         br = browser()
         offset=0

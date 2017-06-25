@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import print_function
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2008, Kovid Goyal <kovid at kovidgoyal.net>'
@@ -71,7 +71,7 @@ def generate_template_language_help(language):
 
     funcs = defaultdict(dict)
 
-    for func in formatter_functions().get_builtins().values():
+    for func in list(formatter_functions().get_builtins().values()):
         class_name = func.__class__.__name__
         func_sig = getattr(func, 'doc')
         m = pat.search(func_sig)

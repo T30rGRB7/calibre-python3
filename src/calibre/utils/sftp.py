@@ -8,7 +8,7 @@ Create a file handle to a remote file over the sftp protocol.
 '''
 
 import sys, socket, getpass
-from urlparse import urlparse
+from urllib.parse import urlparse
 from binascii import hexlify
 
 import paramiko
@@ -26,13 +26,13 @@ def agent_auth(transport, username):
         return
 
     for key in agent_keys:
-        print 'Trying ssh-agent key %s' % hexlify(key.get_fingerprint()),
+        print('Trying ssh-agent key %s' % hexlify(key.get_fingerprint()), end=' ')
         try:
             transport.auth_publickey(username, key)
-            print '... success!'
+            print('... success!')
             return True
         except paramiko.SSHException:
-            print '... failed.'
+            print('... failed.')
     return False
 
 
@@ -78,9 +78,9 @@ def connect_to_url(url, getpw=portable_getpass, mode='r+', bufsize=-1):
 
 def main(args=sys.argv):
     f = connect_to_url(args[1])[-1]
-    print f.read()
+    print(f.read())
     f.seek(0, 2)
-    print f.tell()
+    print(f.tell())
     f.close()
     return 0
 

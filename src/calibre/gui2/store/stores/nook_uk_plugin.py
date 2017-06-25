@@ -8,7 +8,7 @@ __copyright__ = '2012, John Schember <john@nachtimwald.com>'
 __docformat__ = 'restructuredtext en'
 
 import re
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from contextlib import closing
 
 from lxml import html
@@ -45,7 +45,7 @@ class NookUKStore(BasicStoreConfig, StorePlugin):
             d.exec_()
 
     def search(self, query, max_results=10, timeout=60):
-        url = u'http://uk.nook.com/s/%s?s%%5Bdref%%5D=1&s%%5Bkeyword%%5D=%s' % (query.replace(' ', '-'), urllib.quote(query))
+        url = 'http://uk.nook.com/s/%s?s%%5Bdref%%5D=1&s%%5Bkeyword%%5D=%s' % (query.replace(' ', '-'), urllib.parse.quote(query))
 
         br = browser()
 

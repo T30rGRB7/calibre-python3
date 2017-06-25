@@ -9,9 +9,9 @@ __copyright__ = '2014, Kovid Goyal <kovid at kovidgoyal.net>'
 import unittest
 
 try:
-    unicode
+    str
 except NameError:
-    unicode = str
+    str = str
 
 def jsonify(tokens):
     """Turn tokens into "JSON-compatible" data structures."""
@@ -34,7 +34,7 @@ class BaseTest(unittest.TestCase):
         """Test not complete error messages but only substrings."""
         self.ae(len(errors), len(expected_errors))
         for error, expected in zip(errors, expected_errors):
-            self.assertIn(expected, unicode(error))
+            self.assertIn(expected, str(error))
 
     def jsonify_declarations(self, rule):
         return [(decl.name, list(jsonify(decl.value)))

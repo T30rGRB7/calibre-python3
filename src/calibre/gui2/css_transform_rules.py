@@ -49,7 +49,7 @@ class RuleEdit(QWidget):  # {{{
                                'For instance use margin-top, not margin.'))
             elif clause == '{match_type}':
                 self.match_type = w = QComboBox(self)
-                for action, text in MATCH_TYPE_MAP.iteritems():
+                for action, text in MATCH_TYPE_MAP.items():
                     w.addItem(text, action)
                 w.currentIndexChanged.connect(self.update_state)
             elif clause == '{query}':
@@ -69,7 +69,7 @@ class RuleEdit(QWidget):  # {{{
         for clause in parts:
             if clause == '{action}':
                 self.action = w = QComboBox(self)
-                for action, text in ACTION_MAP.iteritems():
+                for action, text in ACTION_MAP.items():
                     w.addItem(text, action)
                 w.currentIndexChanged.connect(self.update_state)
             elif clause == '{action_data}':
@@ -133,14 +133,14 @@ class RuleEdit(QWidget):  # {{{
     def rule(self, rule):
         def sc(name):
             c = getattr(self, name)
-            idx = c.findData(unicode(rule.get(name, '')))
+            idx = c.findData(str(rule.get(name, '')))
             if idx < 0:
                 idx = 0
             c.setCurrentIndex(idx)
         sc('action'), sc('match_type')
-        self.property.setText(unicode(rule.get('property', '')).strip())
-        self.query.setText(unicode(rule.get('query', '')).strip())
-        self.action_data.setText(unicode(rule.get('action_data', '')).strip())
+        self.property.setText(str(rule.get('property', '')).strip())
+        self.query.setText(str(rule.get('query', '')).strip())
+        self.action_data.setText(str(rule.get('action_data', '')).strip())
         self.update_state()
 
     def validate(self):

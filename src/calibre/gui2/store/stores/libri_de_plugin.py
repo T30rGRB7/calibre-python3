@@ -7,7 +7,7 @@ __license__ = 'GPL 3'
 __copyright__ = '2011, John Schember <john@nachtimwald.com>'
 __docformat__ = 'restructuredtext en'
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from contextlib import closing
 
 from lxml import html
@@ -43,7 +43,7 @@ class LibreDEStore(BasicStoreConfig, StorePlugin):
             d.exec_()
 
     def search(self, query, max_results=10, timeout=60):
-        url = ('http://www.ebook.de/de/pathSearch?nav=52122&searchString=' + urllib2.quote(query))
+        url = ('http://www.ebook.de/de/pathSearch?nav=52122&searchString=' + urllib.parse.quote(query))
         br = browser()
 
         counter = max_results

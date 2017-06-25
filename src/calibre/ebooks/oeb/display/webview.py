@@ -21,7 +21,7 @@ class EntityDeclarationProcessor(object):  # {{{
             if len(tokens) > 1:
                 self.declared_entities[tokens[0].strip()] = tokens[1].strip().replace('"', '')
         self.processed_html = html
-        for key, val in self.declared_entities.iteritems():
+        for key, val in self.declared_entities.items():
             self.processed_html = self.processed_html.replace('&%s;'%key, val)
 # }}}
 

@@ -13,7 +13,7 @@ XLINK_NS     = 'http://www.w3.org/1999/xlink'
 
 def clone_node(node, parent):
     ans = parent.makeelement(node.tag)
-    for k in node.keys():
+    for k in list(node.keys()):
         ans.set(k, node.get(k))
     ans.text, ans.tail = node.text, node.tail
     for child in node.iterchildren('*'):
@@ -36,7 +36,7 @@ def merge():
         for child in svg.iterchildren('*'):
             clone_node(child, symbol)
         ans.append(symbol)
-    ans = etree.tostring(ans, encoding=unicode, pretty_print=True, with_tail=False)
+    ans = etree.tostring(ans, encoding=str, pretty_print=True, with_tail=False)
     ans = re.sub('<svg[^>]+>', '<svg style="display:none">', ans, count=1)
     return ans
 

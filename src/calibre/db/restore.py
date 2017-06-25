@@ -183,7 +183,7 @@ class Restore(Thread):
 
     def process_dir(self, dirpath, filenames, book_id):
         book_id = int(book_id)
-        formats = filter(self.is_ebook_file, filenames)
+        formats = list(filter(self.is_ebook_file, filenames))
         fmts    = [os.path.splitext(x)[1][1:].upper() for x in formats]
         sizes   = [os.path.getsize(os.path.join(dirpath, x)) for x in formats]
         names   = [os.path.splitext(x)[0] for x in formats]
@@ -206,7 +206,7 @@ class Restore(Thread):
             self.mismatched_dirs.append(dirpath)
 
         alm = mi.get('author_link_map', {})
-        for author, link in alm.iteritems():
+        for author, link in alm.items():
             existing_link, timestamp = self.authors_links.get(author, (None, None))
             if existing_link is None or existing_link != link and timestamp < mi.timestamp:
                 self.authors_links[author] = (link, mi.timestamp)
@@ -259,7 +259,7 @@ class Restore(Thread):
             self.progress_callback(book['mi'].title, i+1)
 
         id_map = db.get_item_ids('authors', [author for author in self.authors_links])
-        link_map = {aid:self.authors_links[name][0] for name, aid in id_map.iteritems() if aid is not None}
+        link_map = {aid:self.authors_links[name][0] for name, aid in id_map.items() if aid is not None}
         if link_map:
             db.set_link_for_authors(link_map)
         db.close()

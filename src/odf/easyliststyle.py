@@ -20,8 +20,8 @@
 #
 
 import re
-from style import Style, TextProperties, ListLevelProperties
-from text import ListStyle,ListLevelStyleNumber,ListLevelStyleBullet
+from .style import Style, TextProperties, ListLevelProperties
+from .text import ListStyle,ListLevelStyleNumber,ListLevelStyleBullet
 
 """
 Create a <text:list-style> element from a string or array.

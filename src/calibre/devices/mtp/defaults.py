@@ -47,7 +47,7 @@ class DeviceDefaults(object):
         for rule in self.rules:
             tests = rule[0]
             matches = True
-            for k, v in tests.iteritems():
+            for k, v in tests.items():
                 if k == 'vendor' and v != vid:
                     matches = False
                     break

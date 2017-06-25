@@ -1,15 +1,15 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
 # License: GPLv3 Copyright: 2011, Kovid Goyal <kovid at kovidgoyal.net>
-from __future__ import absolute_import, division, print_function, unicode_literals
+
 
 import re
 import socket
 import time
 from functools import partial
-from Queue import Empty, Queue
+from queue import Empty, Queue
 from threading import Thread
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from calibre import as_unicode, browser, random_user_agent
 from calibre.ebooks.metadata import check_isbn
@@ -80,7 +80,7 @@ def parse_details_page(url, log, timeout, browser, domain):
     errmsg = root.xpath('//*[@id="errorMessage"]')
     if errmsg:
         msg = 'Failed to parse amazon details page: %r' % url
-        msg += tostring(errmsg, method='text', encoding=unicode).strip()
+        msg += tostring(errmsg, method='text', encoding=str).strip()
         log.error(msg)
         return
 
@@ -188,18 +188,18 @@ class Worker(Thread):  # Get details {{{
                 12: ['diciembre'],
             },
             'jp': {
-                1: [u'1月'],
-                2: [u'2月'],
-                3: [u'3月'],
-                4: [u'4月'],
-                5: [u'5月'],
-                6: [u'6月'],
-                7: [u'7月'],
-                8: [u'8月'],
-                9: [u'9月'],
-                10: [u'10月'],
-                11: [u'11月'],
-                12: [u'12月'],
+                1: ['1月'],
+                2: ['2月'],
+                3: ['3月'],
+                4: ['4月'],
+                5: ['5月'],
+                6: ['6月'],
+                7: ['7月'],
+                8: ['8月'],
+                9: ['9月'],
+                10: ['10月'],
+                11: ['11月'],
+                12: ['12月'],
             },
             'nl': {
                 1: ['januari'], 2: ['februari'], 3: ['maart'], 5: ['mei'], 6: ['juni'], 7: ['juli'], 8: ['augustus'], 10: ['oktober'],
@@ -274,13 +274,13 @@ class Worker(Thread):  # Get details {{{
             'ita': ('Italian', 'Italiano'),
             'deu': ('German', 'Deutsch'),
             'spa': ('Spanish', 'Espa\xf1ol', 'Espaniol'),
-            'jpn': ('Japanese', u'日本語'),
+            'jpn': ('Japanese', '日本語'),
             'por': ('Portuguese', 'Português'),
             'nld': ('Dutch', 'Nederlands',),
-            'chs': ('Chinese', u'中文', u'简体中文'),
+            'chs': ('Chinese', '中文', '简体中文'),
         }
         self.lang_map = {}
-        for code, names in lm.iteritems():
+        for code, names in lm.items():
             for name in names:
                 self.lang_map[name] = code
 
@@ -300,7 +300,7 @@ class Worker(Thread):  # Get details {{{
         if not self.months:
             return raw
         ans = raw.lower()
-        for i, vals in self.months.iteritems():
+        for i, vals in self.months.items():
             for x in vals:
                 ans = ans.replace(x, self.english_months[i])
         ans = ans.replace(' de ', ' ')
@@ -453,7 +453,7 @@ class Worker(Thread):  # Get details {{{
             self.result_queue.put(mi)
 
     def totext(self, elem):
-        return self.tostring(elem, encoding=unicode, method='text').strip()
+        return self.tostring(elem, encoding=str, method='text').strip()
 
     def parse_title(self, root):
         h1 = root.xpath('//h1[@id="title"]')
@@ -465,10 +465,10 @@ class Worker(Thread):  # Get details {{{
         tdiv = root.xpath('//h1[contains(@class, "parseasinTitle")]')[0]
         actual_title = tdiv.xpath('descendant::*[@id="btAsinTitle"]')
         if actual_title:
-            title = self.tostring(actual_title[0], encoding=unicode,
+            title = self.tostring(actual_title[0], encoding=str,
                                   method='text').strip()
         else:
-            title = self.tostring(tdiv, encoding=unicode,
+            title = self.tostring(tdiv, encoding=str,
                                   method='text').strip()
         ans = re.sub(r'[(\[].*[)\]]', '', title).strip()
         if not ans:
@@ -491,7 +491,7 @@ class Worker(Thread):  # Get details {{{
                     ''')
         for x in aname:
             x.tail = ''
-        authors = [self.tostring(x, encoding=unicode, method='text').strip() for x
+        authors = [self.tostring(x, encoding=str, method='text').strip() for x
                    in aname]
         authors = [a for a in authors if a]
         return authors
@@ -542,7 +542,7 @@ class Worker(Thread):  # Get details {{{
         for a in desc.xpath('descendant::a[@href]'):
             del a.attrib['href']
             a.tag = 'span'
-        desc = self.tostring(desc, method='html', encoding=unicode).strip()
+        desc = self.tostring(desc, method='html', encoding=str).strip()
 
         # Encoding bug in Amazon data U+fffd (replacement char)
         # in some examples it is present in place of '
@@ -559,7 +559,7 @@ class Worker(Thread):  # Get details {{{
         return sanitize_comments_html(desc)
 
     def parse_comments(self, root, raw):
-        from urllib import unquote
+        from urllib.parse import unquote
         ans = ''
         ns = tuple(self.selector('#bookDescription_feature_div noscript'))
         if ns:
@@ -610,14 +610,14 @@ class Worker(Thread):  # Get details {{{
             spans = series.xpath('./span')
             if spans:
                 raw = self.tostring(
-                    spans[0], encoding=unicode, method='text', with_tail=False).strip()
+                    spans[0], encoding=str, method='text', with_tail=False).strip()
                 m = re.search('\s+([0-9.]+)$', raw.strip())
                 if m is not None:
                     series_index = float(m.group(1))
                     s = series.xpath('./a[@id="series-page-link"]')
                     if s:
                         series = self.tostring(
-                            s[0], encoding=unicode, method='text', with_tail=False).strip()
+                            s[0], encoding=str, method='text', with_tail=False).strip()
                         if series:
                             ans = (series, series_index)
         # This is found on Kindle edition pages on amazon.com
@@ -630,7 +630,7 @@ class Worker(Thread):  # Get details {{{
                     a = span.xpath('./a[@href]')
                     if a:
                         series = self.tostring(
-                            a[0], encoding=unicode, method='text', with_tail=False).strip()
+                            a[0], encoding=str, method='text', with_tail=False).strip()
                         if series:
                             ans = (series, series_index)
         # This is found on newer Kindle edition pages on amazon.com
@@ -643,14 +643,14 @@ class Worker(Thread):  # Get details {{{
                     a = b.getparent().xpath('./a[@href]')
                     if a:
                         series = self.tostring(
-                            a[0], encoding=unicode, method='text', with_tail=False).partition('(')[0].strip()
+                            a[0], encoding=str, method='text', with_tail=False).partition('(')[0].strip()
                         if series:
                             ans = series, series_index
 
         if ans == (None, None):
             desc = root.xpath('//div[@id="ps-content"]/div[@class="buying"]')
             if desc:
-                raw = self.tostring(desc[0], method='text', encoding=unicode)
+                raw = self.tostring(desc[0], method='text', encoding=str)
                 raw = re.sub(r'\s+', ' ', raw)
                 match = self.series_pat.search(raw)
                 if match is not None:
@@ -730,7 +730,7 @@ class Worker(Thread):  # Get details {{{
                     mwidth = 0
                     try:
                         url = None
-                        for iurl, (width, height) in idata.iteritems():
+                        for iurl, (width, height) in idata.items():
                             if width > mwidth:
                                 mwidth = width
                                 url = iurl
@@ -932,7 +932,7 @@ class Amazon(Source):
         self.touched_fields = frozenset(tf)
 
     def get_domain_and_asin(self, identifiers, extra_domains=()):
-        for key, val in identifiers.iteritems():
+        for key, val in identifiers.items():
             key = key.lower()
             if key in ('amazon', 'asin'):
                 return 'com', val
@@ -1037,7 +1037,7 @@ class Amazon(Source):
 
     def create_query(self, log, title=None, authors=None, identifiers={},  # {{{
                      domain=None, for_amazon=True):
-        from urllib import urlencode
+        from urllib.parse import urlencode
         if domain is None:
             domain = self.domain
 
@@ -1093,9 +1093,9 @@ class Amazon(Source):
 
         # magic parameter to enable Japanese Shift_JIS encoding.
         if domain == 'jp':
-            q['__mk_ja_JP'] = u'カタカナ'
+            q['__mk_ja_JP'] = 'カタカナ'
         if domain == 'nl':
-            q['__mk_nl_NL'] = u'ÅMÅŽÕÑ'
+            q['__mk_nl_NL'] = 'ÅMÅŽÕÑ'
             if 'field-keywords' not in q:
                 q['field-keywords'] = ''
             for f in 'field-isbn field-title field-author'.split():
@@ -1110,7 +1110,7 @@ class Amazon(Source):
             encode_to = 'latin1'
         encoded_q = dict([(x.encode(encode_to, 'ignore'), y.encode(encode_to,
                                                                    'ignore')) for x, y in
-                          q.iteritems()])
+                          q.items()])
         url = 'https://www.amazon.%s/s/?' % self.get_website_domain(
             domain) + urlencode(encoded_q)
         return url, domain
@@ -1150,7 +1150,7 @@ class Amazon(Source):
             return True
 
         for a in root.xpath(r'//li[starts-with(@id, "result_")]//a[@href and contains(@class, "s-access-detail-page")]'):
-            title = tostring(a, method='text', encoding=unicode)
+            title = tostring(a, method='text', encoding=str)
             if title_ok(title):
                 url = a.get('href')
                 if url.startswith('/'):
@@ -1166,7 +1166,7 @@ class Amazon(Source):
                     # New amazon markup
                     links = div.xpath('descendant::h3/a[@href]')
                 for a in links:
-                    title = tostring(a, method='text', encoding=unicode)
+                    title = tostring(a, method='text', encoding=str)
                     if title_ok(title):
                         url = a.get('href')
                         if url.startswith('/'):
@@ -1181,7 +1181,7 @@ class Amazon(Source):
             for td in root.xpath(
                     r'//div[@id="Results"]/descendant::td[starts-with(@id, "search:Td:")]'):
                 for a in td.xpath(r'descendant::td[@class="dataColumn"]/descendant::a[@href]/span[@class="srTitle"]/..'):
-                    title = tostring(a, method='text', encoding=unicode)
+                    title = tostring(a, method='text', encoding=str)
                     if title_ok(title):
                         url = a.get('href')
                         if url.startswith('/'):
@@ -1553,18 +1553,18 @@ if __name__ == '__main__':  # tests {{{
     jp_tests = [  # {{{
         (  # Adult filtering test
             {'identifiers': {'isbn': '4799500066'}},
-            [title_test(u'Ｂｉｔｃｈ Ｔｒａｐ'), ]
+            [title_test('Ｂｉｔｃｈ Ｔｒａｐ'), ]
         ),
 
         (  # isbn -> title, authors
             {'identifiers': {'isbn': '9784101302720'}},
-            [title_test(u'精霊の守り人',
-                        exact=True), authors_test([u'上橋 菜穂子'])
+            [title_test('精霊の守り人',
+                        exact=True), authors_test(['上橋 菜穂子'])
              ]
         ),
         (  # title, authors -> isbn (will use Shift_JIS encoding in query.)
-            {'title': u'考えない練習',
-             'authors': [u'小池 龍之介']},
+            {'title': '考えない練習',
+             'authors': ['小池 龍之介']},
             [isbn_test('9784093881067'), ]
         ),
     ]  # }}}

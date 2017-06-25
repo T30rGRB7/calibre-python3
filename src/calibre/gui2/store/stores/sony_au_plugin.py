@@ -8,7 +8,7 @@ __license__   = 'GPL v3'
 __copyright__ = '2012, Kovid Goyal <kovid at kovidgoyal.net>'
 __docformat__ = 'restructuredtext en'
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from contextlib import closing
 
 from lxml import html, etree
@@ -41,7 +41,7 @@ class SonyStore(BasicStoreConfig, StorePlugin):
             open_url(QUrl(self.STORE_URL))
 
     def search(self, query, max_results=10, timeout=60):
-        url = self.SEARCH_URL % urllib.quote_plus(query)
+        url = self.SEARCH_URL % urllib.parse.quote_plus(query)
 
         br = browser()
 
@@ -61,19 +61,19 @@ class SonyStore(BasicStoreConfig, StorePlugin):
                 title = item.xpath('descendant::h3[@class="doc-title"]')
                 if not title:
                     continue
-                title = etree.tostring(title[0], method='text', encoding=unicode)
+                title = etree.tostring(title[0], method='text', encoding=str)
                 if not title:
                     continue
                 st = item.xpath('descendant::p[@class="doc-subtitle"]')
                 if st:
-                    st = etree.tostring(st[0], method='text', encoding=unicode)
+                    st = etree.tostring(st[0], method='text', encoding=str)
                     if st and st.strip():
                         title = title.strip() + ': ' + st
                 s.title = title.strip()
                 aut = item.xpath('descendant::p[@class="doc-author"]')
                 if not aut:
                     continue
-                s.author = etree.tostring(aut[0], method='text', encoding=unicode).strip()
+                s.author = etree.tostring(aut[0], method='text', encoding=str).strip()
                 if not s.author:
                     continue
                 du = ''.join(item.xpath('descendant::h3[position() = 1 and @class="doc-title"]/descendant::a[position() = 1 and @href]/@href')).strip()

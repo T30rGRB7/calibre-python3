@@ -7,7 +7,7 @@ __license__ = 'GPL 3'
 __copyright__ = '2011, John Schember <john@nachtimwald.com>'
 __docformat__ = 'restructuredtext en'
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from contextlib import closing
 
 from lxml import html
@@ -27,7 +27,7 @@ def parse_html(raw):
 
 
 def search_google(query, max_results=10, timeout=60, write_html_to=None):
-    url = 'https://www.google.com/search?tbm=bks&q=' + urllib.quote_plus(query)
+    url = 'https://www.google.com/search?tbm=bks&q=' + urllib.parse.quote_plus(query)
 
     br = browser()
 

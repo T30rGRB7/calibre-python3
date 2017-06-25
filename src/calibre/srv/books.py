@@ -7,7 +7,7 @@ from __future__ import (unicode_literals, division, absolute_import,
 from hashlib import sha1
 from functools import partial
 from threading import RLock, Lock
-from cPickle import dumps
+from pickle import dumps
 from zipfile import ZipFile
 import errno, os, tempfile, shutil, time, json as jsonlib
 
@@ -136,7 +136,7 @@ def book_manifest(ctx, rd, book_id, fmt):
         fm = db.format_metadata(book_id, fmt)
         if not fm:
             raise HTTPNotFound('No %s format for the book (id:%s) in the library: %s' % (fmt, book_id, library_id))
-        size, mtime = map(int, (fm['size'], time.mktime(fm['mtime'].utctimetuple())*10))
+        size, mtime = list(map(int, (fm['size'], time.mktime(fm['mtime'].utctimetuple())*10)))
         bhash = book_hash(db.library_id, book_id, fmt, size, mtime)
         with cache_lock:
             mpath = abspath(os.path.join(books_cache_dir(), 'f', bhash, 'calibre-book-manifest.json'))

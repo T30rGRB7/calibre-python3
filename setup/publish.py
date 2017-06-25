@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import with_statement
+
 
 __license__ = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
@@ -214,7 +214,7 @@ class Manual(Command):
         self.info('Building manual for %d languages' % len(jobs))
         if not parallel_build(jobs, self.info):
             raise SystemExit(1)
-        cwd = os.getcwdu()
+        cwd = os.getcwd()
         try:
             os.chdir(self.j(tdir, 'en', 'html'))
             for x in os.listdir(tdir):
@@ -235,10 +235,10 @@ class Manual(Command):
 
     def serve_manual(self, root):
         os.chdir(root)
-        import BaseHTTPServer
-        from SimpleHTTPServer import SimpleHTTPRequestHandler
+        import http.server
+        from http.server import SimpleHTTPRequestHandler
         HandlerClass = SimpleHTTPRequestHandler
-        ServerClass = BaseHTTPServer.HTTPServer
+        ServerClass = http.server.HTTPServer
         Protocol = "HTTP/1.0"
         server_address = ('127.0.0.1', 8000)
 

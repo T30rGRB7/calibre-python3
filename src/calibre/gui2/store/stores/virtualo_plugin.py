@@ -8,7 +8,7 @@ __copyright__ = '2011-2017, Tomasz Długosz <tomek3d@gmail.com>'
 __docformat__ = 'restructuredtext en'
 
 import re
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from base64 import b64encode
 from contextlib import closing
 
@@ -46,7 +46,7 @@ class VirtualoStore(BasicStoreConfig, StorePlugin):
             d.exec_()
 
     def search(self, query, max_results=12, timeout=60):
-        url = 'http://virtualo.pl/?q=' + urllib.quote(query)
+        url = 'http://virtualo.pl/?q=' + urllib.parse.quote(query)
 
         br = browser()
         no_drm_pattern = re.compile(r'Watermark|Brak')

@@ -174,7 +174,8 @@ class Block(object):
         def fget(self):
             return self._position
 
-        def fset(self, (x, y)):
+        def fset(self, xxx_todo_changeme):
+            (x, y) = xxx_todo_changeme
             self._position = Point(x, y)
             if self.layouts:
                 self.layouts[0].setPosition(QPointF(x, y))
@@ -274,14 +275,14 @@ def format_fields(mi, prefs):
 
 @contextmanager
 def preserve_fields(obj, fields):
-    if isinstance(fields, basestring):
+    if isinstance(fields, str):
         fields = fields.split()
     null = object()
     mem = {f:getattr(obj, f, null) for f in fields}
     try:
         yield
     finally:
-        for f, val in mem.iteritems():
+        for f, val in mem.items():
             if val is null:
                 delattr(obj, f)
             else:
@@ -323,10 +324,10 @@ def load_color_themes(prefs):
     t = default_color_themes.copy()
     t.update(prefs.color_themes)
     disabled = frozenset(prefs.disabled_color_themes)
-    ans = [theme_to_colors(v) for k, v in t.iteritems() if k not in disabled]
+    ans = [theme_to_colors(v) for k, v in t.items() if k not in disabled]
     if not ans:
         # Ignore disabled and return only the builtin color themes
-        ans = [theme_to_colors(v) for k, v in default_color_themes.iteritems()]
+        ans = [theme_to_colors(v) for k, v in default_color_themes.items()]
     return ans
 
 
@@ -556,14 +557,14 @@ class Blocks(Style):
 
 def all_styles():
     return set(
-        x.NAME for x in globals().itervalues() if
+        x.NAME for x in globals().values() if
         isinstance(x, type) and issubclass(x, Style) and x is not Style
     )
 
 
 def load_styles(prefs, respect_disabled=True):
     disabled = frozenset(prefs.disabled_styles) if respect_disabled else ()
-    ans = tuple(x for x in globals().itervalues() if
+    ans = tuple(x for x in globals().values() if
             isinstance(x, type) and issubclass(x, Style) and x is not Style and x.NAME not in disabled)
     if not ans and disabled:
         # If all styles have been disabled, ignore the disabling and return all

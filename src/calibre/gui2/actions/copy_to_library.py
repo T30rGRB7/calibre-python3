@@ -123,7 +123,7 @@ class Worker(Thread):  # {{{
         except Exception as err:
             import traceback
             try:
-                err = unicode(err)
+                err = str(err)
             except:
                 err = repr(err)
             self.error = (err, traceback.format_exc())
@@ -189,14 +189,14 @@ class Worker(Thread):  # {{{
                         self.duplicate_ids[book_id] = (mi.title, mi.authors)
                     return
 
-            new_authors = {k for k, v in newdb.new_api.get_item_ids('authors', mi.authors).iteritems() if v is None}
+            new_authors = {k for k, v in newdb.new_api.get_item_ids('authors', mi.authors).items() if v is None}
             new_book_id = newdb.import_book(mi, paths, notify=False, import_hooks=False,
                 apply_import_tags=tweaks['add_new_book_tags_when_importing_books'],
                 preserve_uuid=self.delete_after)
             if new_authors:
                 author_id_map = self.db.new_api.get_item_ids('authors', new_authors)
                 sort_map, link_map = {}, {}
-                for author, aid in author_id_map.iteritems():
+                for author, aid in author_id_map.items():
                     if aid is not None:
                         adata = self.db.new_api.author_data((aid,)).get(aid)
                         if adata is not None:
@@ -300,7 +300,7 @@ class ChooseLibrary(QDialog):  # {{{
 
     @property
     def args(self):
-        return (unicode(self.le.text()), self.delete_after_copy)
+        return (str(self.le.text()), self.delete_after_copy)
 # }}}
 
 
@@ -318,7 +318,7 @@ class DuplicatesQuestion(QDialog):  # {{{
         self.setWindowTitle(_('Duplicate books'))
         self.books = QListWidget(self)
         self.items = []
-        for book_id, (title, authors) in duplicates.iteritems():
+        for book_id, (title, authors) in duplicates.items():
             i = QListWidgetItem(_('{0} by {1}').format(title, ' & '.join(authors[:3])), self.books)
             i.setData(Qt.UserRole, book_id)
             i.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
@@ -338,7 +338,7 @@ class DuplicatesQuestion(QDialog):  # {{{
         self.resize(600, 400)
 
     def copy_to_clipboard(self):
-        items = [('✓' if item.checkState() == Qt.Checked else '✗') + ' ' + unicode(item.text())
+        items = [('✓' if item.checkState() == Qt.Checked else '✗') + ' ' + str(item.text())
                  for item in self.items]
         QApplication.clipboard().setText('\n'.join(items))
 
@@ -526,7 +526,7 @@ class CopyToLibraryAction(InterfaceAction):
 
         self.gui.status_bar.show_message(donemsg.format(num=len(self.worker.processed), loc=loc), 2000)
         if self.worker.auto_merged_ids:
-            books = '\n'.join(self.worker.auto_merged_ids.itervalues())
+            books = '\n'.join(iter(self.worker.auto_merged_ids.values()))
             info_dialog(self.gui, _('Auto merged'),
                     _('Some books were automatically merged into existing '
                         'records in the target library. Click "Show '

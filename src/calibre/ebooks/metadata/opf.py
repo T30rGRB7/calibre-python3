@@ -61,7 +61,7 @@ def set_metadata_opf2(root, cover_prefix, mi, opf_version,
     else:
         orig = opf.get_identifiers()
         orig.update(mi.get_identifiers())
-        opf.set_identifiers({k:v for k, v in orig.iteritems() if k and v})
+        opf.set_identifiers({k:v for k, v in orig.items() if k and v})
     if update_timestamp and mi.timestamp is not None:
         opf.timestamp = mi.timestamp
     raster_cover = opf.raster_cover

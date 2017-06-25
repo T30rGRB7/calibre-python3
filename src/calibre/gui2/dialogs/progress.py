@@ -15,7 +15,7 @@ class ProgressDialog(QDialog):
 
     canceled_signal = pyqtSignal()
 
-    def __init__(self, title, msg=u'\u00a0', min=0, max=99, parent=None, cancelable=True, icon=None):
+    def __init__(self, title, msg='\u00a0', min=0, max=99, parent=None, cancelable=True, icon=None):
         QDialog.__init__(self, parent)
         if icon is None:
             self.l = l = QVBoxLayout(self)
@@ -102,7 +102,7 @@ class ProgressDialog(QDialog):
             return self.title_label.text()
 
         def fset(self, val):
-            self.title_label.setText(unicode(val or ''))
+            self.title_label.setText(str(val or ''))
         return property(fget=fget, fset=fset)
 
     @dynamic_property
@@ -111,7 +111,7 @@ class ProgressDialog(QDialog):
             return self.message.text()
 
         def fset(self, val):
-            val = unicode(val or '')
+            val = str(val or '')
             self.message.setText(elided_text(val, self.font(), self.message.minimumWidth()-10))
         return property(fget=fget, fset=fset)
 

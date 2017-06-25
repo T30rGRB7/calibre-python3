@@ -81,7 +81,7 @@ class GlyfTable(UnknownTable):
         ans = OrderedDict()
         offset = 0
         block = []
-        for glyph_id, glyph in sorted_glyph_map.iteritems():
+        for glyph_id, glyph in sorted_glyph_map.items():
             raw = glyph()
             ans[glyph_id] = (offset, len(raw))
             offset += len(raw)

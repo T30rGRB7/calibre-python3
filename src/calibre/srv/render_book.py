@@ -10,8 +10,8 @@ from collections import defaultdict, OrderedDict
 from itertools import count
 from functools import partial
 from future_builtins import map
-from urlparse import urlparse
-from urllib import quote
+from urllib.parse import urlparse
+from urllib.parse import quote
 
 from cssutils import replaceUrls
 from cssutils.css import CSSRule
@@ -177,7 +177,7 @@ class Container(ContainerBase):
         book_fmt, opfpath, input_fmt = extract_book(path_to_ebook, tdir, log=log)
         ContainerBase.__init__(self, tdir, opfpath, log)
         excluded_names = {
-            name for name, mt in self.mime_map.iteritems() if
+            name for name, mt in self.mime_map.items() if
             name == self.opf_name or mt == guess_type('a.ncx') or name.startswith('META-INF/') or
             name == 'mimetype'
         }
@@ -274,7 +274,7 @@ class Container(ContainerBase):
         # Firefox flakes out sometimes when dynamically creating <style> tags,
         # so convert them to external stylesheets to ensure they never fail
         style_xpath = XPath('//h:style')
-        for name, mt in tuple(self.mime_map.iteritems()):
+        for name, mt in tuple(self.mime_map.items()):
             mt = mt.lower()
             if mt in OEB_DOCS:
                 head = ensure_head(self.parsed(name))
@@ -326,7 +326,7 @@ class Container(ContainerBase):
                 changed.add(base)
             return url
 
-        for name, mt in self.mime_map.iteritems():
+        for name, mt in self.mime_map.items():
             mt = mt.lower()
             if mt in OEB_STYLES:
                 replaceUrls(self.parsed(name), partial(link_replacer, name))
@@ -403,7 +403,7 @@ def map_epub_type(epub_type, attribs, elem):
         roles = OrderedDict([(k, True) for k in role.split()]) if role else OrderedDict()
         if val not in roles:
             roles[val] = True
-        role = ' '.join(roles.iterkeys())
+        role = ' '.join(iter(roles.keys()))
         if in_attribs is None:
             attribs.append(['role', role])
         else:
@@ -429,7 +429,7 @@ def serialize_elem(elem, nsmap):
         if ns:
             ans['s'] = ns
     attribs = []
-    for attr, val in elem.items():
+    for attr, val in list(elem.items()):
         attr_ns, aname = split_name(attr)
         al = aname.lower()
         if not attr_ns and al in boolean_attributes:
@@ -489,7 +489,7 @@ def html_as_dict(root):
         if child.tag.partition('}')[-1] not in ('head', 'body'):
             root.remove(child)
     root.text = root.tail = None
-    nsmap = defaultdict(count().next)
+    nsmap = defaultdict(count().__next__)
     nsmap[XHTML_NS]
     tags = [serialize_elem(root, nsmap)]
     tree = [0]
@@ -503,7 +503,7 @@ def html_as_dict(root):
                 child_tree_node = [len(tags)-1]
                 node.append(child_tree_node)
                 stack.append((child, child_tree_node))
-    ns_map = [ns for ns, nsnum in sorted(nsmap.iteritems(), key=lambda x: x[1])]
+    ns_map = [ns for ns, nsnum in sorted(iter(nsmap.items()), key=lambda x: x[1])]
     return {'ns_map':ns_map, 'tag_map':tags, 'tree':tree}
 
 

@@ -1,4 +1,4 @@
-from __future__ import with_statement
+
 __license__   = 'GPL v3'
 __copyright__ = '2008, Kovid Goyal kovid@kovidgoyal.net'
 __docformat__ = 'restructuredtext en'
@@ -8,7 +8,7 @@ Based on ideas from comiclrf created by FangornUK.
 '''
 
 import os, traceback, time
-from Queue import Empty
+from queue import Empty
 
 from calibre import extract, prints, walk
 from calibre.constants import filesystem_encoding
@@ -27,7 +27,7 @@ def extract_comic(path_to_comic_file):
     Un-archive the comic file.
     '''
     tdir = PersistentTemporaryDirectory(suffix='_comic_extract')
-    if not isinstance(tdir, unicode):
+    if not isinstance(tdir, str):
         # Needed in case the zip file has wrongly encoded unicode file/dir
         # names
         tdir = tdir.decode(filesystem_encoding)
@@ -132,8 +132,8 @@ class PageProcessor(list):  # {{{
 
             try:
                 if self.opts.comic_image_size:
-                    SCRWIDTH, SCRHEIGHT = map(int, [x.strip() for x in
-                        self.opts.comic_image_size.split('x')])
+                    SCRWIDTH, SCRHEIGHT = list(map(int, [x.strip() for x in
+                        self.opts.comic_image_size.split('x')]))
             except:
                 pass  # Ignore
 

@@ -54,7 +54,7 @@ class Updater(QThread):  # {{{
                 self.errors[id_] = traceback.format_exc()
             self.update_progress.emit(i)
         self.update_done.emit()
-        self.done_callback(self.annotation_map.keys(), self.errors)
+        self.done_callback(list(self.annotation_map.keys()), self.errors)
 
 # }}}
 
@@ -74,8 +74,8 @@ class FetchAnnotationsAction(InterfaceAction):
         def get_ids_from_selected_rows():
             rows = self.gui.library_view.selectionModel().selectedRows()
             if not rows or len(rows) < 2:
-                rows = xrange(self.gui.library_view.model().rowCount(QModelIndex()))
-            ids = map(self.gui.library_view.model().id, rows)
+                rows = range(self.gui.library_view.model().rowCount(QModelIndex()))
+            ids = list(map(self.gui.library_view.model().id, rows))
             return ids
 
         def get_formats(id):
@@ -151,7 +151,7 @@ class FetchAnnotationsAction(InterfaceAction):
         if errors:
             db = self.gui.library_view.model().db
             entries = []
-            for id_, tb in errors.iteritems():
+            for id_, tb in errors.items():
                 title = id_
                 if isinstance(id_, type(1)):
                     title = db.title(id_, index_is_id=True)

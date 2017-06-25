@@ -135,7 +135,7 @@ class ConfigWidget(QWidget, Ui_ConfigWidget):
             self.columns.setCurrentRow(idx+1)
 
     def format_map(self):
-        formats = [unicode(self.columns.item(i).data(Qt.UserRole) or '') for i in range(self.columns.count()) if self.columns.item(i).checkState()==Qt.Checked]
+        formats = [str(self.columns.item(i).data(Qt.UserRole) or '') for i in range(self.columns.count()) if self.columns.item(i).checkState()==Qt.Checked]
         return formats
 
     def use_subdirs(self):
@@ -160,14 +160,14 @@ class ConfigWidget(QWidget, Ui_ConfigWidget):
                             (', '.join(fmts)), self.device_name)):
                 return False
 
-        tmpl = unicode(self.opt_save_template.text())
+        tmpl = str(self.opt_save_template.text())
         try:
             validation_formatter.validate(tmpl)
             return True
         except Exception as err:
             error_dialog(self, _('Invalid template'),
                     '<p>'+_('The template %s is invalid:')%tmpl +
-                    '<br>'+unicode(err), show=True)
+                    '<br>'+str(err), show=True)
 
             return False
 

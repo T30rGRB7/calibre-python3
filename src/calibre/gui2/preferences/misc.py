@@ -45,7 +45,7 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
         txt = _('No proxies used')
         if proxies:
             lines = ['<br><code>%s: %s</code>'%(t, p) for t, p in
-                    proxies.iteritems()]
+                    proxies.items()]
             txt = _('<b>Using proxies:</b>') + ''.join(lines)
         self.proxies.setText(txt)
 

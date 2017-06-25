@@ -102,27 +102,27 @@ def cap_path(data):
 def register():
     base = os.path.dirname(sys.executable)
 
-    for program, data in default_programs().iteritems():
+    for program, data in default_programs().items():
         data = data.copy()
         exe = os.path.join(base, program)
         capabilities_path = cap_path(data)
         ext_map = {ext.lower():guess_type('file.' + ext.lower())[0] for ext in extensions(program)}
-        ext_map = {ext:mt for ext, mt in ext_map.iteritems() if mt}
+        ext_map = {ext:mt for ext, mt in ext_map.items() if mt}
         prog_id_map = {ext:progid_name(data['assoc_name'], ext) for ext in ext_map}
 
         with Key(capabilities_path) as key:
-            for k, v in {'ApplicationDescription':'description', 'ApplicationName':'name'}.iteritems():
+            for k, v in {'ApplicationDescription':'description', 'ApplicationName':'name'}.items():
                 key.set(k, data[v])
             key.set('ApplicationIcon', '%s,0' % exe)
             key.set_default_value(r'shell\open\command', '"%s" "%%1"' % exe)
 
             with Key('FileAssociations', root=key) as fak, Key('MimeAssociations', root=key) as mak:
                 # previous_associations = set(fak.itervalues())
-                for ext, prog_id in prog_id_map.iteritems():
+                for ext, prog_id in prog_id_map.items():
                     mt = ext_map[ext]
                     fak.set('.' + ext, prog_id)
                     mak.set(mt, prog_id)
-        for ext, prog_id in prog_id_map.iteritems():
+        for ext, prog_id in prog_id_map.items():
             create_prog_id(ext, prog_id, ext_map, exe)
 
         with Key(r'Software\RegisteredApplications') as key:
@@ -133,17 +133,17 @@ def register():
 
 
 def unregister():
-    for program, data in default_programs().iteritems():
+    for program, data in default_programs().items():
         capabilities_path = cap_path(data).rpartition('\\')[0]
         ext_map = {ext.lower():guess_type('file.' + ext.lower())[0] for ext in extensions(program)}
-        ext_map = {ext:mt for ext, mt in ext_map.iteritems() if mt}
+        ext_map = {ext:mt for ext, mt in ext_map.items() if mt}
         prog_id_map = {ext:progid_name(data['assoc_name'], ext) for ext in ext_map}
         with Key(r'Software\RegisteredApplications') as key:
             key.delete_value(data['name'])
         parent, sk = capabilities_path.rpartition('\\')[0::2]
         with Key(parent) as key:
             key.delete_tree(sk)
-        for ext, prog_id in prog_id_map.iteritems():
+        for ext, prog_id in prog_id_map.items():
             with Key(r'Software\Classes\.%s\OpenWithProgIDs' % ext) as key:
                 key.delete_value(prog_id)
             with Key(r'Software\Classes') as key:
@@ -295,7 +295,7 @@ def find_programs(extensions):
         except WindowsError as err:
             if err.errno == winerror.ERROR_FILE_NOT_FOUND:
                 continue
-        for prog_id in k.itervalues():
+        for prog_id in k.values():
             if prog_id and prog_id not in seen_prog_ids:
                 seen_prog_ids.add(prog_id)
                 cmdline, icon_resource, friendly_name = get_open_data(base, prog_id)

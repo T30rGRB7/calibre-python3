@@ -10,7 +10,7 @@ __docformat__ = 'restructuredtext en'
 import base64
 import mimetypes
 import re
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from contextlib import closing
 
 from lxml import etree
@@ -31,7 +31,7 @@ def fix_url(url):
 
 
 def search(query, max_results=10, timeout=60, write_raw_to=None):
-    url = 'http://m.gutenberg.org/ebooks/search.opds/?query=' + urllib.quote_plus(query)
+    url = 'http://m.gutenberg.org/ebooks/search.opds/?query=' + urllib.parse.quote_plus(query)
 
     counter = max_results
     br = browser(user_agent='calibre/'+__version__)
@@ -70,7 +70,7 @@ def search(query, max_results=10, timeout=60, write_raw_to=None):
                             ext = ext[1:].upper().strip()
                             s.downloads[ext] = fix_url(href)
 
-            s.formats = ', '.join(s.downloads.keys())
+            s.formats = ', '.join(list(s.downloads.keys()))
             if not s.formats:
                 continue
 

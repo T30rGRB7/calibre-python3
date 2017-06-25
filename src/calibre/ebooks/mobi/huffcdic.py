@@ -34,7 +34,7 @@ class Reader(object):
                 assert term
             maxcode = ((maxcode + 1) << (32 - codelen)) - 1
             return (codelen, term, maxcode)
-        self.dict1 = map(dict1_unpack, struct.unpack_from(b'>256L', huff, off1))
+        self.dict1 = list(map(dict1_unpack, struct.unpack_from(b'>256L', huff, off1)))
 
         dict2 = struct.unpack_from(b'>64L', huff, off2)
         self.mincode, self.maxcode = (), ()
@@ -56,7 +56,7 @@ class Reader(object):
             blen, = h(cdic, 16+off)
             slice = cdic[18+off:18+off+(blen&0x7fff)]
             return (slice, blen&0x8000)
-        self.dictionary += map(getslice, struct.unpack_from(b'>%dH' % n, cdic, 16))
+        self.dictionary += list(map(getslice, struct.unpack_from(b'>%dH' % n, cdic, 16)))
 
     def unpack(self, data):
         q = self.q

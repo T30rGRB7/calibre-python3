@@ -195,18 +195,18 @@ def generate_ebook_convert_help(preamble, app):
 
 
 def update_cli_doc(name, raw, app):
-    if isinstance(raw, unicode):
+    if isinstance(raw, str):
         raw = raw.encode('utf-8')
     path = 'generated/%s/%s.rst' % (app.config.language, name)
     old_raw = open(path, 'rb').read() if os.path.exists(path) else ''
     if not os.path.exists(path) or old_raw != raw:
         import difflib
-        print path, 'has changed'
+        print(path, 'has changed')
         if old_raw:
             lines = difflib.unified_diff(old_raw.splitlines(), raw.splitlines(),
                     path, path)
             for line in lines:
-                print line
+                print(line)
         app.builder.info('creating '+os.path.splitext(os.path.basename(path))[0])
         p = os.path.dirname(path)
         if p and not os.path.exists(p):
@@ -239,7 +239,7 @@ def render_options(cmd, groups, options_header=True, add_program=True, header_le
 
 
 def mark_options(raw):
-    raw = re.sub(r'(\s+)--(\s+)', ur'\1-\u200b-\2', raw)
+    raw = re.sub(r'(\s+)--(\s+)', r'\1-\u200b-\2', raw)
 
     def sub(m):
         opt = m.group()
@@ -334,7 +334,7 @@ def add_html_context(app, pagename, templatename, context, *args):
 
 def guilabel_role(typ, rawtext, text, *args, **kwargs):
     from sphinx.roles import menusel_role
-    text = text.replace(u'->', u'\N{THIN SPACE}\N{RIGHTWARDS ARROW}\N{THIN SPACE}')
+    text = text.replace('->', '\N{THIN SPACE}\N{RIGHTWARDS ARROW}\N{THIN SPACE}')
     return menusel_role(typ, rawtext, text, *args, **kwargs)
 
 

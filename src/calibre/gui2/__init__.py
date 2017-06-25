@@ -1,10 +1,10 @@
 __license__   = 'GPL v3'
 __copyright__ = '2008, Kovid Goyal <kovid at kovidgoyal.net>'
 """ The GUI """
-import os, sys, Queue, threading, glob, signal
+import os, sys, queue, threading, glob, signal
 from contextlib import contextmanager
 from threading import RLock, Lock
-from urllib import unquote
+from urllib.parse import unquote
 from PyQt5.QtWidgets import QStyle  # Gives a nicer error message than import from Qt
 from PyQt5.Qt import (
     QFileInfo, QObject, QBuffer, Qt, QByteArray, QTranslator, QSocketNotifier,
@@ -287,7 +287,7 @@ def default_author_link():
 
 def available_heights():
     desktop  = QCoreApplication.instance().desktop()
-    return map(lambda x: x.height(), map(desktop.availableGeometry, range(desktop.screenCount())))
+    return [x.height() for x in list(map(desktop.availableGeometry, list(range(desktop.screenCount()))))]
 
 
 def available_height():
@@ -469,7 +469,7 @@ class FunctionDispatcher(QObject):
         if not queued:
             typ = Qt.AutoConnection if queued is None else Qt.DirectConnection
         self.dispatch_signal.connect(self.dispatch, type=typ)
-        self.q = Queue.Queue()
+        self.q = queue.Queue()
         self.lock = threading.Lock()
 
     def __call__(self, *args, **kwargs):
@@ -536,7 +536,7 @@ class FileIconProvider(QFileIconProvider):
         upath, bpath = I('mimetypes'), I('mimetypes', allow_user_override=False)
         if upath != bpath:
             # User has chosen to override mimetype icons
-            path_map = {v:I('mimetypes/%s.png' % v) for v in set(self.ICONS.itervalues())}
+            path_map = {v:I('mimetypes/%s.png' % v) for v in set(self.ICONS.values())}
             icons = self.ICONS.copy()
             for uicon in glob.glob(os.path.join(upath, '*.png')):
                 ukey = os.path.basename(uicon).rpartition('.')[0].lower()
@@ -544,18 +544,18 @@ class FileIconProvider(QFileIconProvider):
                     path_map[ukey] = uicon
                     icons[ukey] = ukey
         else:
-            path_map = {v:os.path.join(bpath, v + '.png') for v in set(self.ICONS.itervalues())}
+            path_map = {v:os.path.join(bpath, v + '.png') for v in set(self.ICONS.values())}
             icons = self.ICONS
-        self.icons = {k:path_map[v] for k, v in icons.iteritems()}
+        self.icons = {k:path_map[v] for k, v in icons.items()}
         self.icons['calibre'] = I('lt.png', allow_user_override=False)
         for i in ('dir', 'default', 'zero'):
             self.icons[i] = QIcon(self.icons[i])
 
     def key_from_ext(self, ext):
-        key = ext if ext in self.icons.keys() else 'default'
+        key = ext if ext in list(self.icons.keys()) else 'default'
         if key == 'default' and ext.count('.') > 0:
             ext = ext.rpartition('.')[2]
-            key = ext if ext in self.icons.keys() else 'default'
+            key = ext if ext in list(self.icons.keys()) else 'default'
         return key
 
     def cached_icon(self, key):
@@ -580,7 +580,7 @@ class FileIconProvider(QFileIconProvider):
         if fileinfo.isDir():
             key = 'dir'
         else:
-            ext = unicode(fileinfo.completeSuffix()).lower()
+            ext = str(fileinfo.completeSuffix()).lower()
             key = self.key_from_ext(ext)
         return self.cached_icon(key)
 
@@ -617,7 +617,7 @@ def select_initial_dir(q):
         if os.path.exists(c):
             return c
         q = c
-    return expanduser(u'~')
+    return expanduser('~')
 
 
 class FileDialog(QObject):
@@ -629,7 +629,7 @@ class FileDialog(QObject):
                        modal=True,
                        name='',
                        mode=QFileDialog.ExistingFiles,
-                       default_dir=u'~',
+                       default_dir='~',
                        no_save_dir=False,
                        combine_file_and_saved_dir=False
                        ):
@@ -653,19 +653,19 @@ class FileDialog(QObject):
         if combine_file_and_saved_dir:
             bn = os.path.basename(default_dir)
             prev = dynamic.get(self.dialog_name,
-                    expanduser(u'~'))
+                    expanduser('~'))
             if os.path.exists(prev):
                 if os.path.isfile(prev):
                     prev = os.path.dirname(prev)
             else:
-                prev = expanduser(u'~')
+                prev = expanduser('~')
             initial_dir = os.path.join(prev, bn)
         elif no_save_dir:
             initial_dir = expanduser(default_dir)
         else:
             initial_dir = dynamic.get(self.dialog_name,
                     expanduser(default_dir))
-        if not isinstance(initial_dir, basestring):
+        if not isinstance(initial_dir, str):
             initial_dir = expanduser(default_dir)
         if not initial_dir or (not os.path.exists(initial_dir) and not (
                 mode == QFileDialog.AnyFile and (no_save_dir or combine_file_and_saved_dir))):
@@ -691,7 +691,7 @@ class FileDialog(QObject):
                         ftext, "", opts)
                 if fs and fs[0]:
                     for f in fs[0]:
-                        f = unicode(f)
+                        f = str(f)
                         if not f:
                             continue
                         if not os.path.exists(f):
@@ -703,11 +703,11 @@ class FileDialog(QObject):
             else:
                 if mode == QFileDialog.Directory:
                     opts |= QFileDialog.ShowDirsOnly
-                f = unicode(QFileDialog.getExistingDirectory(parent, title, initial_dir, opts))
+                f = str(QFileDialog.getExistingDirectory(parent, title, initial_dir, opts))
                 if os.path.exists(f):
                     self.selected_files.append(f)
         if self.selected_files:
-            self.selected_files = [unicode(q) for q in self.selected_files]
+            self.selected_files = [str(q) for q in self.selected_files]
             saved_loc = self.selected_files[0]
             if os.path.isfile(saved_loc):
                 saved_loc = os.path.dirname(saved_loc)
@@ -717,7 +717,7 @@ class FileDialog(QObject):
 
     def get_files(self):
         if self.selected_files is None:
-            return tuple(os.path.abspath(unicode(i)) for i in self.fd.selectedFiles())
+            return tuple(os.path.abspath(str(i)) for i in self.fd.selectedFiles())
         return tuple(self.selected_files)
 
 
@@ -739,7 +739,7 @@ else:
             return dir[0]
 
     def choose_files(window, name, title,
-                    filters=[], all_files=True, select_only_single_file=False, default_dir=u'~'):
+                    filters=[], all_files=True, select_only_single_file=False, default_dir='~'):
         '''
         Ask user to choose a bunch of files.
         :param name: Unique dialog name used to store the opened directory
@@ -876,9 +876,9 @@ class Translator(QTranslator):
 
     def translate(self, *args, **kwargs):
         try:
-            src = unicode(args[1])
+            src = str(args[1])
         except:
-            return u''
+            return ''
         t = _
         return t(src)
 
@@ -907,9 +907,9 @@ def load_builtin_fonts():
                 fid = QFontDatabase.addApplicationFontFromData(s.read())
                 if fid > -1:
                     fam = QFontDatabase.applicationFontFamilies(fid)
-                    fam = set(map(unicode, fam))
-                    if u'calibre Symbols' in fam:
-                        _rating_font = u'calibre Symbols'
+                    fam = set(map(str, fam))
+                    if 'calibre Symbols' in fam:
+                        _rating_font = 'calibre Symbols'
 
 
 def setup_gui_option_parser(parser):
@@ -963,7 +963,7 @@ class Application(QApplication):
                 args = sys.argv[:1]
             args.extend(['-platformpluginpath', sys.extensions_location, '-platform', 'headless'])
         self.headless = headless
-        qargs = [i.encode('utf-8') if isinstance(i, unicode) else i for i in args]
+        qargs = [i.encode('utf-8') if isinstance(i, str) else i for i in args]
         self.pi = plugins['progress_indicator'][0]
         if not isosx and not headless:
             # On OS X high dpi scaling is turned on automatically by the OS, so we dont need to set it explicitly
@@ -1005,7 +1005,7 @@ class Application(QApplication):
         self.line_height = max(12, QFontMetrics(self.font()).lineSpacing())
 
         dl = QLocale(get_lang())
-        if unicode(dl.bcp47Name()) != u'C':
+        if str(dl.bcp47Name()) != 'C':
             QLocale.setDefault(dl)
         global gui_thread, qt_app
         gui_thread = QThread.currentThread()
@@ -1094,22 +1094,22 @@ class Application(QApplication):
         icon_map = self.__icon_map_memory_ = {}
         pcache = {}
         for k, v in {
-            'DialogYesButton': u'ok.png',
-            'DialogNoButton': u'window-close.png',
-            'DialogCloseButton': u'window-close.png',
-            'DialogOkButton': u'ok.png',
-            'DialogCancelButton': u'window-close.png',
-            'DialogHelpButton': u'help.png',
-            'DialogOpenButton': u'document_open.png',
-            'DialogSaveButton': u'save.png',
-            'DialogApplyButton': u'ok.png',
-            'DialogDiscardButton': u'trash.png',
-            'MessageBoxInformation': u'dialog_information.png',
-            'MessageBoxWarning': u'dialog_warning.png',
-            'MessageBoxCritical': u'dialog_error.png',
-            'MessageBoxQuestion': u'dialog_question.png',
-            'BrowserReload': u'view-refresh.png',
-        }.iteritems():
+            'DialogYesButton': 'ok.png',
+            'DialogNoButton': 'window-close.png',
+            'DialogCloseButton': 'window-close.png',
+            'DialogOkButton': 'ok.png',
+            'DialogCancelButton': 'window-close.png',
+            'DialogHelpButton': 'help.png',
+            'DialogOpenButton': 'document_open.png',
+            'DialogSaveButton': 'save.png',
+            'DialogApplyButton': 'ok.png',
+            'DialogDiscardButton': 'trash.png',
+            'MessageBoxInformation': 'dialog_information.png',
+            'MessageBoxWarning': 'dialog_warning.png',
+            'MessageBoxCritical': 'dialog_error.png',
+            'MessageBoxQuestion': 'dialog_question.png',
+            'BrowserReload': 'view-refresh.png',
+        }.items():
             if v not in pcache:
                 p = I(v)
                 if isinstance(p, bytes):
@@ -1134,7 +1134,7 @@ class Application(QApplication):
 
     def event(self, e):
         if callable(self.file_event_hook) and e.type() == QEvent.FileOpen:
-            path = unicode(e.file())
+            path = str(e.file())
             if os.access(path, os.R_OK):
                 with self._file_open_lock:
                     self._file_open_paths.append(path)
@@ -1149,11 +1149,11 @@ class Application(QApplication):
 
         def fget(self):
             return [col.getRgb() for col in
-                    (QColorDialog.customColor(i) for i in xrange(QColorDialog.customCount()))]
+                    (QColorDialog.customColor(i) for i in range(QColorDialog.customCount()))]
 
         def fset(self, colors):
             num = min(len(colors), QColorDialog.customCount())
-            for i in xrange(num):
+            for i in range(num):
                 QColorDialog.setCustomColor(i, QColor(*colors[i]))
         return property(fget=fget, fset=fset)
 
@@ -1217,7 +1217,7 @@ def sanitize_env_vars():
 
     originals = {x:os.environ.get(x, '') for x in env_vars}
     changed = {x:False for x in env_vars}
-    for var, suffix in env_vars.iteritems():
+    for var, suffix in env_vars.items():
         paths = [x for x in originals[var].split(os.pathsep) if x]
         npaths = [] if suffix is None else [x for x in paths if x != (sys.frozen_path + suffix)]
         if len(npaths) < len(paths):
@@ -1230,7 +1230,7 @@ def sanitize_env_vars():
     try:
         yield
     finally:
-        for var, orig in originals.iteritems():
+        for var, orig in originals.items():
             if changed[var]:
                 if orig:
                     os.environ[var] = orig
@@ -1245,7 +1245,7 @@ def open_url(qurl):
     # Qt 5 requires QApplication to be constructed before trying to use
     # QDesktopServices::openUrl()
     ensure_app()
-    if isinstance(qurl, basestring):
+    if isinstance(qurl, str):
         qurl = QUrl(qurl)
     with sanitize_env_vars():
         QDesktopServices.openUrl(qurl)
@@ -1352,7 +1352,7 @@ def elided_text(text, font=None, width=300, pos='middle'):
     from PyQt5.Qt import QFontMetrics, QApplication
     fm = QApplication.fontMetrics() if font is None else (font if isinstance(font, QFontMetrics) else QFontMetrics(font))
     delta = 4
-    ellipsis = u'\u2026'
+    ellipsis = '\u2026'
 
     def remove_middle(x):
         mid = len(x) // 2
@@ -1361,7 +1361,7 @@ def elided_text(text, font=None, width=300, pos='middle'):
     chomp = {'middle':remove_middle, 'left':lambda x:(ellipsis + x[delta:]), 'right':lambda x:(x[:-delta] + ellipsis)}[pos]
     while len(text) > delta and fm.width(text) > width:
         text = chomp(text)
-    return unicode(text)
+    return str(text)
 
 
 def find_forms(srcdir):
@@ -1380,7 +1380,7 @@ def form_to_compiled_form(form):
 
 
 def build_forms(srcdir, info=None, summary=False, check_for_migration=False):
-    import re, cStringIO
+    import re, io
     from PyQt5.uic import compileUi
     forms = find_forms(srcdir)
     if info is None:
@@ -1405,7 +1405,7 @@ def build_forms(srcdir, info=None, summary=False, check_for_migration=False):
         if force_compile or not os.path.exists(compiled_form) or os.stat(form).st_mtime > os.stat(compiled_form).st_mtime:
             if not summary:
                 info('\tCompiling form', form)
-            buf = cStringIO.StringIO()
+            buf = io.StringIO()
             compileUi(form, buf)
             dat = buf.getvalue()
             dat = dat.replace('import images_rc', '')
@@ -1430,7 +1430,7 @@ if is_running_from_develop:
 def event_type_name(ev_or_etype):
     from PyQt5.QtCore import QEvent
     etype = ev_or_etype.type() if isinstance(ev_or_etype, QEvent) else ev_or_etype
-    for name, num in vars(QEvent).iteritems():
+    for name, num in vars(QEvent).items():
         if num == etype:
             return name
     return 'UnknownEventType'

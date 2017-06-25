@@ -217,7 +217,7 @@ class TXTInput(InputFormatPlugin):
         for opt in html_input.options:
             setattr(options, opt.option.name, opt.recommended_value)
         options.input_encoding = 'utf-8'
-        base = os.getcwdu()
+        base = os.getcwd()
         if file_ext != 'txtz' and hasattr(stream, 'name'):
             base = os.path.dirname(stream.name)
         fname = os.path.join(base, 'index.html')

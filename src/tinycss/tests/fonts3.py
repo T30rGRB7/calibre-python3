@@ -43,14 +43,14 @@ class TestFonts3(BaseTest):
                 'A B, C D, "E", serif': ['A B', 'C D', 'E', 'serif'],
                 '': [],
                 '"", a': ['a'],
-        }.iteritems():
+        }.items():
             self.ae(q, parse_font_family(raw))
         for single in ('serif', 'sans-serif', 'A B C'):
             self.ae([single], parse_font_family(single))
 
     def test_parse_font(self):
         def t(raw, **kw):
-            q = {('line' if k == 'height' else 'font') + '-' + k:v for k, v in kw.iteritems()}
+            q = {('line' if k == 'height' else 'font') + '-' + k:v for k, v in kw.items()}
             self.ae(q, parse_font(raw))
             self.ae(q, parse_font(serialize_font(q)))
         t('caption', family=['sans-serif'])

@@ -54,7 +54,7 @@ class GoogleImages(Source):
 
     def get_image_urls(self, title, author, log, abort, timeout):
         from calibre.utils.cleantext import clean_ascii_chars
-        from urllib import urlencode
+        from urllib.parse import urlencode
         import html5lib
         import json
         from collections import OrderedDict
@@ -81,11 +81,11 @@ class GoogleImages(Source):
                 continue
             if 'ou' in data:
                 ans[data['ou']] = True
-        return list(ans.iterkeys())
+        return list(ans.keys())
 
 
 def test():
-    from Queue import Queue
+    from queue import Queue
     from threading import Event
     from calibre.utils.logging import default_log
     p = GoogleImages(None)
@@ -93,7 +93,7 @@ def test():
     rq = Queue()
     p.download_cover(default_log, rq, Event(), title='The Heroes',
                      authors=('Joe Abercrombie',))
-    print ('Downloaded', rq.qsize(), 'covers')
+    print(('Downloaded', rq.qsize(), 'covers'))
 
 
 if __name__ == '__main__':

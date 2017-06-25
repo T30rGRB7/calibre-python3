@@ -37,5 +37,5 @@ class ConfigWidget(QWidget):
         self.label.setBuddy(self.msg)
 
     def save_settings(self):
-        prefs['hello_world_msg'] = unicode(self.msg.text())
+        prefs['hello_world_msg'] = str(self.msg.text())
 

@@ -29,7 +29,7 @@ class ChooseResources(QWidget):
         l.addWidget(i)
 
     def __iter__(self):
-        for i in xrange(self.items.count()):
+        for i in range(self.items.count()):
             yield self.items.item(i)
 
     def select_none(self):
@@ -171,7 +171,7 @@ class DownloadResources(Dialog):
         else:
             replacements, failures = ret
             if failures:
-                tb = ['{}\n\t{}\n'.format(url, err) for url, err in failures.iteritems()]
+                tb = ['{}\n\t{}\n'.format(url, err) for url, err in failures.items()]
                 if not replacements:
                     error_dialog(self, _('Download failed'), _(
                         'Failed to download external resources, click "Show Details" for more information.'),
@@ -258,5 +258,5 @@ if __name__ == '__main__':
     set_current_container(get_container(sys.argv[-1]))
     d = DownloadResources()
     d.exec_()
-    print(d.show_diff)
+    print((d.show_diff))
     del d, app

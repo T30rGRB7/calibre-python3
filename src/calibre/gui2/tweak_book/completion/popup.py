@@ -246,7 +246,7 @@ class CompletionPopup(ChoosePopupWidget):
 
     def set_items(self, items, descriptions=None, query=None):
         self.current_query = query
-        ChoosePopupWidget.set_items(self, tuple(items.iteritems()), descriptions=descriptions)
+        ChoosePopupWidget.set_items(self, tuple(items.items()), descriptions=descriptions)
 
     def choose_next_result(self, previous=False):
         ChoosePopupWidget.choose_next_result(self, previous=previous)

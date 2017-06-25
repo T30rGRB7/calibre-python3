@@ -9,7 +9,7 @@
     :license: BSD, see LICENSE for more details.
 """
 
-from __future__ import unicode_literals
+
 
 import re
 import sys
@@ -124,11 +124,11 @@ TOKEN_DISPATCH = []
 
 
 try:
-    unichr
+    chr
 except NameError:
     # Python 3
-    unichr = chr
-    unicode = str
+    chr = chr
+    str = str
 
 
 def _init():
@@ -164,7 +164,7 @@ def _init():
         (' \t\r\n\f', ['S']),
         ('uU', ['URI', 'BAD_URI', 'UNICODE-RANGE']),
         # \ is an escape outside of another token
-        (string.ascii_letters + '\\_-' + unichr(160), ['FUNCTION', 'IDENT']),
+        (string.ascii_letters + '\\_-' + chr(160), ['FUNCTION', 'IDENT']),
         (string.digits + '.+-', ['DIMENSION', 'PERCENTAGE', 'NUMBER']),
         ('@', ['ATKEYWORD']),
         ('#', ['HASH']),
@@ -190,10 +190,10 @@ def _init():
 _init()
 
 
-def _unicode_replace(match, int=int, unichr=unichr, maxunicode=sys.maxunicode):
+def _unicode_replace(match, int=int, chr=chr, maxunicode=sys.maxunicode):
     codepoint = int(match.group(1), 16)
     if codepoint <= maxunicode:
-        return unichr(codepoint)
+        return chr(codepoint)
     else:
         return '\N{REPLACEMENT CHARACTER}'  # U+FFFD
 

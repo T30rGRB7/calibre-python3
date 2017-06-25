@@ -201,13 +201,13 @@ class EditorWidget(QWebView):  # {{{
         col = QColorDialog.getColor(Qt.black, self,
                 _('Choose foreground color'), QColorDialog.ShowAlphaChannel)
         if col.isValid():
-            self.exec_command('foreColor', unicode(col.name()))
+            self.exec_command('foreColor', str(col.name()))
 
     def background_color(self):
         col = QColorDialog.getColor(Qt.white, self,
                 _('Choose background color'), QColorDialog.ShowAlphaChannel)
         if col.isValid():
-            self.exec_command('hiliteColor', unicode(col.name()))
+            self.exec_command('hiliteColor', str(col.name()))
 
     def insert_link(self, *args):
         link, name, is_image = self.ask_link()
@@ -215,7 +215,7 @@ class EditorWidget(QWebView):  # {{{
             return
         url = self.parse_link(link)
         if url.isValid():
-            url = unicode(url.toString(NO_URL_FORMATTING))
+            url = str(url.toString(NO_URL_FORMATTING))
             self.setFocus(Qt.OtherFocusReason)
             if is_image:
                 self.exec_command('insertHTML',
@@ -277,7 +277,7 @@ class EditorWidget(QWebView):  # {{{
         d.resize(d.sizeHint())
         link, name, is_image = None, None, False
         if d.exec_() == d.Accepted:
-            link, name = unicode(d.url.text()).strip(), unicode(d.name.text()).strip()
+            link, name = str(d.url.text()).strip(), str(d.name.text()).strip()
             is_image = d.treat_as_image.isChecked()
         return link, name, is_image
 
@@ -311,7 +311,7 @@ class EditorWidget(QWebView):  # {{{
         frame = self.page().mainFrame()
         if arg is not None:
             js = 'document.execCommand("%s", false, %s);' % (cmd,
-                    json.dumps(unicode(arg)))
+                    json.dumps(str(arg)))
         else:
             js = 'document.execCommand("%s", false, null);' % cmd
         frame.evaluateJavaScript(js)
@@ -323,13 +323,13 @@ class EditorWidget(QWebView):  # {{{
     def html(self):
 
         def fget(self):
-            ans = u''
+            ans = ''
             try:
                 if not self.page().mainFrame().documentElement().findFirst('meta[name="calibre-dont-sanitize"]').isNull():
                     # Bypass cleanup if special meta tag exists
-                    return unicode(self.page().mainFrame().toHtml())
-                check = unicode(self.page().mainFrame().toPlainText()).strip()
-                raw = unicode(self.page().mainFrame().toHtml())
+                    return str(self.page().mainFrame().toHtml())
+                check = str(self.page().mainFrame().toPlainText()).strip()
+                raw = str(self.page().mainFrame().toHtml())
                 raw = xml_to_unicode(raw, strip_encoding_pats=True,
                                     resolve_entities=True)[0]
                 raw = self.comments_pat.sub('', raw)
@@ -345,13 +345,13 @@ class EditorWidget(QWebView):  # {{{
                 for body in root.xpath('//body'):
                     if body.text:
                         elems.append(body.text)
-                    elems += [html.tostring(x, encoding=unicode) for x in body if
+                    elems += [html.tostring(x, encoding=str) for x in body if
                         x.tag not in ('script', 'style')]
 
                 if len(elems) > 1:
-                    ans = u'<div>%s</div>'%(u''.join(elems))
+                    ans = '<div>%s</div>'%(''.join(elems))
                 else:
-                    ans = u''.join(elems)
+                    ans = ''.join(elems)
                     if not ans.startswith('<'):
                         ans = '<p>%s</p>'%ans
                 ans = xml_replace_entities(ans)
@@ -372,13 +372,13 @@ class EditorWidget(QWebView):  # {{{
             return
         mf = self.page().mainFrame()
         mf.evaluateJavaScript('document.execCommand("selectAll", false, null)')
-        mf.evaluateJavaScript('document.execCommand("insertHTML", false, %s)' % json.dumps(unicode(val)))
+        mf.evaluateJavaScript('document.execCommand("insertHTML", false, %s)' % json.dumps(str(val)))
         self.set_font_style()
 
     def set_font_style(self):
         fi = QFontInfo(QApplication.font(self))
         f  = fi.pixelSize() + 1 + int(tweaks['change_book_details_font_size_by'])
-        fam = unicode(fi.family()).strip().replace('"', '')
+        fam = str(fi.family()).strip().replace('"', '')
         if not fam:
             fam = 'sans-serif'
         style = 'font-size: %fpx; font-family:"%s",sans-serif;' % (f, fam)
@@ -451,7 +451,7 @@ class Highlighter(QSyntaxHighlighter):
             if state == State_Comment:
                 start = pos
                 while pos < len_:
-                    if text[pos:pos+3] == u"-->":
+                    if text[pos:pos+3] == "-->":
                         pos += 3
                         state = State_Text
                         break
@@ -464,7 +464,7 @@ class Highlighter(QSyntaxHighlighter):
                 while pos < len_:
                     ch = text[pos]
                     pos += 1
-                    if ch == u'>':
+                    if ch == '>':
                         state = State_Text
                         break
                 self.setFormat(start, pos - start, self.colors['doctype'])
@@ -475,7 +475,7 @@ class Highlighter(QSyntaxHighlighter):
                 while pos < len_:
                     ch = text[pos]
                     pos += 1
-                    if ch == u'>':
+                    if ch == '>':
                         state = State_Text
                         break
                     if not ch.isspace():
@@ -493,7 +493,7 @@ class Highlighter(QSyntaxHighlighter):
                         pos -= 1
                         state = State_InsideTag
                         break
-                    if ch == u'>':
+                    if ch == '>':
                         state = State_Text
                         break
                 self.setFormat(start, pos - start, self.colors['tag'])
@@ -506,10 +506,10 @@ class Highlighter(QSyntaxHighlighter):
                     ch = text[pos]
                     pos += 1
 
-                    if ch == u'/':
+                    if ch == '/':
                         continue
 
-                    if ch == u'>':
+                    if ch == '>':
                         state = State_Text
                         break
 
@@ -526,11 +526,11 @@ class Highlighter(QSyntaxHighlighter):
                     ch = text[pos]
                     pos += 1
 
-                    if ch == u'=':
+                    if ch == '=':
                         state = State_AttributeValue
                         break
 
-                    if ch in (u'>', u'/'):
+                    if ch in ('>', '/'):
                         state = State_InsideTag
                         break
 
@@ -546,12 +546,12 @@ class Highlighter(QSyntaxHighlighter):
                     pos += 1
 
                     # handle opening single quote
-                    if ch == u"'":
+                    if ch == "'":
                         state = State_SingleQuote
                         break
 
                     # handle opening double quote
-                    if ch == u'"':
+                    if ch == '"':
                         state = State_DoubleQuote
                         break
 
@@ -566,7 +566,7 @@ class Highlighter(QSyntaxHighlighter):
                         ch = text[pos]
                         if ch.isspace():
                             break
-                        if ch in (u'>', u'/'):
+                        if ch in ('>', '/'):
                             break
                         pos += 1
                     state = State_InsideTag
@@ -579,7 +579,7 @@ class Highlighter(QSyntaxHighlighter):
                 while pos < len_:
                     ch = text[pos]
                     pos += 1
-                    if ch == u"'":
+                    if ch == "'":
                         break
 
                 state = State_InsideTag
@@ -593,7 +593,7 @@ class Highlighter(QSyntaxHighlighter):
                 while pos < len_:
                     ch = text[pos]
                     pos += 1
-                    if ch == u'"':
+                    if ch == '"':
                         break
 
                 state = State_InsideTag
@@ -604,18 +604,18 @@ class Highlighter(QSyntaxHighlighter):
                 # State_Text and default
                 while pos < len_:
                     ch = text[pos]
-                    if ch == u'<':
-                        if text[pos:pos+4] == u"<!--":
+                    if ch == '<':
+                        if text[pos:pos+4] == "<!--":
                             state = State_Comment
                         else:
-                            if text[pos:pos+9].upper() == u"<!DOCTYPE":
+                            if text[pos:pos+9].upper() == "<!DOCTYPE":
                                 state = State_DocType
                             else:
                                 state = State_TagStart
                         break
-                    elif ch == u'&':
+                    elif ch == '&':
                         start = pos
-                        while pos < len_ and text[pos] != u';':
+                        while pos < len_ and text[pos] != ';':
                             self.setFormat(start, pos - start,
                                     self.colors['entity'])
                             pos += 1
@@ -745,7 +745,7 @@ class Editor(QWidget):  # {{{
                 self.wyswyg_dirty = False
         elif index == 0:  # changing to wyswyg
             if self.source_dirty:
-                self.editor.html = unicode(self.code_edit.toPlainText())
+                self.editor.html = str(self.code_edit.toPlainText())
                 self.source_dirty = False
 
     @dynamic_property

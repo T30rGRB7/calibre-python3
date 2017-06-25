@@ -197,7 +197,7 @@ class ConfigDialog(QDialog, Ui_Dialog):
                 _('Choose a name for this theme'))
         if not ok:
             return
-        themename = unicode(themename).strip()
+        themename = str(themename).strip()
         if not themename:
             return
         c = config('')
@@ -212,7 +212,7 @@ class ConfigDialog(QDialog, Ui_Dialog):
         for x in ('load', 'delete'):
             m = getattr(self, '%s_theme_button'%x).menu()
             m.clear()
-            for x in self.themes.iterkeys():
+            for x in self.themes.keys():
                 title = x[len('theme_'):]
                 ac = m.addAction(title)
                 ac.theme_id = x
@@ -242,7 +242,7 @@ class ConfigDialog(QDialog, Ui_Dialog):
 
         def fset(self, wl):
             self.dictionary_list.clear()
-            for langcode, url in sorted(wl.iteritems(), key=lambda (lc, url):sort_key(calibre_langcode_to_name(lc))):
+            for langcode, url in sorted(iter(wl.items()), key=lambda lc_url:sort_key(calibre_langcode_to_name(lc_url[0]))):
                 i = QListWidgetItem('%s: %s' % (calibre_langcode_to_name(langcode), url), self.dictionary_list)
                 i.setData(Qt.UserRole, (langcode, url))
         return property(fget=fget, fset=fset)
@@ -380,7 +380,7 @@ class ConfigDialog(QDialog, Ui_Dialog):
             col = QColorDialog.getColor(initial, self,
                     title, QColorDialog.ShowAlphaChannel)
             if col.isValid():
-                name = unicode(col.name())
+                name = str(col.name())
                 setattr(self, 'current_%s_color'%which, name)
         self.update_sample_colors()
 
@@ -405,15 +405,15 @@ class ConfigDialog(QDialog, Ui_Dialog):
         return QDialog.accept(self, *args)
 
     def save_options(self, c):
-        c.set('serif_family', unicode(self.serif_family.currentFont().family()))
-        c.set('sans_family', unicode(self.sans_family.currentFont().family()))
-        c.set('mono_family', unicode(self.mono_family.currentFont().family()))
+        c.set('serif_family', str(self.serif_family.currentFont().family()))
+        c.set('sans_family', str(self.sans_family.currentFont().family()))
+        c.set('mono_family', str(self.mono_family.currentFont().family()))
         c.set('default_font_size', self.default_font_size.value())
         c.set('minimum_font_size', self.minimum_font_size.value())
         c.set('mono_font_size', self.mono_font_size.value())
         c.set('standard_font', {0:'serif', 1:'sans', 2:'mono'}[
             self.standard_font.currentIndex()])
-        c.set('user_css', unicode(self.css.toPlainText()))
+        c.set('user_css', str(self.css.toPlainText()))
         c.set('remember_window_size', self.opt_remember_window_size.isChecked())
         c.set('fit_images', self.opt_fit_images.isChecked())
         c.set('max_fs_width', int(self.max_fs_width.value()))

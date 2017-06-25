@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
@@ -63,7 +63,7 @@ class RecipeInput(InputFormatPlugin):
             zf = ZipFile(recipe_or_file, 'r')
             zf.extractall()
             zf.close()
-            self.recipe_source = open(u'download.recipe', 'rb').read()
+            self.recipe_source = open('download.recipe', 'rb').read()
             recipe = compile_recipe(self.recipe_source)
             recipe.needs_subscription = False
             self.recipe_object = recipe(opts, log, self.report_progress)
@@ -119,14 +119,14 @@ class RecipeInput(InputFormatPlugin):
             ro.download()
             self.recipe_object = ro
 
-        for key, val in self.recipe_object.conversion_options.items():
+        for key, val in list(self.recipe_object.conversion_options.items()):
             setattr(opts, key, val)
 
-        for f in os.listdir(u'.'):
+        for f in os.listdir('.'):
             if f.endswith('.opf'):
                 return os.path.abspath(f)
 
-        for f in walk(u'.'):
+        for f in walk('.'):
             if f.endswith('.opf'):
                 return os.path.abspath(f)
 
@@ -144,7 +144,7 @@ class RecipeInput(InputFormatPlugin):
 
     def save_download(self, zf):
         raw = self.recipe_source
-        if isinstance(raw, unicode):
+        if isinstance(raw, str):
             raw = raw.encode('utf-8')
         zf.writestr('download.recipe', raw)
 

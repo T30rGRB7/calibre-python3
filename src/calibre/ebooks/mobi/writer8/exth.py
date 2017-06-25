@@ -62,14 +62,14 @@ def build_exth(metadata, prefer_author_sort=False, is_periodical=False,
         items = metadata[term]
         if term == 'creator':
             if prefer_author_sort:
-                creators = [authors_to_sort_string([unicode(c)]) for c in
+                creators = [authors_to_sort_string([str(c)]) for c in
                             items]
             else:
-                creators = [unicode(c) for c in items]
+                creators = [str(c) for c in items]
             items = creators
         elif term == 'rights':
             try:
-                rights = utf8_text(unicode(metadata.rights[0]))
+                rights = utf8_text(str(metadata.rights[0]))
             except:
                 rights = b'Unknown'
             exth.write(pack(b'>II', EXTH_CODES['rights'], len(rights) + 8))
@@ -78,7 +78,7 @@ def build_exth(metadata, prefer_author_sort=False, is_periodical=False,
             continue
 
         for item in items:
-            data = unicode(item)
+            data = str(item)
             if term != 'description':
                 data = COLLAPSE_RE.sub(' ', data)
             if term == 'identifier':
@@ -102,14 +102,14 @@ def build_exth(metadata, prefer_author_sort=False, is_periodical=False,
     from calibre.ebooks.oeb.base import OPF
     for x in metadata['identifier']:
         if (x.get(OPF('scheme'), None).lower() == 'uuid' or
-                unicode(x).startswith('urn:uuid:')):
-            uuid = unicode(x).split(':')[-1]
+                str(x).startswith('urn:uuid:')):
+            uuid = str(x).split(':')[-1]
             break
     if uuid is None:
         from uuid import uuid4
         uuid = str(uuid4())
 
-    if isinstance(uuid, unicode):
+    if isinstance(uuid, str):
         uuid = uuid.encode('utf-8')
     if not share_not_sync:
         exth.write(pack(b'>II', 113, len(uuid) + 8))
@@ -162,7 +162,7 @@ def build_exth(metadata, prefer_author_sort=False, is_periodical=False,
     else:
         # Pretend to be kindlegen 1.2
         vals = {204:201, 205:1, 206:2, 207:33307}
-    for code, val in vals.iteritems():
+    for code, val in vals.items():
         exth.write(pack(b'>III', code, 12, val))
         nrecs += 1
     if be_kindlegen2:

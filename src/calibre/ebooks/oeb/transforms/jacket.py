@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
@@ -98,17 +98,17 @@ class Jacket(Base):
         self.log('Inserting metadata into book...')
 
         try:
-            tags = map(unicode, self.oeb.metadata.subject)
+            tags = list(map(str, self.oeb.metadata.subject))
         except:
             tags = []
 
         try:
-            comments = unicode(self.oeb.metadata.description[0])
+            comments = str(self.oeb.metadata.description[0])
         except:
             comments = ''
 
         try:
-            title = unicode(self.oeb.metadata.title[0])
+            title = str(self.oeb.metadata.title[0])
         except:
             title = _('Unknown')
 
@@ -132,7 +132,7 @@ class Jacket(Base):
     def remove_existing_jacket(self):
         for x in self.oeb.spine[:4]:
             if XPath(JACKET_XPATH)(x.data):
-                self.remove_images(x, limit=sys.maxint)
+                self.remove_images(x, limit=sys.maxsize)
                 self.oeb.manifest.remove(x)
                 self.log('Removed existing jacket')
                 break
@@ -165,7 +165,7 @@ def get_rating(rating, rchar, e_rchar):
     return ans
 
 
-class Series(unicode):
+class Series(str):
 
     def __new__(self, series, series_index):
         if series and series_index is not None:
@@ -174,20 +174,20 @@ class Series(unicode):
             combined = _('{1} of <em>{0}</em>').format(
                 escape(series), escape(fmt_sidx(series_index, use_roman=False)))
         else:
-            combined = roman = escape(series or u'')
-        s = unicode.__new__(self, combined)
+            combined = roman = escape(series or '')
+        s = str.__new__(self, combined)
         s.roman = roman
-        s.name = escape(series or u'')
+        s.name = escape(series or '')
         s.number = escape(fmt_sidx(series_index or 1.0, use_roman=False))
         s.roman_number = escape(fmt_sidx(series_index or 1.0, use_roman=True))
         return s
 
 
-class Tags(unicode):
+class Tags(str):
 
     def __new__(self, tags, output_profile):
         tags = [escape(x) for x in tags or ()]
-        t = unicode.__new__(self, ', '.join(tags))
+        t = str.__new__(self, ', '.join(tags))
         t.alphabetical = ', '.join(sorted(tags, key=sort_key))
         t.tags_list = tags
         return t
@@ -220,7 +220,7 @@ def render_jacket(mi, output_profile,
         if is_date_undefined(mi.pubdate):
             pubdate = ''
         else:
-            pubdate = strftime(u'%Y', mi.pubdate.timetuple())
+            pubdate = strftime('%Y', mi.pubdate.timetuple())
     except:
         pubdate = ''
 
@@ -274,9 +274,9 @@ def render_jacket(mi, output_profile,
 
         if False:
             print("Custom column values available in jacket template:")
-            for key in args.keys():
+            for key in list(args.keys()):
                 if key.startswith('_') and not key.endswith('_label'):
-                    print(" %s: %s" % ('#' + key[1:], args[key]))
+                    print((" %s: %s" % ('#' + key[1:], args[key])))
 
         # Used in the comment describing use of custom columns in templates
         # Don't change this unless you also change it in template.xhtml

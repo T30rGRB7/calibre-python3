@@ -14,7 +14,7 @@ to get and set meta information. For example:
 
 import struct, zlib, sys, os
 from shutil import copyfileobj
-from cStringIO import StringIO
+from io import StringIO
 import xml.dom.minidom as dom
 from functools import wraps
 
@@ -193,9 +193,9 @@ class xml_field(object):
             return elem
 
         if not val:
-            val = u''
+            val = ''
         if type(val).__name__ != 'unicode':
-            val = unicode(val, 'utf-8')
+            val = str(val, 'utf-8')
 
         elems = document.getElementsByTagName(self.tag_name)
         elem = None
@@ -373,9 +373,9 @@ class LRFMetaFile(object):
                 return res
             return restore_pos
         locals_ = func()
-        if locals_.has_key("fget"):  # noqa
+        if "fget" in locals_:  # noqa
             locals_["fget"] = decorator(locals_["fget"])
-        if locals_.has_key("fset"):  # noqa
+        if "fset" in locals_:  # noqa
             locals_["fset"] = decorator(locals_["fset"])
         return property(**locals_)
 
@@ -685,8 +685,8 @@ def main(args=sys.argv):
     options, args = parser.parse_args(args)
     if len(args) != 2:
         parser.print_help()
-        print
-        print 'No lrf file specified'
+        print()
+        print('No lrf file specified')
         return 1
     lrf = LRFMetaFile(open(args[1], "r+b"))
 
@@ -727,13 +727,13 @@ def main(args=sys.argv):
             f.write(t)
             f.close()
 
-    fields = LRFMetaFile.__dict__.items()
+    fields = list(LRFMetaFile.__dict__.items())
     fields.sort()
     for f in fields:
         if "XML" in str(f):
-            print str(f[1]) + ":", lrf.__getattribute__(f[0]).encode('utf-8')
+            print(str(f[1]) + ":", lrf.__getattribute__(f[0]).encode('utf-8'))
     if options.get_thumbnail:
-        print "Thumbnail:", td
+        print("Thumbnail:", td)
     if options.get_cover:
         try:
             ext, data = lrf.get_cover()
@@ -742,9 +742,9 @@ def main(args=sys.argv):
         if data:
             cover = os.path.splitext(os.path.basename(args[1]))[0]+"_cover."+ext
             open(cover, 'wb').write(data)
-            print 'Cover:', cover
+            print('Cover:', cover)
         else:
-            print 'Could not find cover in the LRF file'
+            print('Could not find cover in the LRF file')
 
 
 if __name__ == '__main__':

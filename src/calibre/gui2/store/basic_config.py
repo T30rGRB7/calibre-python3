@@ -38,5 +38,5 @@ class BasicStoreConfig(object):
 
     def save_settings(self, config_widget):
         self.config['open_external'] = config_widget.open_external.isChecked()
-        tags = unicode(config_widget.tags.text())
+        tags = str(config_widget.tags.text())
         self.config['tags'] = tags

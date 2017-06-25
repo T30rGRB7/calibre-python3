@@ -2,9 +2,9 @@
 # vim:fileencoding=utf-8
 # License: GPLv3 Copyright: 2015, Kovid Goyal <kovid at kovidgoyal.net>
 
-from __future__ import absolute_import, division, print_function, unicode_literals
 
-import cPickle
+
+import pickle
 import hashlib
 import random
 import shutil
@@ -172,8 +172,8 @@ def get_library_init_data(ctx, rd, db, num, sorts, orders, vl):
         sf.pop('ondevice', None)
         ans['sortable_fields'] = sorted(
             ((sanitize_sort_field_name(db.field_metadata, k), v)
-             for k, v in sf.iteritems()),
-            key=lambda (field, name): sort_key(name)
+             for k, v in sf.items()),
+            key=lambda field_name: sort_key(field_name[1])
         )
         ans['field_metadata'] = db.field_metadata.all_metadata()
         ans['virtual_libraries'] = db._pref('virtual_libraries', {})
@@ -361,7 +361,7 @@ def tag_browser(ctx, rd):
     db, library_id = get_library_data(ctx, rd)[:2]
     opts = categories_settings(rd.query, db)
     vl = rd.query.get('vl') or ''
-    etag = cPickle.dumps([db.last_modified().isoformat(), rd.username, library_id, vl, list(opts)], -1)
+    etag = pickle.dumps([db.last_modified().isoformat(), rd.username, library_id, vl, list(opts)], -1)
     etag = hashlib.sha1(etag).hexdigest()
 
     def generate():

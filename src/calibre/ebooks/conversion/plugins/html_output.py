@@ -1,4 +1,4 @@
-from __future__ import with_statement
+
 __license__ = 'GPL 3'
 __copyright__ = '2010, Fabian Grassl <fg@jusmeum.de>'
 __docformat__ = 'restructuredtext en'
@@ -45,7 +45,7 @@ class HTMLOutput(OutputFormatPlugin):
         Generate table of contents
         '''
         from lxml import etree
-        from urllib import unquote
+        from urllib.parse import unquote
 
         from calibre.ebooks.oeb.base import element
         with CurrentDir(output_dir):
@@ -79,7 +79,7 @@ class HTMLOutput(OutputFormatPlugin):
         from lxml import etree
         from calibre.utils import zipfile
         from templite import Templite
-        from urllib import unquote
+        from urllib.parse import unquote
         from calibre.ebooks.html.meta import EasyMeta
 
         # read template files
@@ -129,7 +129,7 @@ class HTMLOutput(OutputFormatPlugin):
                     toc=html_toc, meta=meta, nextLink=nextLink,
                     tocUrl=tocUrl, cssLink=cssLink,
                     firstContentPageLink=nextLink)
-            if isinstance(t, unicode):
+            if isinstance(t, str):
                 t = t.encode('utf-8')
             f.write(t)
 

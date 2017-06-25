@@ -49,7 +49,7 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
         choices = [(x.upper(), x) for x in output_formats]
         r('output_format', prefs, choices=choices, setting=OutputFormatSetting)
 
-        restrictions = sorted(db.prefs['virtual_libraries'].iterkeys(), key=sort_key)
+        restrictions = sorted(iter(db.prefs['virtual_libraries'].keys()), key=sort_key)
         choices = [('', '')] + [(x, x) for x in restrictions]
         # check that the virtual library still exists
         vls = db.prefs['virtual_lib_on_startup']
@@ -83,7 +83,7 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
 
     def commit(self):
         input_map = prefs['input_format_order']
-        input_cols = [unicode(self.opt_input_order.item(i).data(Qt.UserRole) or '') for
+        input_cols = [str(self.opt_input_order.item(i).data(Qt.UserRole) or '') for
                 i in range(self.opt_input_order.count())]
         if input_map != input_cols:
             prefs['input_format_order'] = input_cols
@@ -128,7 +128,7 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
         viewer = self.opt_internally_viewed_formats
         for i in range(viewer.count()):
             if viewer.item(i).checkState() == Qt.Checked:
-                fmts.append(unicode(viewer.item(i).text()))
+                fmts.append(str(viewer.item(i).text()))
         return fmts
     # }}}
 
@@ -164,7 +164,7 @@ class ConfigWidget(ConfigWidgetBase, Ui_Form):
     # }}}
 
     def reset_confirmation_dialogs(self, *args):
-        for key in dynamic.keys():
+        for key in list(dynamic.keys()):
             if key.endswith('_again') and dynamic[key] is False:
                 dynamic[key] = True
         gprefs['questions_to_auto_skip'] = []

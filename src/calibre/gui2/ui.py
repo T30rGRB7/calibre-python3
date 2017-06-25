@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
@@ -10,7 +10,7 @@ __docformat__ = 'restructuredtext en'
 '''The main GUI'''
 
 import collections, os, sys, textwrap, time, gc, errno, re
-from Queue import Queue, Empty
+from queue import Queue, Empty
 from threading import Thread
 from collections import OrderedDict
 from io import BytesIO
@@ -234,7 +234,7 @@ class Main(MainWindow, MainWindowMixin, DeviceMixin, EmailMixin,  # {{{
         self.check_messages_timer.timeout.connect(self.another_instance_wants_to_talk)
         self.check_messages_timer.start(1000)
 
-        for ac in self.iactions.values():
+        for ac in list(self.iactions.values()):
             try:
                 ac.do_genesis()
             except Exception:
@@ -245,7 +245,7 @@ class Main(MainWindow, MainWindowMixin, DeviceMixin, EmailMixin,  # {{{
                     raise
         self.donate_action = QAction(QIcon(I('donate.png')),
                 _('&Donate to support calibre'), self)
-        for st in self.istores.values():
+        for st in list(self.istores.values()):
             st.do_genesis()
         MainWindowMixin.init_main_window_mixin(self, db)
 
@@ -388,7 +388,7 @@ class Main(MainWindow, MainWindowMixin, DeviceMixin, EmailMixin,  # {{{
 
         self.build_context_menus()
 
-        for ac in self.iactions.values():
+        for ac in list(self.iactions.values()):
             try:
                 ac.gui_layout_complete()
             except:
@@ -406,7 +406,7 @@ class Main(MainWindow, MainWindowMixin, DeviceMixin, EmailMixin,  # {{{
         self.bars_manager.start_animation()
         self.set_window_title()
 
-        for ac in self.iactions.values():
+        for ac in list(self.iactions.values()):
             try:
                 ac.initialization_complete()
             except:
@@ -593,7 +593,7 @@ class Main(MainWindow, MainWindowMixin, DeviceMixin, EmailMixin,  # {{{
         if self.content_server is not None and \
                 self.content_server.exception is not None:
             error_dialog(self, _('Failed to start Content server'),
-                         unicode(self.content_server.exception)).exec_()
+                         str(self.content_server.exception)).exec_()
 
     @property
     def current_db(self):
@@ -653,7 +653,7 @@ class Main(MainWindow, MainWindowMixin, DeviceMixin, EmailMixin,  # {{{
                 import traceback
                 traceback.print_exc()
         else:
-            print msg
+            print(msg)
 
     def current_view(self):
         '''Convenience method that returns the currently visible view '''
@@ -726,7 +726,7 @@ class Main(MainWindow, MainWindowMixin, DeviceMixin, EmailMixin,  # {{{
             if db.prefs['virtual_lib_on_startup']:
                 self.apply_virtual_library(db.prefs['virtual_lib_on_startup'])
             self.rebuild_vl_tabs()
-            for action in self.iactions.values():
+            for action in list(self.iactions.values()):
                 action.library_changed(db)
             self.library_broker.gui_library_changed(db, olddb)
             if self.device_connected:
@@ -753,7 +753,7 @@ class Main(MainWindow, MainWindowMixin, DeviceMixin, EmailMixin,  # {{{
             font.setBold(True)
             font.setItalic(True)
         self.virtual_library.setFont(font)
-        title = u'{0} - || {1}{2} ||'.format(
+        title = '{0} - || {1}{2} ||'.format(
                 __appname__, self.iactions['Choose Library'].library_name(), restrictions)
         self.setWindowTitle(title)
 
@@ -767,7 +767,7 @@ class Main(MainWindow, MainWindowMixin, DeviceMixin, EmailMixin,  # {{{
         for x in ('tb', 'cb'):
             splitter = getattr(self, x+'_splitter')
             splitter.button.setEnabled(location == 'library')
-        for action in self.iactions.values():
+        for action in list(self.iactions.values()):
             action.location_selected(location)
         if location == 'library':
             self.virtual_library_menu.setEnabled(True)
@@ -876,7 +876,7 @@ class Main(MainWindow, MainWindowMixin, DeviceMixin, EmailMixin,  # {{{
             pass
         if not minz:
             self.job_error_dialog.show_error(dialog_title,
-                    _('<b>Failed</b>')+': '+unicode(job.description),
+                    _('<b>Failed</b>')+': '+str(job.description),
                     det_msg=job.details, retry_func=retry_func)
 
     def read_settings(self):
@@ -960,7 +960,7 @@ class Main(MainWindow, MainWindowMixin, DeviceMixin, EmailMixin,  # {{{
             db.new_api.set_pref('field_metadata', db.field_metadata.all_metadata())
             db.commit_dirty_cache()
             db.prefs.write_serialized(prefs['library_path'])
-        for action in self.iactions.values():
+        for action in list(self.iactions.values()):
             if not action.shutting_down():
                 return
         if write_settings:

@@ -44,7 +44,7 @@ class HistoryMixin(object):
             self.lineEdit().editingFinished.connect(self.save_history)
 
     def save_history(self):
-        ct = unicode(self.text())
+        ct = str(self.text())
         if len(ct) > 2:
             try:
                 self.history.remove(ct)
@@ -91,7 +91,7 @@ class ColorButton(QPushButton):
             return self._color
 
         def fset(self, val):
-            val = unicode(val or '')
+            val = str(val or '')
             col = QColor(val)
             orig = self._color
             if col.isValid():
@@ -111,7 +111,7 @@ class ColorButton(QPushButton):
     def choose_color(self):
         col = QColorDialog.getColor(QColor(self._color or Qt.white), self, _('Choose a color'))
         if col.isValid():
-            self.color = unicode(col.name())
+            self.color = str(col.name())
 
 
 def access_key(k):

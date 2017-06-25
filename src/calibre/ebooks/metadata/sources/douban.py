@@ -9,7 +9,7 @@ __docformat__ = 'restructuredtext en'
 
 import time
 from functools import partial
-from Queue import Queue, Empty
+from queue import Queue, Empty
 
 
 from calibre.ebooks.metadata import check_isbn
@@ -175,7 +175,7 @@ class Douban(Source):
     # }}}
 
     def create_query(self, log, title=None, authors=None, identifiers={}):  # {{{
-        from urllib import urlencode
+        from urllib.parse import urlencode
         SEARCH_URL = 'https://api.douban.com/book/subjects?'
         ISBN_URL = 'https://api.douban.com/book/subject/isbn/'
         SUBJECT_URL = 'https://api.douban.com/book/subject/'
@@ -203,7 +203,7 @@ class Douban(Source):
                     build_term('author', author_tokens))
             t = 'search'
         q = q.strip()
-        if isinstance(q, unicode):
+        if isinstance(q, str):
             q = q.encode('utf-8')
         if not q:
             return None

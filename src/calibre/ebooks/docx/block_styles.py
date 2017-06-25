@@ -112,11 +112,11 @@ def read_border(parent, dest, XPath, get, border_edges=border_edges, name='pBdr'
 
     for border in XPath('./w:' + name)(parent):
         for edge in border_edges:
-            for prop, val in read_single_border(border, edge, XPath, get).iteritems():
+            for prop, val in read_single_border(border, edge, XPath, get).items():
                 if val is not None:
                     vals[prop % edge] = val
 
-    for key, val in vals.iteritems():
+    for key, val in vals.items():
         setattr(dest, key, val)
 
 
@@ -124,7 +124,7 @@ def border_to_css(edge, style, css):
     bs = getattr(style, 'border_%s_style' % edge)
     bc = getattr(style, 'border_%s_color' % edge)
     bw = getattr(style, 'border_%s_width' % edge)
-    if isinstance(bw, (float, int, long)):
+    if isinstance(bw, (float, int)):
         # WebKit needs at least 1pt to render borders and 3pt to render double borders
         bw = max(bw, (3 if bs == 'double' else 1))
     if bs is not inherit and bs is not None:
@@ -132,7 +132,7 @@ def border_to_css(edge, style, css):
     if bc is not inherit and bc is not None:
         css['border-%s-color' % edge] = bc
     if bw is not inherit and bw is not None:
-        if isinstance(bw, (int, float, long)):
+        if isinstance(bw, (int, float)):
             bw = '%.3gpt' % bw
         css['border-%s-width' % edge] = bw
 

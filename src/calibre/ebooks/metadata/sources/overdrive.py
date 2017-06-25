@@ -11,7 +11,7 @@ Fetch metadata using Overdrive Content Reserve
 '''
 import re, random, copy, json
 from threading import RLock
-from Queue import Queue, Empty
+from queue import Queue, Empty
 
 
 from calibre.ebooks.metadata import check_isbn
@@ -233,7 +233,7 @@ class OverDrive(Source):
             xreq.add_header('Referer', q_init_search)
             xreq.add_header('Accept', 'application/json, text/javascript, */*')
             raw = br.open_novisit(xreq).read()
-            for m in re.finditer(ur'"iTotalDisplayRecords":(?P<displayrecords>\d+).*?"iTotalRecords":(?P<totalrecords>\d+)', raw):
+            for m in re.finditer(r'"iTotalDisplayRecords":(?P<displayrecords>\d+).*?"iTotalRecords":(?P<totalrecords>\d+)', raw):
                 if int(m.group('totalrecords')) == 0:
                     return ''
                 elif int(m.group('displayrecords')) >= 1:
@@ -408,7 +408,7 @@ class OverDrive(Source):
 
         try:
             raw = br.open_novisit(metadata_url).read()
-        except Exception, e:
+        except Exception as e:
             if callable(getattr(e, 'getcode', None)) and \
                     e.getcode() == 404:
                 return False
@@ -450,7 +450,7 @@ class OverDrive(Source):
 
         if desc:
             desc = desc[0]
-            desc = html.tostring(desc, method='html', encoding=unicode).strip()
+            desc = html.tostring(desc, method='html', encoding=str).strip()
             # remove all attributes from tags
             desc = re.sub(r'<([a-zA-Z0-9]+)\s[^>]+>', r'<\1>', desc)
             # Remove comments

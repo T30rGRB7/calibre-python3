@@ -13,7 +13,7 @@ DEBUG_DIALOG = False
 import os, time
 from threading import Thread, Event
 from operator import attrgetter
-from Queue import Queue, Empty
+from queue import Queue, Empty
 from io import BytesIO
 
 from PyQt5.Qt import (
@@ -153,7 +153,7 @@ class ResultsModel(QAbstractTableModel):  # {{{
 
     def data_as_text(self, book, col):
         if col == 0:
-            return unicode(book.gui_rank+1)
+            return str(book.gui_rank+1)
         if col == 1:
             t = book.title if book.title else _('Unknown')
             a = authors_to_string(book.authors) if book.authors else ''
@@ -343,12 +343,12 @@ class Comments(QWebView):  # {{{
             if col.isValid():
                 col = col.toRgb()
                 if col.isValid():
-                    ans = unicode(col.name())
+                    ans = str(col.name())
             return ans
 
         fi = QFontInfo(QApplication.font(self.parent()))
         f = fi.pixelSize()+1+int(tweaks['change_book_details_font_size_by'])
-        fam = unicode(fi.family()).strip().replace('"', '')
+        fam = str(fi.family()).strip().replace('"', '')
         if not fam:
             fam = 'sans-serif'
 
@@ -423,7 +423,7 @@ class IdentifyWorker(Thread):  # {{{
                         'single_identify', (self.title, self.authors,
                             self.identifiers), no_output=True, abort=self.abort)
                 self.results, covers, caches, log_dump = res['result']
-                self.results = [OPF(BytesIO(r), basedir=os.getcwdu(),
+                self.results = [OPF(BytesIO(r), basedir=os.getcwd(),
                     populate_spine=False).to_book_metadata() for r in self.results]
                 for r, cov in zip(self.results, covers):
                     r.has_cached_cover_url = cov
@@ -508,12 +508,12 @@ class IdentifyWidget(QWidget):  # {{{
             parts.append('authors:'+authors_to_string(authors))
             simple_desc += _('Authors: %s ') % authors_to_string(authors)
         if identifiers:
-            x = ', '.join('%s:%s'%(k, v) for k, v in identifiers.iteritems())
+            x = ', '.join('%s:%s'%(k, v) for k, v in identifiers.items())
             parts.append(x)
             if 'isbn' in identifiers:
                 simple_desc += ' ISBN: %s' % identifiers['isbn']
         self.query.setText(simple_desc)
-        self.log(unicode(self.query.text()))
+        self.log(str(self.query.text()))
 
         self.worker = IdentifyWorker(self.log, self.abort, title,
                 authors, identifiers, self.caches)
@@ -688,7 +688,7 @@ class CoversModel(QAbstractListModel):  # {{{
 
     def plugin_for_index(self, index):
         row = index.row() if hasattr(index, 'row') else index
-        for k, v in self.plugin_map.iteritems():
+        for k, v in self.plugin_map.items():
             if row in v:
                 return k
 
@@ -703,7 +703,7 @@ class CoversModel(QAbstractListModel):  # {{{
                 return 1
             return pmap.width()*pmap.height()
         dcovers = sorted(self.covers[1:], key=keygen, reverse=True)
-        cmap = {i:self.plugin_for_index(i) for i in xrange(len(self.covers))}
+        cmap = {i:self.plugin_for_index(i) for i in range(len(self.covers))}
         for i, x in enumerate(self.covers[0:1] + dcovers):
             if not x[-1]:
                 good.append(x)
@@ -749,8 +749,8 @@ class CoversModel(QAbstractListModel):  # {{{
             if pmap.isNull():
                 return
             self.beginInsertRows(QModelIndex(), last_row, last_row)
-            for rows in self.plugin_map.itervalues():
-                for i in xrange(len(rows)):
+            for rows in self.plugin_map.values():
+                for i in range(len(rows)):
                     if rows[i] >= last_row:
                         rows[i] += 1
             self.plugin_map[plugin].insert(-1, last_row)
@@ -759,7 +759,7 @@ class CoversModel(QAbstractListModel):  # {{{
         else:
             # single cover plugin
             idx = None
-            for plugin, rows in self.plugin_map.iteritems():
+            for plugin, rows in self.plugin_map.items():
                 if plugin.name == plugin_name:
                     idx = rows[0]
                     break
@@ -842,7 +842,7 @@ class CoversView(QListView):  # {{{
             pmap = self.model().cc
         if pmap is not None:
             from calibre.gui2.viewer.image_popup import ImageView
-            d = ImageView(self, pmap, unicode(idx.data(Qt.DisplayRole) or ''), geom_name='metadata_download_cover_popup_geom')
+            d = ImageView(self, pmap, str(idx.data(Qt.DisplayRole) or ''), geom_name='metadata_download_cover_popup_geom')
             d(use_exec=True)
 
     def copy_cover(self):

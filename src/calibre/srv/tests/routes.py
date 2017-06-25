@@ -52,7 +52,7 @@ class TestRouter(BaseTest):
         router = Router()
 
         def find(path):
-            path = filter(None, path.split('/'))
+            path = [_f for _f in path.split('/') if _f]
             ep, args = router.find_route(path)
             args = list(args)
             return ep, args
@@ -85,7 +85,7 @@ class TestRouter(BaseTest):
         def get(ctx, dest, a, b):
             pass
 
-        for x in locals().itervalues():
+        for x in locals().values():
             if getattr(x, 'is_endpoint', False):
                 router.add(x)
         router.finalize()

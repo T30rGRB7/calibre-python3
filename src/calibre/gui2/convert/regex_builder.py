@@ -58,7 +58,7 @@ class RegexBuilder(QDialog, Ui_RegexBuilder):
         gprefs['regex_builder_geometry'] = geom
 
     def regex_valid(self):
-        regex = unicode(self.regex.text())
+        regex = str(self.regex.text())
         if regex:
             try:
                 compile_regular_expression(regex)
@@ -81,8 +81,8 @@ class RegexBuilder(QDialog, Ui_RegexBuilder):
         selections = []
         self.match_locs = []
         if self.regex_valid():
-            text = unicode(self.preview.toPlainText())
-            regex = unicode(self.regex.text())
+            text = str(self.preview.toPlainText())
+            regex = str(self.regex.text())
             cursor = QTextCursor(self.preview.document())
             extsel = QTextEdit.ExtraSelection()
             extsel.cursor = cursor
@@ -106,7 +106,7 @@ class RegexBuilder(QDialog, Ui_RegexBuilder):
         pos = self.preview.textCursor().position()
         if self.match_locs:
             match_loc = len(self.match_locs) - 1
-            for i in xrange(len(self.match_locs) - 1, -1, -1):
+            for i in range(len(self.match_locs) - 1, -1, -1):
                 loc = self.match_locs[i][1]
                 if pos > loc:
                     match_loc = i
@@ -117,7 +117,7 @@ class RegexBuilder(QDialog, Ui_RegexBuilder):
         pos = self.preview.textCursor().position()
         if self.match_locs:
             match_loc = 0
-            for i in xrange(len(self.match_locs)):
+            for i in range(len(self.match_locs)):
                 loc = self.match_locs[i][0]
                 if pos < loc:
                     match_loc = i
@@ -196,12 +196,12 @@ class RegexBuilder(QDialog, Ui_RegexBuilder):
             self.open_book(files[0])
 
     def doc(self):
-        return unicode(self.preview.toPlainText())
+        return str(self.preview.toPlainText())
 
 
 class RegexEdit(QWidget, Ui_Edit):
 
-    doc_update = pyqtSignal(unicode)
+    doc_update = pyqtSignal(str)
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
@@ -232,7 +232,7 @@ class RegexEdit(QWidget, Ui_Edit):
     def setObjectName(self, *args):
         QWidget.setObjectName(self, *args)
         if hasattr(self, 'edit'):
-            self.edit.initialize('regex_edit_'+unicode(self.objectName()))
+            self.edit.initialize('regex_edit_'+str(self.objectName()))
 
     def set_msg(self, msg):
         self.msg.setText(msg)
@@ -254,7 +254,7 @@ class RegexEdit(QWidget, Ui_Edit):
 
     @property
     def text(self):
-        return unicode(self.edit.text())
+        return str(self.edit.text())
 
     @property
     def regex(self):

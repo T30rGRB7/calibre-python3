@@ -124,7 +124,7 @@ class Cell(object):
             makeelement(tcPr, 'w:shd', w_val="clear", w_color="auto", w_fill=bc)
 
         b = makeelement(tcPr, 'w:tcBorders', append=False)
-        for edge, border in self.borders.iteritems():
+        for edge, border in self.borders.items():
             if border is not None and border.width > 0 and border.style != 'none':
                 makeelement(b, 'w:' + edge, w_val=border.style, w_sz=str(border.width), w_color=border.color)
         if len(b) > 0:
@@ -309,7 +309,7 @@ class Table(object):
             for cell in tuple(row.cells):
                 idx = row.cells.index(cell)
                 if cell.col_span > 1 and (cell is row.cells[-1] or not isinstance(row.cells[idx+1], SpannedCell)):
-                    row.cells[idx:idx+1] = [cell] + [SpannedCell(cell, horizontal=True) for i in xrange(1, cell.col_span)]
+                    row.cells[idx:idx+1] = [cell] + [SpannedCell(cell, horizontal=True) for i in range(1, cell.col_span)]
 
         # Expand vertically
         for r, row in enumerate(self.rows):
@@ -322,7 +322,7 @@ class Table(object):
                         except Exception:
                             tcell = None
                         if tcell is None:
-                            nrow.cells.extend([SpannedCell(nrow.cells[-1], horizontal=True) for i in xrange(idx - len(nrow.cells))])
+                            nrow.cells.extend([SpannedCell(nrow.cells[-1], horizontal=True) for i in range(idx - len(nrow.cells))])
                             nrow.cells.append(sc)
                         else:
                             if isinstance(tcell, SpannedCell):

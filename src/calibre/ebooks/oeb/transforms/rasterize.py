@@ -1,13 +1,13 @@
 '''
 SVG rasterization transform.
 '''
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2008, Marshall T. Vandegrift <llasram@gmail.com>'
 
 import os, re
-from urlparse import urldefrag
+from urllib.parse import urldefrag
 
 from lxml import etree
 from PyQt5.Qt import (
@@ -67,7 +67,7 @@ class SVGRasterizer(object):
 
         if view_box is not None:
             try:
-                box = [float(x) for x in filter(None, re.split('[, ]', view_box))]
+                box = [float(x) for x in [_f for _f in re.split('[, ]', view_box) if _f]]
                 sizes = [box[2]-box[0], box[3] - box[1]]
             except (TypeError, ValueError, IndexError):
                 logger.warn('SVG image has invalid viewBox="%s", ignoring the viewBox' % view_box)
@@ -104,7 +104,7 @@ class SVGRasterizer(object):
         return str(array)
 
     def dataize_manifest(self):
-        for item in self.oeb.manifest.values():
+        for item in list(self.oeb.manifest.values()):
             if item.media_type == SVG_MIME and item.data is not None:
                 self.dataize_svg(item)
 
@@ -223,11 +223,11 @@ class SVGRasterizer(object):
         covers = self.oeb.metadata.cover
         if not covers:
             return
-        if unicode(covers[0]) not in self.oeb.manifest.ids:
+        if str(covers[0]) not in self.oeb.manifest.ids:
             self.oeb.logger.warn('Cover not in manifest, skipping.')
             self.oeb.metadata.clear('cover')
             return
-        cover = self.oeb.manifest.ids[unicode(covers[0])]
+        cover = self.oeb.manifest.ids[str(covers[0])]
         if not cover.media_type == SVG_MIME:
             return
         width = (self.profile.width / 72) * self.profile.dpi

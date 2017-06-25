@@ -161,7 +161,7 @@ class AddBrackets:
             self.__open_bracket = False
 
         inline_string = ''.join(['%s<nu<%s\n' % (k, v)
-                for k, v in self.__inline.iteritems()
+                for k, v in self.__inline.items()
                     if v != 'false'])
         if inline_string:
             self.__write_obj.write('ob<nu<open-brack<0003\n'

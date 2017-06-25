@@ -214,7 +214,7 @@ class EximDialog(Dialog):
             lambda i, sz: self.lib_list.item(i).setText(self.export_lib_text(self.lib_list.item(i).data(Qt.UserRole), sz))), type=Qt.QueuedConnection)
 
     def get_lib_sizes(self):
-        for i in xrange(self.lib_list.count()):
+        for i in range(self.lib_list.count()):
             path = self.lib_list.item(i).data(Qt.UserRole)
             try:
                 sz = disk_usage(path, abort=self.abort_disk_usage)

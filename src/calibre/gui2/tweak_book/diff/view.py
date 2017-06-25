@@ -66,7 +66,7 @@ def beautify_text(raw, syntax):
     else:
         root = parse(raw, line_numbers=False)
         pretty_html_tree(None, root)
-    return etree.tostring(root, encoding=unicode)
+    return etree.tostring(root, encoding=str)
 
 
 class LineNumberMap(dict):  # {{{
@@ -79,7 +79,7 @@ class LineNumberMap(dict):  # {{{
         return self
 
     def __setitem__(self, k, v):
-        v = unicode(v)
+        v = str(v)
         dict.__setitem__(self, k, v)
         self.max_width = max(self.max_width, len(v))
 
@@ -160,13 +160,13 @@ class TextBrowser(PlainTextEdit):  # {{{
 
     def calculate_metrics(self):
         w = self.fontMetrics()
-        self.number_width = max(map(lambda x:w.width(str(x)), xrange(10)))
+        self.number_width = max([w.width(str(x)) for x in range(10)])
         self.space_width = w.width(' ')
 
     def show_context_menu(self, pos):
         m = QMenu(self)
         a = m.addAction
-        i = unicode(self.textCursor().selectedText()).rstrip('\0')
+        i = str(self.textCursor().selectedText()).rstrip('\0')
         if i:
             a(QIcon(I('edit-copy.png')), _('Copy to clipboard'), self.copy).setShortcut(QKeySequence.Copy)
 
@@ -215,7 +215,7 @@ class TextBrowser(PlainTextEdit):  # {{{
         headers = dict(self.headers)
         if lnum in headers:
             cpos = self.search_header_pos
-        lines = unicode(self.toPlainText()).splitlines()
+        lines = str(self.toPlainText()).splitlines()
         for hn, text in self.headers:
             lines[hn] = text
         prefix, postfix = lines[lnum][:cpos], lines[lnum][cpos:]
@@ -306,7 +306,7 @@ class TextBrowser(PlainTextEdit):  # {{{
         while block.isValid() and top <= ev.rect().bottom():
             r = ev.rect()
             if block.isVisible() and bottom >= r.top():
-                text = unicode(self.line_number_map.get(num, ''))
+                text = str(self.line_number_map.get(num, ''))
                 is_start = text != '-' and num in change_starts
                 if is_start:
                     painter.save()
@@ -325,7 +325,7 @@ class TextBrowser(PlainTextEdit):  # {{{
                                 Qt.AlignRight, text)
                 if is_start:
                     painter.restore()
-            block = block.next()
+            block = next(block)
             top = bottom
             bottom = top + int(self.blockBoundingRect(block).height())
             num += 1
@@ -381,7 +381,7 @@ class TextBrowser(PlainTextEdit):  # {{{
         PlainTextEdit.paintEvent(self, event)
         painter = QPainter(self.viewport())
         painter.setClipRect(event.rect())
-        for top, bottom, kind in sorted(lines, key=lambda (t, b, k):{'replace':0}.get(k, 1)):
+        for top, bottom, kind in sorted(lines, key=lambda t_b_k:{'replace':0}.get(t_b_k[2], 1)):
             painter.setPen(QPen(self.diff_foregrounds[kind], 1))
             painter.drawLine(0, top, w, top)
             painter.drawLine(0, bottom - 1, w, bottom - 1)
@@ -612,7 +612,7 @@ class DiffSplit(QSplitter):  # {{{
             if size > 0:
                 c.beginEditBlock()
                 c.insertText(_('Size: {0} Resolution: {1}x{2}').format(human_readable(size), img.width(), img.height()))
-                for i in xrange(lines + 1):
+                for i in range(lines + 1):
                     c.insertBlock()
             change.extend((start, c.block().blockNumber()))
             c.insertBlock()
@@ -640,7 +640,7 @@ class DiffSplit(QSplitter):  # {{{
                 c.beginEditBlock()
                 c.movePosition(c.StartOfBlock)
                 if delta > 0:
-                    for _ in xrange(delta):
+                    for _ in range(delta):
                         c.insertBlock()
                 else:
                     c.movePosition(c.NextBlock, c.KeepAnchor, -delta)
@@ -652,12 +652,12 @@ class DiffSplit(QSplitter):  # {{{
                     return x if x <= top else x + delta
                 lnm = LineNumberMap()
                 lnm.max_width = v.line_number_map.max_width
-                for x, val in v.line_number_map.iteritems():
+                for x, val in v.line_number_map.items():
                     dict.__setitem__(lnm, mapnum(x), val)
                 v.line_number_map = lnm
                 v.changes = [(mapnum(t), mapnum(b), k) for t, b, k in v.changes]
                 v.headers = [(mapnum(x), name) for x, name in v.headers]
-                v.images = OrderedDict((mapnum(x), v) for x, v in v.images.iteritems())
+                v.images = OrderedDict((mapnum(x), v) for x, v in v.images.items())
             v.viewport().update()
 
     def get_lines_for_image(self, img, view):
@@ -747,7 +747,7 @@ class DiffSplit(QSplitter):  # {{{
     def do_insert(self, cursor, highlighter, line_number_map, lo, hi):
         start_block = cursor.block()
         highlighter.copy_lines(lo, hi, cursor)
-        for num, i in enumerate(xrange(start_block.blockNumber(), cursor.blockNumber())):
+        for num, i in enumerate(range(start_block.blockNumber(), cursor.blockNumber())):
             line_number_map[i] = lo + num + 1
         return start_block.blockNumber(), cursor.block().blockNumber()
 
@@ -806,10 +806,10 @@ class DiffSplit(QSplitter):  # {{{
         # search for the pair that matches best without being identical
         # (identical lines must be junk lines, & we don't want to synch up
         # on junk -- unless we have to)
-        for j in xrange(blo, bhi):
+        for j in range(blo, bhi):
             bj = b[j]
             cruncher.set_seq2(bj)
-            for i in xrange(alo, ahi):
+            for i in range(alo, ahi):
                 ai = a[i]
                 if ai == bj:
                     if eqi is None:
@@ -879,7 +879,7 @@ class DiffSplit(QSplitter):  # {{{
                 if word == '\n':
                     if fmts:
                         block.layout().setAdditionalFormats(fmts)
-                    pos, block, fmts = 0, block.next(), []
+                    pos, block, fmts = 0, next(block), []
                     continue
 
                 if tag in {'replace', 'insert', 'delete'}:
@@ -1058,7 +1058,7 @@ class DiffView(QWidget):  # {{{
                 ebl(b)
                 lmap[b.blockNumber()] = last_line_count
                 last_line_count += b.layout().lineCount()
-                b = b.next()
+                b = next(b)
             for top, bot, kind in v.changes:
                 changes.append((lmap[top], lmap[bot], kind))
 

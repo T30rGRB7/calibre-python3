@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
-from __future__ import with_statement
+
 
 __license__   = 'GPL v3'
 __copyright__ = '2009, Kovid Goyal <kovid@kovidgoyal.net>'
@@ -44,7 +44,7 @@ def gui_socket_address():
             if not user:
                 user = os.path.basename(os.path.expanduser('~'))
             if islinux:
-                ADDRESS = (u'\0%s-calibre-gui.socket' % ascii_filename(force_unicode(user))).encode('ascii')
+                ADDRESS = ('\0%s-calibre-gui.socket' % ascii_filename(force_unicode(user))).encode('ascii')
             else:
                 from tempfile import gettempdir
                 tmp = gettempdir()
@@ -70,7 +70,7 @@ def viewer_socket_address():
             if not user:
                 user = os.path.basename(os.path.expanduser('~'))
             if islinux:
-                VADDRESS = (u'\0%s-calibre-viewer.socket' % ascii_filename(force_unicode(user))).encode('ascii')
+                VADDRESS = ('\0%s-calibre-viewer.socket' % ascii_filename(force_unicode(user))).encode('ascii')
             else:
                 from tempfile import gettempdir
                 tmp = gettempdir()

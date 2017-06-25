@@ -74,7 +74,7 @@ class FileOrFolder(object):
     def __repr__(self):
         name = 'Folder' if self.is_folder else 'File'
         try:
-            path = unicode(self.full_path)
+            path = str(self.full_path)
         except:
             path = ''
         datum = 'size=%s'%(self.size)
@@ -201,7 +201,7 @@ class FilesystemCache(object):
         for entry in entries:
             FileOrFolder(entry, self)
 
-        for item in self.id_map.itervalues():
+        for item in self.id_map.values():
             try:
                 p = item.parent
             except KeyError:
@@ -227,7 +227,7 @@ class FilesystemCache(object):
                 return e
 
     def iterebooks(self, storage_id):
-        for x in self.id_map.itervalues():
+        for x in self.id_map.values():
             if x.storage_id == storage_id and x.is_ebook:
                 if x.parent_id == storage_id and x.name.lower().endswith('.txt'):
                     continue  # Ignore .txt files in the root

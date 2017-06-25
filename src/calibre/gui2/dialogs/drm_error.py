@@ -16,7 +16,7 @@ class DRMErrorMessage(QDialog, Ui_Dialog):
         QDialog.__init__(self, parent)
         self.setupUi(self)
         if title is not None:
-            t = unicode(self.msg.text())
+            t = str(self.msg.text())
             self.msg.setText('<h2>%s</h2>%s'%(title, t))
         self.resize(self.sizeHint())
 

@@ -17,7 +17,7 @@ sources = {'calibre':j(imgsrc, 'calibre.svg'), 'ebook-edit':j(imgsrc, 'tweak.svg
 if sys.argv[-1] == 'only-logo':
     sources = {'calibre':sources['calibre']}
 
-for name, src in sources.iteritems():
+for name, src in sources.items():
     iconset = name + '.iconset'
     if os.path.exists(iconset):
         shutil.rmtree(iconset)

@@ -80,8 +80,8 @@ def force_encoding(raw, verbose, assume_utf8=False):
     if chardet['confidence'] < 1 and assume_utf8:
         encoding = 'utf-8'
     if chardet['confidence'] < 1 and verbose:
-        print('WARNING: Encoding detection confidence for %s is %d%%'%(
-            chardet['encoding'], chardet['confidence']*100))
+        print(('WARNING: Encoding detection confidence for %s is %d%%'%(
+            chardet['encoding'], chardet['confidence']*100)))
     if not encoding:
         encoding = preferred_encoding
     encoding = encoding.lower()
@@ -92,7 +92,7 @@ def force_encoding(raw, verbose, assume_utf8=False):
 
 
 def detect_xml_encoding(raw, verbose=False, assume_utf8=False):
-    if not raw or isinstance(raw, unicode):
+    if not raw or isinstance(raw, str):
         return raw, None
     for x in ('utf8', 'utf-16-le', 'utf-16-be'):
         bom = getattr(codecs, 'BOM_'+x.upper().replace('-16', '16').replace(
@@ -135,7 +135,7 @@ def xml_to_unicode(raw, verbose=False, strip_encoding_pats=False,
         return '', None
     raw, encoding = detect_xml_encoding(raw, verbose=verbose,
             assume_utf8=assume_utf8)
-    if not isinstance(raw, unicode):
+    if not isinstance(raw, str):
         raw = raw.decode(encoding, 'replace')
 
     if strip_encoding_pats:

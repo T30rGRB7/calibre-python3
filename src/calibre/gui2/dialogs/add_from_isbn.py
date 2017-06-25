@@ -25,7 +25,7 @@ class AddFromISBN(QDialog):
 
         path = r'C:\Users\kovid\e-books\some_book.epub' if iswindows else \
                 '/Users/kovid/e-books/some_book.epub'
-        self.label.setText(unicode(self.label.text())%path)
+        self.label.setText(str(self.label.text())%path)
 
         self.isbns = []
         self.books = []
@@ -70,19 +70,19 @@ class AddFromISBN(QDialog):
     def paste(self, *args):
         app = QApplication.instance()
         c = app.clipboard()
-        txt = unicode(c.text()).strip()
+        txt = str(c.text()).strip()
         if txt:
-            old = unicode(self.isbn_box.toPlainText()).strip()
+            old = str(self.isbn_box.toPlainText()).strip()
             new = old + '\n' + txt
             self.isbn_box.setPlainText(new)
 
     def accept(self, *args):
-        tags = unicode(self.add_tags.text()).strip().split(',')
-        tags = list(filter(None, [x.strip() for x in tags]))
+        tags = str(self.add_tags.text()).strip().split(',')
+        tags = list([_f for _f in [x.strip() for x in tags] if _f])
         gprefs['add from ISBN tags'] = tags
         self.set_tags = tags
         bad = set()
-        for line in unicode(self.isbn_box.toPlainText()).strip().splitlines():
+        for line in str(self.isbn_box.toPlainText()).strip().splitlines():
             line = line.strip()
             if not line:
                 continue
