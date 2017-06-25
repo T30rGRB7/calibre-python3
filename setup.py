@@ -8,15 +8,11 @@ __docformat__ = 'restructuredtext en'
 
 import sys, os
 
-
 def check_version_info():
     vi = sys.version_info
-    if vi[0] == 2 and vi[1:3] >= (7, 9):
+    if vi.major >= 3:
         return
-    raise SystemExit(
-        'calibre requires python >= 2.7.9 and < 3. Current python version: %s'
-        % vi)
-
+    raise SystemExit('calibre-python3 requires python >= 3. Current python version: %d.%d' % (vi.major, vi.minor))
 
 check_version_info()
 
@@ -24,7 +20,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import setup.commands as commands
 from setup import prints, get_warnings
-
 
 def option_parser():
     import optparse
