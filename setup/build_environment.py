@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # vim:fileencoding=UTF-8:ts=4:sw=4:sta:et:sts=4:ai
 
 
@@ -85,10 +85,17 @@ from PyQt5.QtCore import PYQT_CONFIGURATION
 pyqt['sip_flags'] = PYQT_CONFIGURATION['sip_flags']
 def get_sip_dir():
     q = os.environ.get('SIP_DIR', os.path.join(sys.prefix, 'share', 'sip') if iswindows else os.path.join(sys.prefix, 'share', 'sip'))
-    for x in ('', 'Py2-PyQt5', 'PyQt5', 'sip/PyQt5'):
+    for x in ('', 'Py3-PyQt5', 'PyQt5', 'sip/PyQt5'):
         base = os.path.join(q, x)
         if os.path.exists(os.path.join(base, 'QtWidgets')):
             return base
+    try:
+        import sipconfig
+        base = os.path.join(sipconfig.Configuration().default_sip_dir, "Qt5")
+        if os.path.exists(os.path.join(base, "QtWidgets")):
+            return base
+    except ImportError:
+        raise EnvironmentError('Failed to import the sipconfig module')
     raise EnvironmentError('Failed to find the location of the PyQt5 .sip files')
 pyqt['pyqt_sip_dir'] = get_sip_dir()
 pyqt['sip_inc_dir'] = os.environ.get('SIP_INC_DIR', sysconfig.get_path('include'))
