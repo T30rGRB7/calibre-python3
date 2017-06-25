@@ -15,8 +15,6 @@ from collections import OrderedDict
 from itertools import islice
 
 
-from future_builtins import map
-
 from calibre import detect_ncpus as cpu_count, as_unicode
 from calibre.constants import plugins, filesystem_encoding
 from calibre.utils.icu import primary_sort_key, primary_find, primary_collator

@@ -1,7 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # vim:fileencoding=utf-8
-from __future__ import (unicode_literals, division, absolute_import,
-                        print_function)
+#from __future__ import (unicode_literals, division, absolute_import,
+#                        print_function)
 
 __license__ = 'GPL v3'
 __copyright__ = '2013, Kovid Goyal <kovid at kovidgoyal.net>'
@@ -9,7 +9,6 @@ __copyright__ = '2013, Kovid Goyal <kovid at kovidgoyal.net>'
 import os
 from functools import partial
 from itertools import product
-from future_builtins import map
 
 from PyQt5.Qt import (
     QDockWidget, Qt, QLabel, QIcon, QAction, QApplication, QWidget, QEvent,

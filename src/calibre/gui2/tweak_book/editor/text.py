@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # vim:fileencoding=utf-8
 # License: GPLv3 Copyright: 2013, Kovid Goyal <kovid at kovidgoyal.net>
 
@@ -8,7 +8,6 @@ import os
 import re
 import textwrap
 import unicodedata
-from future_builtins import map
 
 from PyQt5.Qt import (
     QColor, QColorDialog, QFont, QFontDatabase, QKeySequence, QPainter, QPalette,

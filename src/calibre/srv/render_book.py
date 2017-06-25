@@ -1,15 +1,14 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # vim:fileencoding=utf-8
 # License: GPLv3 Copyright: 2016, Kovid Goyal <kovid at kovidgoyal.net>
 
-from __future__ import (unicode_literals, division, absolute_import,
-                        print_function)
+#from __future__ import (unicode_literals, division, absolute_import,
+#                        print_function)
 import sys, os, json, re
 from base64 import standard_b64encode, standard_b64decode
 from collections import defaultdict, OrderedDict
 from itertools import count
 from functools import partial
-from future_builtins import map
 from urllib.parse import urlparse
 from urllib.parse import quote
 

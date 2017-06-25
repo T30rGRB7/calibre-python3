@@ -1,4 +1,4 @@
-#!/usr/bin/env  python2
+#!/usr/bin/env  python3
 __license__   = 'GPL v3'
 __copyright__ = '2008, Kovid Goyal kovid@kovidgoyal.net'
 __docformat__ = 'restructuredtext en'
@@ -7,7 +7,6 @@ __docformat__ = 'restructuredtext en'
 import math, json
 from base64 import b64encode
 from functools import partial
-from future_builtins import map
 
 from PyQt5.Qt import (
     QSize, QSizePolicy, QUrl, Qt, QPainter, QPalette, QBrush,

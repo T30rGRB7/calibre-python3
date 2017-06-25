@@ -10,7 +10,6 @@ import os, errno
 from binascii import hexlify
 from io import BytesIO
 from threading import Lock
-from future_builtins import map
 from functools import partial
 
 from calibre import fit_image

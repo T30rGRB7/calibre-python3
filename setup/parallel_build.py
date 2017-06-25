@@ -46,16 +46,16 @@ cpu_count = min(16, max(1, cpu_count))
 
 def run_worker(job, decorate=True):
     cmd, human_text = job
-    human_text = human_text or b' '.join(cmd)
+    human_text = human_text or ' '.join(cmd)
     try:
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     except Exception as err:
         return False, human_text, str(err)
     stdout, stderr = p.communicate()
     if decorate:
-        stdout = bytes(human_text) + b'\n' + (stdout or b'')
+        stdout = str(human_text) + "\n" + (str(stdout) or "")
     ok = p.returncode == 0
-    return ok, stdout, (stderr or b'')
+    return ok, stdout, (stderr or '')
 
 def create_job(cmd, human_text=None):
     return (cmd, human_text)

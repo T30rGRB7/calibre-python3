@@ -10,3 +10,7 @@ Install at least these from homebrew:
 You might need to link qt5 by force to get `qmake`:
 
 * `brew link qt --force`
+
+Install these as well:
+
+* hunspell

@@ -1,7 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # vim:fileencoding=utf-8
-from __future__ import (unicode_literals, division, absolute_import,
-                        print_function)
+#from __future__ import (unicode_literals, division, absolute_import,
+#                        print_function)
 
 __license__ = 'GPL v3'
 __copyright__ = '2015, Kovid Goyal <kovid at kovidgoyal.net>'
@@ -13,7 +13,6 @@ from urllib.parse import parse_qs
 import reprlib as reprlib
 from email.utils import formatdate
 from operator import itemgetter
-from future_builtins import map
 from urllib.parse import quote as urlquote
 from binascii import hexlify, unhexlify
 

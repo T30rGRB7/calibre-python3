@@ -1,14 +1,13 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # vim:fileencoding=utf-8
-from __future__ import (unicode_literals, division, absolute_import,
-                        print_function)
+#from __future__ import (unicode_literals, division, absolute_import,
+#                        print_function)
 
 __license__ = 'GPL v3'
 __copyright__ = '2013, Kovid Goyal <kovid at kovidgoyal.net>'
 
 from operator import attrgetter, methodcaller
 from collections import namedtuple
-from future_builtins import map
 from itertools import product
 from functools import partial
 from copy import copy, deepcopy

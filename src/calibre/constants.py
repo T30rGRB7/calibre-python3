@@ -86,7 +86,7 @@ else:
         filesystem_encoding = 'utf-8'
 
 
-DEBUG = b'CALIBRE_DEBUG' in os.environ
+DEBUG = 'CALIBRE_DEBUG' in os.environ
 
 
 def debug():
@@ -184,12 +184,13 @@ class Plugins(collections.Mapping):
             del sys.modules[name]
         except KeyError:
             pass
+        err2 = ""
         try:
             p, err = importlib.import_module(name), ''
         except Exception as err:
             p = None
-            err = str(err)
-        self._plugins[name] = (p, err)
+            err2 = str(err)
+        self._plugins[name] = (p, err2)
         sys.path.remove(sys.extensions_location)
 
     def __iter__(self):

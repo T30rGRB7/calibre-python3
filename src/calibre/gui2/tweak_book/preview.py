@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # vim:fileencoding=utf-8
 from __future__ import (unicode_literals, division, absolute_import,
                         print_function)
@@ -9,7 +9,6 @@ __copyright__ = '2013, Kovid Goyal <kovid at kovidgoyal.net>'
 import time, textwrap, json
 from bisect import bisect_right
 from base64 import b64encode
-from future_builtins import map
 from threading import Thread
 from queue import Queue, Empty
 from functools import partial

@@ -1,7 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # vim:fileencoding=utf-8
-from __future__ import (unicode_literals, division, absolute_import,
-                        print_function)
+#from __future__ import (unicode_literals, division, absolute_import,
+#                        print_function)
 
 __license__ = 'GPL v3'
 __copyright__ = '2015, Kovid Goyal <kovid at kovidgoyal.net>'
@@ -12,7 +12,6 @@ from io import BytesIO, DEFAULT_BUFFER_SIZE
 from itertools import chain, repeat, zip_longest
 from operator import itemgetter
 from functools import wraps
-from future_builtins import map
 
 from calibre import guess_type, force_unicode
 from calibre.constants import __version__, plugins

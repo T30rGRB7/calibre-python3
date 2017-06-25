@@ -1,14 +1,13 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # vim:fileencoding=utf-8
-from __future__ import (unicode_literals, division, absolute_import,
-                        print_function)
+#from __future__ import (unicode_literals, division, absolute_import,
+#                        print_function)
 
 __license__ = 'GPL v3'
 __copyright__ = '2014, Kovid Goyal <kovid at kovidgoyal.net>'
 
 
 import re
-from future_builtins import map
 from tinycss.css21 import CSS21Parser, ParseError
 from .tokenizer import tokenize_grouped
 

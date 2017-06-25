@@ -1,3 +1,2 @@
 #!/bin/sh
-python3 ./setup.py build
-python3 ./setup.py gui
+python3 ./setup.py build && python3 ./setup.py gui
